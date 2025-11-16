@@ -1,17 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-<head> <link rel="manifest" href="manifest.json" />
-
+<head>
   <meta charset="UTF-8" />
-  <title>Ali's Trading System - Secure Web Dashboard</title>
+  <title>Ali's Trading System - PnL & Weekly / Monthly Stats</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#020617" />
 
   <!-- Fonts & Chart.js -->
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
-    rel="stylesheet"
-  />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
@@ -19,7 +14,7 @@
       --bg: #020617;
       --bg-elevated: #020617;
       --accent: #f97316;
-      --accent-soft: rgba(249, 115, 22, 0.16);
+      --accent-soft: rgba(249, 115, 22, 0.12);
       --danger: #ef4444;
       --success: #22c55e;
       --text: #e5e7eb;
@@ -29,41 +24,25 @@
       --card-radius: 18px;
     }
 
-    /* Light mode palette */
-    :root[data-theme="light"] {
-      --bg: #f4f4f5;
-      --bg-elevated: #ffffff;
-      --accent: #ea580c;
-      --accent-soft: rgba(234, 88, 12, 0.1);
-      --danger: #dc2626;
-      --success: #16a34a;
-      --text: #020617;
-      --text-soft: #4b5563;
-      --muted: #6b7280;
-      --border: #e5e7eb;
-      --card-radius: 18px;
-    }
-
     * {
       box-sizing: border-box;
     }
 
     body {
       margin: 0;
-      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
-        "Segoe UI", sans-serif;
-      background: radial-gradient(circle at top, #111827 45%, #020617 100%);
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #111827 40%, #020617 100%);
       color: var(--text);
-      min-height: 100vh;
     }
 
-    .app-shell {
+    .app {
+      min-height: 100vh;
+      padding: 20px 16px 40px;
       max-width: 1280px;
       margin: 0 auto;
-      padding: 18px 16px 32px;
     }
 
-    .top-bar {
+    header {
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -71,1967 +50,1364 @@
       margin-bottom: 18px;
     }
 
-    .top-left {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
+    .title-block h1 {
+      font-size: 1.5rem;
+      margin: 0 0 4px;
     }
 
-    .app-title {
-      font-size: 1.25rem;
-      font-weight: 600;
-      letter-spacing: 0.02em;
-    }
-
-    .app-subtitle {
+    .subtitle {
       font-size: 0.8rem;
       color: var(--text-soft);
     }
 
-    .top-right {
+    .pill-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
-      align-items: center;
-      justify-content: flex-end;
+      gap: 6px;
+      margin-top: 6px;
     }
 
     .pill {
       font-size: 0.72rem;
-      padding: 4px 10px;
+      padding: 3px 8px;
       border-radius: 999px;
       border: 1px solid var(--border);
-      background: rgba(15, 23, 42, 0.8);
+      background: rgba(15, 23, 42, 0.9);
       color: var(--text-soft);
+    }
+
+    .top-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .chip {
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      border: 1px solid var(--border);
+      background: rgba(15, 23, 42, 0.95);
       display: inline-flex;
       align-items: center;
       gap: 6px;
+      color: var(--text-soft);
     }
 
-    .pill-dot {
+    .chip-dot {
       width: 7px;
       height: 7px;
-      border-radius: 50%;
-      background: #22c55e;
-    }
-
-    .btn-primary,
-    .btn-secondary {
       border-radius: 999px;
-      padding: 8px 14px;
-      border: none;
-      cursor: pointer;
-      font-size: 0.8rem;
-      font-weight: 500;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      white-space: nowrap;
-      transition: transform 0.08s ease, box-shadow 0.08s ease,
-        background 0.12s;
+      background: var(--success);
     }
 
-    .btn-primary {
-      background: linear-gradient(135deg, #f97316, #fb923c);
-      color: #0b1120;
-      box-shadow: 0 12px 25px rgba(248, 113, 22, 0.45);
-    }
-
-    .btn-secondary {
-      background: rgba(15, 23, 42, 0.85);
-      color: var(--text-soft);
+    .btn-icon {
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 0.75rem;
       border: 1px solid var(--border);
-    }
-
-    button:active,
-    .btn-primary:active,
-    .btn-secondary:active {
-      transform: scale(0.97);
-      box-shadow: 0 0 0 rgba(0, 0, 0, 0);
-    }
-
-    .btn-primary:hover {
-      background: linear-gradient(135deg, #fb923c, #f97316);
+      background: rgba(15, 23, 42, 0.95);
+      color: var(--text-soft);
+      cursor: pointer;
     }
 
     .layout {
       display: grid;
-      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.2fr);
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
       gap: 16px;
     }
 
-    @media (max-width: 960px) {
-      .layout {
-        grid-template-columns: minmax(0, 1fr);
-      }
-    }
-
     .card {
-      background: radial-gradient(circle at top left, #020617, #020617 70%);
+      background: rgba(15, 23, 42, 0.98);
       border-radius: var(--card-radius);
-      padding: 14px 14px 16px;
-      border: 1px solid var(--border);
-      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.75);
-      position: relative;
-      overflow: hidden;
-      transition: transform 0.15s ease-out, box-shadow 0.15s ease-out,
-        background 0.15s;
-    }
-
-    .card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 20px 45px rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(15, 23, 42, 0.9);
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.65);
+      padding: 14px 16px 16px;
     }
 
     .card-header {
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
       gap: 8px;
       margin-bottom: 10px;
     }
 
     .card-title {
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       font-weight: 600;
     }
 
-    .card-subtitle {
-      font-size: 0.75rem;
+    .section-label {
+      font-size: 0.7rem;
       color: var(--text-soft);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 8px;
     }
 
-    .field-group {
+    .field-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 8px;
-    }
-
-    @media (max-width: 720px) {
-      .field-group {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .field {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    label {
-      font-size: 0.72rem;
-      color: var(--text-soft);
-    }
-
-    input,
-    select,
-    textarea {
-      background: rgba(15, 23, 42, 0.85);
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      padding: 6px 8px;
-      font-size: 0.8rem;
-      color: var(--text);
-      outline: none;
-    }
-
-    input::placeholder,
-    textarea::placeholder {
-      color: #6b7280;
-    }
-
-    input:focus,
-    select:focus,
-    textarea:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 1px var(--accent-soft);
-    }
-
-    textarea {
-      min-height: 64px;
-      resize: vertical;
-    }
-
-    .criteria-grid {
-      margin-top: 10px;
-      border-top: 1px solid var(--border);
-      padding-top: 10px;
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 8px;
-    }
-
-    @media (max-width: 720px) {
-      .criteria-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .criterion {
-      padding: 6px 7px;
-      border-radius: 12px;
-      background: rgba(15, 23, 42, 0.9);
-      border: 1px solid rgba(55, 65, 81, 0.9);
-      display: flex;
-      gap: 6px;
-      align-items: flex-start;
-      font-size: 0.75rem;
-    }
-
-    .criterion input[type="checkbox"] {
-      margin-top: 2px;
-    }
-
-    .criterion-main {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .criterion-title {
-      font-weight: 500;
-    }
-
-    .criterion-meta {
-      font-size: 0.7rem;
-      color: var(--text-soft);
-    }
-
-    .criterion-tag {
-      font-size: 0.65rem;
-      padding: 2px 6px;
-      border-radius: 999px;
-      background: rgba(15, 23, 42, 0.9);
-      border: 1px solid var(--border);
-    }
-
-    .criteria-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      margin-top: 10px;
-      flex-wrap: wrap;
-    }
-
-    .small-muted {
-      font-size: 0.7rem;
-      color: var(--text-soft);
-    }
-
-    .btn-row {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      font-size: 0.7rem;
-      padding: 2px 7px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: rgba(15, 23, 42, 0.8);
-      color: var(--text-soft);
-    }
-
-    .chip-dot-high {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: #22c55e;
-    }
-
-    .chip-dot-med {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: #facc15;
-    }
-
-    .chip-dot-low {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: #f97316;
-    }
-
-    .dashboard-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 8px;
       margin-bottom: 10px;
     }
 
-    @media (max-width: 720px) {
-      .dashboard-grid {
-        grid-template-columns: 1fr;
-      }
+    label {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 0.75rem;
+      color: var(--text-soft);
     }
 
-    .metric-card {
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    select,
+    textarea {
+      background: #020617;
+      border-radius: 10px;
+      border: 1px solid #111827;
+      padding: 7px 9px;
+      font-size: 0.78rem;
+      color: var(--text);
+      outline: none;
+      width: 100%;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: #4b5563;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 56px;
+      max-height: 120px;
+    }
+
+    .criteria-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 6px;
+      margin-bottom: 9px;
+    }
+
+    .criterion {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
       padding: 6px 8px;
-      border-radius: 14px;
-      background: rgba(15, 23, 42, 0.9);
-      border: 1px solid var(--border);
+      border-radius: 10px;
+      border: 1px solid #111827;
+      background: rgba(15, 23, 42, 0.95);
     }
 
-    .metric-label {
+    .criterion-left {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+    }
+
+    .criterion input[type="checkbox"] {
+      accent-color: var(--accent);
+      width: 13px;
+      height: 13px;
+    }
+
+    .badge {
+      font-size: 0.7rem;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: #fed7aa;
+      border: 1px solid rgba(251, 146, 60, 0.5);
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 8px 12px;
+      margin-top: 4px;
+      border-radius: 999px;
+      border: none;
+      font-size: 0.8rem;
+      background: linear-gradient(135deg, #fb923c, #f97316);
+      color: #111827;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .btn-secondary {
+      width: 100%;
+      padding: 7px 12px;
+      margin-top: 4px;
+      border-radius: 999px;
+      border: 1px solid #111827;
+      font-size: 0.76rem;
+      background: rgba(15, 23, 42, 0.95);
+      color: var(--text-soft);
+      cursor: pointer;
+    }
+
+    .two-btn-row {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    /* Dashboard */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .kpi-card {
+      background: #020617;
+      border-radius: 14px;
+      border: 1px solid #111827;
+      padding: 8px 10px;
+    }
+
+    .kpi-label {
+      font-size: 0.7rem;
+      color: var(--text-soft);
+      margin-bottom: 4px;
+    }
+
+    .kpi-main {
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .kpi-sub {
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .kpi-main.good {
+      color: var(--success);
+    }
+
+    .kpi-main.bad {
+      color: var(--danger);
+    }
+
+    .charts-row {
+      display: grid;
+      grid-template-columns: 1.1fr 1.1fr 0.8fr;
+      gap: 8px;
+    }
+
+    .chart-card {
+      background: #020617;
+      border-radius: 14px;
+      border: 1px solid #111827;
+      padding: 8px 10px;
+    }
+
+    .chart-title {
       font-size: 0.72rem;
       color: var(--text-soft);
       margin-bottom: 4px;
     }
 
-    .metric-value {
-      font-size: 1.05rem;
+    .wm-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .wm-card {
+      background: #020617;
+      border-radius: 14px;
+      border: 1px solid #111827;
+      padding: 8px 10px;
+    }
+
+    .wm-title {
+      font-size: 0.72rem;
+      color: var(--text-soft);
+      margin-bottom: 2px;
+    }
+
+    .wm-main {
+      font-size: 0.95rem;
       font-weight: 600;
     }
 
-    .metric-subtext {
+    .wm-sub {
       font-size: 0.7rem;
       color: var(--muted);
     }
 
-    .chart-row {
-      display: grid;
-      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.1fr);
-      gap: 8px;
-      margin-bottom: 10px;
-    }
-
-    @media (max-width: 960px) {
-      .chart-row {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .chart-container {
-      padding: 10px 10px 8px;
+    /* Trade table */
+    .table-card {
+      background: #020617;
       border-radius: 14px;
-      background: rgba(15, 23, 42, 0.9);
-      border: 1px solid var(--border);
-      animation: fadeInUp 0.35s ease-out;
+      border: 1px solid #111827;
+      padding: 8px 10px 10px;
     }
 
-    .chart-title {
-      font-size: 0.75rem;
-      color: var(--text-soft);
-      margin-bottom: 6px;
+    .table-header-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
+      margin-bottom: 6px;
     }
 
-    .chart-legend {
-      display: inline-flex;
+    .filters-row {
+      display: flex;
+      flex-wrap: wrap;
       gap: 6px;
+      margin-bottom: 6px;
+    }
+
+    .filters-row select,
+    .filters-row input[type="date"] {
+      max-width: 130px;
       font-size: 0.7rem;
-      align-items: center;
-    }
-
-    .legend-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 999px;
-    }
-
-    .table-wrapper {
-      margin-top: 8px;
-      border-radius: 14px;
-      border: 1px solid var(--border);
-      background: rgba(15, 23, 42, 0.95);
-      overflow: auto;
-      max-height: 260px;
+      padding: 4px 6px;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 0.72rem;
-      min-width: 800px;
+      font-size: 0.7rem;
     }
 
-    thead {
-      position: sticky;
-      top: 0;
-      background: rgba(15, 23, 42, 0.98);
-      z-index: 2;
-    }
-
-    th,
-    td {
-      padding: 6px 8px;
-      border-bottom: 1px solid rgba(31, 41, 55, 0.9);
+    th, td {
+      padding: 4px 4px;
       text-align: left;
+      border-bottom: 1px solid #020617;
       white-space: nowrap;
     }
 
     th {
-      font-weight: 500;
       color: var(--text-soft);
-      font-size: 0.7rem;
-    }
-
-    tbody tr:nth-child(even) {
-      background: rgba(15, 23, 42, 0.6);
-    }
-
-    .prob-pill {
-      border-radius: 999px;
-      padding: 2px 8px;
-      font-size: 0.7rem;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .prob-high {
-      background: rgba(34, 197, 94, 0.12);
-      color: #4ade80;
-      border: 1px solid rgba(34, 197, 94, 0.5);
-    }
-
-    .prob-medium {
-      background: rgba(250, 204, 21, 0.12);
-      color: #fde68a;
-      border: 1px solid rgba(250, 204, 21, 0.6);
-    }
-
-    .prob-low {
-      background: rgba(248, 113, 22, 0.12);
-      color: #fed7aa;
-      border: 1px solid rgba(248, 113, 22, 0.6);
-    }
-
-    .filters-bar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-bottom: 6px;
-      align-items: center;
-    }
-
-    .filters-bar input,
-    .filters-bar select {
-      font-size: 0.7rem;
-      padding: 4px 8px;
-      border-radius: 999px;
-    }
-
-    .coach-card {
-      margin-top: 10px;
-      padding: 8px 10px;
-      border-radius: 14px;
-      background: rgba(15, 23, 42, 0.9);
-      border: 1px solid var(--border);
-      font-size: 0.75rem;
-      color: var(--text-soft);
-    }
-
-    .coach-title {
-      font-size: 0.8rem;
       font-weight: 500;
-      margin-bottom: 4px;
-    }
-
-    .settings-chip-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 4px;
-    }
-
-    .settings-chip {
       font-size: 0.68rem;
-      padding: 2px 6px;
-      border-radius: 999px;
-      border: 1px dashed var(--border);
-      color: var(--text-soft);
-      background: rgba(15, 23, 42, 0.7);
     }
 
-    .footer-bar {
-      display: flex;
-      justify-content: space-between;
-      gap: 8px;
-      margin-top: 10px;
-      flex-wrap: wrap;
-      font-size: 0.7rem;
-      color: var(--muted);
+    tr:nth-child(even) td {
+      background: #020617;
     }
 
-    .export-row {
+    .badge-prob-low {
+      color: #f97316;
+    }
+
+    .badge-prob-med {
+      color: #22c55e;
+    }
+
+    .badge-prob-high {
+      color: #22c55e;
+      font-weight: 600;
+    }
+
+    .bottom-bar {
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
-      align-items: center;
+      justify-content: flex-end;
+      margin-top: 6px;
     }
 
-    .export-row button {
-      font-size: 0.72rem;
-      padding: 6px 10px;
+    .btn-small {
+      padding: 5px 9px;
       border-radius: 999px;
-      border: 1px solid var(--border);
-      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid #111827;
+      background: rgba(15, 23, 42, 0.95);
       color: var(--text-soft);
+      font-size: 0.7rem;
       cursor: pointer;
     }
 
-    .export-row input[type="file"] {
+    .btn-small.primary {
+      background: var(--accent);
+      color: #111827;
+      border-color: var(--accent);
+    }
+
+    .file-input {
       display: none;
     }
 
-    .lock-badge {
-      position: absolute;
-      top: 10px;
-      right: 10px;
+    .coach-card {
+      background: #020617;
+      border-radius: 14px;
+      border: 1px solid #111827;
+      padding: 8px 10px;
+      margin-top: 6px;
       font-size: 0.72rem;
-      padding: 4px 10px;
-      border-radius: 999px;
-      background: rgba(15, 23, 42, 0.95);
-      border: 1px solid var(--border);
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .lock-badge span.dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: #22c55e;
-    }
-
-    /* Lock screen */
-    .lock-screen {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px 16px;
-    }
-
-    .lock-panel {
-      width: 100%;
-      max-width: 380px;
-      padding: 20px 18px 18px;
-      border-radius: 18px;
-      border: 1px solid var(--border);
-      background: radial-gradient(circle at top left, #020617, #020617 70%);
-      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.9);
-    }
-
-    .lock-title {
-      font-size: 1.05rem;
-      font-weight: 600;
-      margin-bottom: 6px;
-    }
-
-    .lock-text {
-      font-size: 0.78rem;
-      color: var(--text-soft);
-      margin-bottom: 12px;
-    }
-
-    .lock-input-row {
-      display: flex;
-      gap: 8px;
-    }
-
-    .lock-input-row input {
-      flex: 1;
-    }
-
-    .lock-footer {
-      margin-top: 10px;
-      display: flex;
-      justify-content: space-between;
-      gap: 8px;
-      font-size: 0.7rem;
       color: var(--muted);
-      flex-wrap: wrap;
     }
 
-    .link-like {
-      color: var(--accent);
-      cursor: pointer;
-      text-decoration: underline;
+    .coach-title {
+      font-weight: 600;
+      margin-bottom: 3px;
+      color: var(--text-soft);
     }
 
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(8px);
+    .autosave-label {
+      font-size: 0.7rem;
+      color: var(--text-soft);
+      margin-top: 2px;
+    }
+
+    @media (max-width: 980px) {
+      .layout {
+        grid-template-columns: 1fr;
       }
-      to {
-        opacity: 1;
-        transform: translateY(0);
+      .charts-row {
+        grid-template-columns: 1fr;
+      }
+      .kpi-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 0;
+      }
+      .app {
+        padding-inline: 10px;
+      }
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .top-controls {
+        width: 100%;
+        justify-content: space-between;
       }
     }
   </style>
 </head>
 <body>
-  <!-- LOCK SCREEN (PIN) -->
-  <div id="lock-root" class="lock-screen" style="display: none;">
-    <div class="lock-panel">
-      <div class="lock-title">Ali's Trading System</div>
-      <div id="lock-mode-setup">
-        <div class="lock-text">
-          First-time setup. Create a PIN to protect your dashboard on this
-          device.
-        </div>
-        <div class="lock-input-row">
-          <input
-            id="pin-setup-input"
-            type="password"
-            placeholder="4+ digits"
-          />
-          <button id="pin-setup-btn" class="btn-primary">Set PIN</button>
-        </div>
-      </div>
-
-      <div id="lock-mode-login" style="display: none;">
-        <div class="lock-text">
-          Enter PIN to unlock your dashboard on this device.
-        </div>
-        <div class="lock-input-row">
-          <input
-            id="pin-login-input"
-            type="password"
-            placeholder="PIN"
-          />
-          <button id="pin-login-btn" class="btn-primary">Unlock</button>
-        </div>
-      </div>
-
-      <div class="lock-footer">
-        <span class="small-muted">
-          PIN is stored locally only. Clearing browser data resets it.
-        </span>
-        <span id="lock-reset" class="link-like">Reset / forgot PIN</span>
-      </div>
-      <div id="lock-error" style="font-size:0.72rem;color:#fca5a5;margin-top:6px;"></div>
-    </div>
-  </div>
-
-  <!-- MAIN APP -->
-  <div id="app-root" style="display: none;">
-    <div class="app-shell">
-      <div class="top-bar">
-        <div class="top-left">
-          <div class="app-title">Ali's Trading System</div>
-          <div class="app-subtitle">
-            Probabilities • Discipline • R • Web-based execution journal
-          </div>
-        </div>
-        <div class="top-right">
-          <button id="theme-toggle" class="btn-secondary">🌙 Dark</button>
-          <button class="btn-secondary" id="lock-btn">Lock</button>
-          <span class="pill">
-            <span class="pill-dot"></span>
-            <span id="autosave-status">Local session • Auto-backup every 10s</span>
-          </span>
-        </div>
-      </div>
-
-      <div class="layout">
-        <!-- LEFT: NEW TRADE -->
-        <div class="card">
-          <div class="card-header">
-            <div>
-              <div class="card-title">New trade</div>
-              <div class="card-subtitle">
-                Fill the form, tick criteria, log trade. Scores &amp; probability
-                are calculated automatically.
-              </div>
-            </div>
-            <span class="chip">
-              Checklist + Execution
-            </span>
-          </div>
-
-          <div class="field-group">
-            <div class="field">
-              <label for="date">Date</label>
-              <input id="date" type="date" />
-            </div>
-            <div class="field">
-              <label for="pair">Pair</label>
-              <input id="pair" type="text" placeholder="e.g. GBPUSD" />
-            </div>
-            <div class="field">
-              <label for="direction">Direction</label>
-              <select id="direction">
-                <option value="">Select</option>
-                <option>Buy</option>
-                <option>Sell</option>
-              </select>
-            </div>
-            <div class="field">
-              <label for="setup">Setup</label>
-              <select id="setup">
-                <option value="">Select</option>
-                <option>Breakout with momentum</option>
-                <option>Retest continuation</option>
-                <option>Range fade / reversal</option>
-              </select>
-            </div>
-            <div class="field">
-              <label for="risk">Risk per trade (R)</label>
-              <input id="risk" type="number" step="0.01" placeholder="e.g. 1" />
-            </div>
-            <div class="field">
-              <label for="rr-planned">R:R planned</label>
-              <input
-                id="rr-planned"
-                type="number"
-                step="0.1"
-                placeholder="e.g. 2.5"
-              />
-            </div>
-            <div class="field">
-              <label for="rr-realized">R realized</label>
-              <input
-                id="rr-realized"
-                type="number"
-                step="0.01"
-                placeholder="e.g. 1.8"
-              />
-            </div>
-            <div class="field">
-              <label for="session">Session</label>
-              <select id="session">
-                <option value="">Select</option>
-                <option>London</option>
-                <option>New York</option>
-                <option>Asia</option>
-              </select>
-            </div>
-            <div class="field">
-              <label for="emotion">Emotion tag</label>
-              <select id="emotion">
-                <option value="">Select</option>
-                <option>Calm</option>
-                <option>Disciplined</option>
-                <option>Confident</option>
-                <option>Neutral</option>
-                <option>FOMO</option>
-                <option>Fearful</option>
-                <option>Revenge</option>
-                <option>Over-confident</option>
-              </select>
-            </div>
-            <div class="field">
-              <label for="screenshot">Screenshot / chart link</label>
-              <input
-                id="screenshot"
-                type="url"
-                placeholder="Paste TradingView / chart link"
-              />
-            </div>
-            <div class="field">
-              <label for="tags">Tags (comma-separated)</label>
-              <input
-                id="tags"
-                type="text"
-                placeholder="e.g. London open, news, A+"
-              />
-            </div>
-          </div>
-
-          <div class="field" style="margin-top:8px;">
-            <label for="notes">Journal notes</label>
-            <textarea
-              id="notes"
-              placeholder="What did you do well? What can you improve?"
-            ></textarea>
-          </div>
-
-          <!-- Criteria -->
-          <div class="criteria-grid">
-            <label style="grid-column:1/-1;font-size:0.75rem;color:var(--text-soft);">
-              Breakout / candle criteria (weighted). Tick only what was actually met.
-            </label>
-
-            <div class="criterion">
-              <input type="checkbox" data-weight="2" class="crit-check" id="crit1" />
-              <div class="criterion-main">
-                <span class="criterion-title">Clean close at level</span>
-                <span class="criterion-meta"
-                  >No big wicks both sides • weight 2</span
-                >
-              </div>
-            </div>
-
-            <div class="criterion">
-              <input type="checkbox" data-weight="2" class="crit-check" id="crit2" />
-              <div class="criterion-main">
-                <span class="criterion-title">No long wick against direction</span>
-                <span class="criterion-meta"
-                  >Wick profile matches bias • weight 2</span
-                >
-              </div>
-            </div>
-
-            <div class="criterion">
-              <input type="checkbox" data-weight="1" class="crit-check" id="crit3" />
-              <div class="criterion-main">
-                <span class="criterion-title">Structure matches plan</span>
-                <span class="criterion-meta"
-                  >Story + higher TF aligned • weight 1</span
-                >
-              </div>
-            </div>
-
-            <div class="criterion">
-              <input type="checkbox" data-weight="1" class="crit-check" id="crit4" />
-              <div class="criterion-main">
-                <span class="criterion-title">Not after huge candle</span>
-                <span class="criterion-meta"
-                  >Avoid chasing exhaustion moves • weight 1</span
-                >
-              </div>
-            </div>
-
-            <div class="criterion">
-              <input type="checkbox" data-weight="2" class="crit-check" id="crit5" />
-              <div class="criterion-main">
-                <span class="criterion-title">No flat / no-wick close</span>
-                <span class="criterion-meta"
-                  >Entry candle prints wick first then flips • weight 2</span
-                >
-              </div>
-            </div>
-
-            <div class="criterion">
-              <input type="checkbox" data-weight="2" class="crit-check" id="crit6" />
-              <div class="criterion-main">
-                <span class="criterion-title">Wick first, then flip entry</span>
-                <span class="criterion-meta"
-                  >Classic flip entry behaviour • weight 2</span
-                >
-              </div>
-            </div>
-          </div>
-
-          <div class="criteria-footer">
-            <div class="small-muted" id="criteria-summary">
-              0 / 10 weighted points selected.
-            </div>
-            <div class="btn-row">
-              <button id="add-trade-btn" class="btn-primary">
-                + Add trade to log
-              </button>
-              <button id="clear-form-btn" class="btn-secondary">
-                Clear form
-              </button>
-            </div>
-          </div>
-
-          <div class="settings-chip-row">
-            <span class="settings-chip">Weighted checklist</span>
-            <span class="settings-chip">Auto-score</span>
-            <span class="settings-chip">JSON / CSV export</span>
-            <span class="settings-chip">Local auto-backup</span>
-          </div>
-        </div>
-
-        <!-- RIGHT: DASHBOARD -->
-        <div class="card">
-          <div class="card-header">
-            <div>
-              <div class="card-title">Dashboard</div>
-              <div class="card-subtitle">
-                Live performance breakdown, probability &amp; behaviour tracking.
-              </div>
-            </div>
-            <span class="chip">Auto-updated from left panel</span>
-          </div>
-
-          <div class="dashboard-grid">
-            <div class="metric-card">
-              <div class="metric-label">Win rate</div>
-              <div class="metric-value" id="winrate-text">0.0%</div>
-              <div class="metric-subtext" id="winrate-subtext">0 trades</div>
-            </div>
-
-            <div class="metric-card">
-              <div class="metric-label">Avg R (realized)</div>
-              <div class="metric-value" id="avgR-text">0.00R</div>
-              <div class="metric-subtext" id="avgR-subtext">Equity: 0.00R</div>
-            </div>
-
-            <div class="metric-card">
-              <div class="metric-label">Discipline score</div>
-              <div class="metric-value" id="disc-text">0</div>
-              <div class="metric-subtext" id="disc-subtext">No trades yet</div>
-            </div>
-          </div>
-
-          <div class="chart-row">
-            <div class="chart-container">
-              <div class="chart-title">
-                <span>High vs low probability</span>
-                <span class="chart-legend">
-                  <span class="legend-dot" style="background:#22c55e;"></span
-                  >High
-                  <span class="legend-dot" style="background:#facc15;"></span
-                  >Medium
-                  <span class="legend-dot" style="background:#f97316;"></span
-                  >Low
-                </span>
-              </div>
-              <canvas id="prob-chart" height="140"></canvas>
-            </div>
-
-            <div class="chart-container">
-              <div class="chart-title">
-                <span>Equity curve (R)</span>
-                <span id="equity-summary" style="font-size:0.7rem;color:var(--text-soft);">
-                  0.00R total
-                </span>
-              </div>
-              <canvas id="equity-chart" height="140"></canvas>
-            </div>
-          </div>
-
-          <div class="chart-row">
-            <div class="chart-container">
-              <div class="chart-title">
-                <span>Probability history</span>
-                <span style="font-size:0.7rem;color:var(--text-soft);">
-                  1=Low • 2=Medium • 3=High
-                </span>
-              </div>
-              <canvas id="prob-history-chart" height="90"></canvas>
-            </div>
-
-            <div class="chart-container">
-              <div class="chart-title">
-                <span>Most common mistakes (last 30 trades)</span>
-                <span style="font-size:0.7rem;color:var(--text-soft);" id="mistake-count">
-                  None yet
-                </span>
-              </div>
-              <div id="mistake-list" style="font-size:0.74rem;color:var(--text-soft);">
-                No mistakes logged yet. Tag emotions &amp; write notes to see patterns.
-              </div>
-            </div>
-          </div>
-
-          <div class="coach-card">
-            <div class="coach-title">Coach’s feedback</div>
-            <div id="ai-coach-text">
-              Log a trade to see feedback based on probability, discipline and emotional tags.
-            </div>
-          </div>
-
-          <div style="margin-top:10px;">
-            <div class="chart-title" style="margin-bottom:4px;">
-              <span>Trade log</span>
-              <span style="font-size:0.7rem;color:var(--text-soft);">
-                Based on filters, tags &amp; date range.
-              </span>
-            </div>
-            <div class="filters-bar">
-              <input
-                id="filter-text"
-                type="text"
-                placeholder="Filter by tag, pair, setup or notes…"
-              />
-              <select id="filter-prob">
-                <option value="">All probabilities</option>
-                <option value="High">High only</option>
-                <option value="Medium">Medium only</option>
-                <option value="Low">Low only</option>
-              </select>
-              <input id="filter-from" type="date" />
-              <input id="filter-to" type="date" />
-              <button id="filter-clear" class="btn-secondary" style="padding:4px 10px;">
-                Clear filters
-              </button>
-            </div>
-
-            <div class="table-wrapper">
-              <table id="trades-table">
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>Date</th>
-                    <th>Pair</th>
-                    <th>Dir</th>
-                    <th>Setup</th>
-                    <th>Prob</th>
-                    <th>Score</th>
-                    <th>R planned</th>
-                    <th>R realized</th>
-                    <th>Run R</th>
-                    <th>Session</th>
-                    <th>Emotion</th>
-                    <th>Discipline</th>
-                    <th>Tags</th>
-                  </tr>
-                </thead>
-                <tbody></tbody>
-              </table>
-            </div>
-          </div>
-
-          <div class="footer-bar">
-            <div class="export-row">
-              <button id="export-json-btn">Export JSON</button>
-              <button id="export-csv-btn">Export CSV</button>
-
-              <label class="btn-secondary" style="padding:4px 10px;cursor:pointer;">
-                Import JSON
-                <input id="import-json-input" type="file" accept=".json" />
-              </label>
-            </div>
-
-            <div style="max-width:320px;">
-              Save this file somewhere easy to open. You can host it on Netlify /
-              Vercel / GitHub Pages (like now) to access it from anywhere.
-            </div>
-          </div>
-
-          <!-- Telegram (optional) -->
-          <div class="coach-card" style="margin-top:10px;">
-            <div class="coach-title">Notifications (optional)</div>
-            <div class="small-muted" style="margin-bottom:6px;">
-              Add a Telegram bot token + chat ID to receive a message each time
-              you log a new trade. Data goes straight from your browser to Telegram.
-            </div>
-            <div class="field-group">
-              <div class="field" style="flex:1 1 50%;">
-                <label>
-                  <input type="checkbox" id="notify-telegram" />
-                  Enable Telegram alert on new trade
-                </label>
-              </div>
-              <div class="field">
-                <label for="tg-token">Telegram bot token</label>
-                <input id="tg-token" type="password" placeholder="123456:ABC-DEF..." />
-              </div>
-              <div class="field">
-                <label for="tg-chat">Telegram chat ID</label>
-                <input id="tg-chat" type="text" placeholder="Your chat ID" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div style="margin-top:10px;font-size:0.7rem;color:var(--muted);text-align:center;">
-        upgrade v2 • client-side only • PIN + local backup • hosted on GitHub Pages
+<div class="app">
+  <header>
+    <div class="title-block">
+      <h1>Ali's Trading System</h1>
+      <div class="subtitle">Probabilities • Discipline • R • Web-based execution journal</div>
+      <div class="pill-row">
+        <div class="pill">Weighted checklist</div>
+        <div class="pill">PnL & account balance</div>
+        <div class="pill">Weekly & monthly stats</div>
+        <div class="pill">JSON / CSV export</div>
       </div>
     </div>
-  </div>
+    <div class="top-controls">
+      <div class="chip">
+        <span class="chip-dot"></span>
+        <span id="session-status">Local session</span>
+      </div>
+      <button class="btn-icon" id="lock-btn">🔒 Lock</button>
+    </div>
+  </header>
 
-  <script>
-    // ---------- THEME ----------
-    (function () {
-      const root = document.documentElement;
-      const btn = document.getElementById("theme-toggle");
-      if (!btn) return;
+  <main class="layout">
+    <!-- LEFT: New trade form -->
+    <section class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">New trade</div>
+          <div class="autosave-label" id="autosave-status">Last autosave: –</div>
+        </div>
+        <div class="badge">Checklist + Execution</div>
+      </div>
 
-      const STORAGE_KEY = "aliTheme";
+      <div class="section-label">Account</div>
+      <div class="field-grid">
+        <label>
+          Starting balance
+          <input id="starting-balance" type="number" step="0.01" placeholder="e.g. 2000" />
+        </label>
+        <label>
+          Current balance
+          <input id="current-balance" type="number" step="0.01" disabled />
+        </label>
+      </div>
 
-      function applyTheme(theme) {
-        if (theme === "light") {
-          root.setAttribute("data-theme", "light");
-          btn.textContent = "☀️ Light";
-        } else {
-          root.removeAttribute("data-theme");
-          btn.textContent = "🌙 Dark";
-          theme = "dark";
-        }
-        localStorage.setItem(STORAGE_KEY, theme);
+      <div class="section-label">New trade</div>
+      <div class="field-grid">
+        <label>
+          Date
+          <input id="trade-date" type="date" />
+        </label>
+        <label>
+          Pair
+          <input id="trade-pair" type="text" placeholder="e.g. GBPUSD" />
+        </label>
+        <label>
+          Direction
+          <select id="trade-direction">
+            <option value="">Select</option>
+            <option>Buy</option>
+            <option>Sell</option>
+          </select>
+        </label>
+        <label>
+          Setup
+          <select id="trade-setup">
+            <option value="">Select</option>
+            <option>Breakout with momentum</option>
+            <option>Candle close above/below level</option>
+          </select>
+        </label>
+        <label>
+          Risk per trade (money)
+          <input id="risk-amount" type="number" step="0.01" placeholder="e.g. 50" />
+        </label>
+        <label>
+          R:R planned
+          <input id="rr-planned" type="number" step="0.1" placeholder="e.g. 2.5" />
+        </label>
+        <label>
+          R realized
+          <input id="rr-realized" type="number" step="0.1" placeholder="e.g. 1.8 or -1" />
+        </label>
+        <label>
+          Session
+          <select id="trade-session">
+            <option value="">Select</option>
+            <option>London</option>
+            <option>New York</option>
+            <option>Asia</option>
+            <option>Overlap</option>
+          </select>
+        </label>
+        <label>
+          Emotion tag
+          <select id="trade-emotion">
+            <option value="">Select</option>
+            <option>Calm</option>
+            <option>Disciplined</option>
+            <option>Confident</option>
+            <option>Neutral</option>
+            <option>FOMO</option>
+            <option>Fearful</option>
+            <option>Revenge</option>
+            <option>Greedy</option>
+          </select>
+        </label>
+        <label>
+          Screenshot / chart link
+          <input id="screenshot-link" type="text" placeholder="Paste TradingView / chart link" />
+        </label>
+      </div>
+
+      <label>
+        Tags (comma-separated)
+        <input id="trade-tags" type="text" placeholder="e.g. London open, news, A+" />
+      </label>
+
+      <label style="margin-top:6px;">
+        Journal notes
+        <textarea id="trade-notes" placeholder="What did you do well? What can you improve?"></textarea>
+      </label>
+
+      <div class="section-label" style="margin-top:10px;">Breakout / candle criteria (weighted)</div>
+      <div class="criteria-grid" id="criteria-list">
+        <!-- JS will inject criteria here -->
+      </div>
+
+      <div class="two-btn-row">
+        <button class="btn-primary" id="add-trade-btn">
+          + Add trade to log
+        </button>
+        <button class="btn-secondary" id="clear-form-btn">
+          Clear form
+        </button>
+      </div>
+    </section>
+
+    <!-- RIGHT: Dashboard & table -->
+    <section class="dashboard-grid">
+      <section class="card">
+        <div class="card-header">
+          <div class="card-title">Dashboard</div>
+          <div class="badge">Auto-updated from left panel</div>
+        </div>
+
+        <div class="kpi-row">
+          <div class="kpi-card">
+            <div class="kpi-label">Win rate</div>
+            <div class="kpi-main" id="kpi-winrate">0.0%</div>
+            <div class="kpi-sub" id="kpi-trade-count">0 trades</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Avg R (realized)</div>
+            <div class="kpi-main" id="kpi-avg-r">0.00R</div>
+            <div class="kpi-sub" id="kpi-equity-r">Equity: 0.00R</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Discipline score</div>
+            <div class="kpi-main" id="kpi-discipline">0</div>
+            <div class="kpi-sub">Checklist score (0–100)</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Total PnL & balance</div>
+            <div class="kpi-main" id="kpi-total-pnl">0.00</div>
+            <div class="kpi-sub" id="kpi-balance">Balance: 0.00</div>
+          </div>
+        </div>
+
+        <div class="charts-row" style="margin-top:8px;">
+          <div class="chart-card">
+            <div class="chart-title">High vs medium vs low probability</div>
+            <canvas id="probabilityChart" height="150"></canvas>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">Equity curve (R)</div>
+            <canvas id="equityChart" height="150"></canvas>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">Probability history</div>
+            <canvas id="probHistoryChart" height="150"></canvas>
+          </div>
+        </div>
+
+        <div class="section-label" style="margin-top:10px;">Weekly & monthly stats</div>
+        <div class="wm-grid">
+          <div class="wm-card">
+            <div class="wm-title">Last 7 days</div>
+            <div class="wm-main" id="wm-week-winrate">0.0% win</div>
+            <div class="wm-sub" id="wm-week-pnl">0.00R • 0.00 money</div>
+          </div>
+          <div class="wm-card">
+            <div class="wm-title">Last 30 days</div>
+            <div class="wm-main" id="wm-month-winrate">0.0% win</div>
+            <div class="wm-sub" id="wm-month-pnl">0.00R • 0.00 money</div>
+          </div>
+        </div>
+
+        <div class="coach-card">
+          <div class="coach-title">Coach's feedback</div>
+          <div id="coach-feedback">
+            Log trades, tag emotions and maintain high checklist scores. I’ll highlight patterns as data builds up.
+          </div>
+        </div>
+      </section>
+
+      <section class="card table-card">
+        <div class="table-header-row">
+          <div class="card-title">Trade log</div>
+          <span class="section-label" style="margin:0;">Based on filters, tags & date range.</span>
+        </div>
+
+        <div class="filters-row">
+          <select id="filter-prob">
+            <option value="">All probabilities</option>
+            <option value="High">High</option>
+            <option value="Medium">Medium</option>
+            <option value="Low">Low</option>
+          </select>
+          <input id="filter-from" type="date" />
+          <input id="filter-to" type="date" />
+          <button class="btn-small" id="clear-filters-btn">Clear filters</button>
+        </div>
+
+        <div style="overflow-x:auto; max-height:230px;">
+          <table>
+            <thead>
+            <tr>
+              <th>#</th>
+              <th>Date</th>
+              <th>Pair</th>
+              <th>Dir</th>
+              <th>Setup</th>
+              <th>Prob</th>
+              <th>Score</th>
+              <th>R planned</th>
+              <th>R realized</th>
+              <th>PnL (R)</th>
+              <th>PnL</th>
+              <th>Balance</th>
+              <th>Session</th>
+              <th>Emotion</th>
+            </tr>
+            </thead>
+            <tbody id="trades-tbody">
+            <!-- JS will inject rows -->
+            </tbody>
+          </table>
+        </div>
+
+        <div class="bottom-bar">
+          <button class="btn-small primary" id="export-json-btn">Export JSON</button>
+          <button class="btn-small primary" id="export-csv-btn">Export CSV</button>
+          <label class="btn-small" style="cursor:pointer;">
+            Import JSON
+            <input id="import-json-input" class="file-input" type="file" accept="application/json" />
+          </label>
+          <button class="btn-small" id="clear-log-btn">Clear log (local)</button>
+        </div>
+      </section>
+    </section>
+  </main>
+</div>
+
+<script>
+  // --------- STATE ---------
+  const STORAGE_KEY = "ali_trading_trades_v3";
+  const BALANCE_KEY = "ali_trading_balance_v3";
+  const START_BAL_KEY = "ali_trading_start_balance_v3";
+
+  let trades = [];
+  let startingBalance = parseFloat(localStorage.getItem(START_BAL_KEY) || "0");
+  let accountBalance = parseFloat(localStorage.getItem(BALANCE_KEY) || startingBalance);
+
+  let probabilityChart, equityChart, probHistoryChart;
+  let autosaveTimer = null;
+
+  const criteriaConfig = [
+    { id: "clean", label: "Clean close at level", desc: "No big wicks both sides", weight: 2 },
+    { id: "no-wick-against", label: "No long wick against direction", desc: "Favourable wick profile", weight: 2 },
+    { id: "structure", label: "Structure matches plan", desc: "Story + higher TF aligned", weight: 1 },
+    { id: "no-huge-candle", label: "Not after huge candle", desc: "Avoid chasing exhaustion moves", weight: 1 },
+    { id: "no-flat", label: "No flat / no-wick close", desc: "Entry candle prints wick first then flips", weight: 2 },
+    { id: "flip-entry", label: "Wick first, then flip entry", desc: "Classic flip entry behaviour", weight: 2 }
+  ];
+
+  // --------- HELPERS ---------
+  function formatPercent(x) {
+    if (!isFinite(x)) return "0.0%";
+    return (x * 100).toFixed(1) + "%";
+  }
+
+  function formatMoney(x) {
+    if (!isFinite(x)) return "0.00";
+    return x.toFixed(2);
+  }
+
+  function nowIsoDate() {
+    return new Date().toISOString().slice(0, 10);
+  }
+
+  function parseDateSafe(str) {
+    if (!str) return null;
+    const d = new Date(str);
+    return isNaN(d.getTime()) ? null : d;
+  }
+
+  function inLastNDays(dateStr, n) {
+    const d = parseDateSafe(dateStr);
+    if (!d) return false;
+    const today = new Date();
+    const diff = (today - d) / (1000 * 60 * 60 * 24);
+    return diff >= 0 && diff < n;
+  }
+
+  function calcSummary(subset) {
+    let total = subset.length;
+    let wins = 0;
+    let sumR = 0;
+    let sumMoney = 0;
+    let sumScore = 0;
+
+    subset.forEach(t => {
+      const pnlR = parseFloat(t.pnlR || 0);
+      const pnlMoney = parseFloat(t.pnlMoney || 0);
+      const score = parseFloat(t.checklistScore || 0);
+      sumR += pnlR;
+      sumMoney += pnlMoney;
+      sumScore += score;
+      if (pnlR > 0) wins++;
+    });
+
+    const winRate = total ? wins / total : 0;
+    const avgR = total ? sumR / total : 0;
+    const avgScore = total ? sumScore / total : 0;
+
+    return {
+      total,
+      wins,
+      winRate,
+      sumR,
+      sumMoney,
+      avgR,
+      avgScore
+    };
+  }
+
+  function saveState() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(trades));
+    localStorage.setItem(BALANCE_KEY, accountBalance.toString());
+    localStorage.setItem(START_BAL_KEY, startingBalance.toString());
+    const autosaveLabel = document.getElementById("autosave-status");
+    if (autosaveLabel) {
+      const t = new Date();
+      autosaveLabel.textContent = "Last autosave: " + t.toLocaleTimeString();
+    }
+  }
+
+  function scheduleAutosave() {
+    if (autosaveTimer) clearTimeout(autosaveTimer);
+    autosaveTimer = setTimeout(saveState, 1000);
+  }
+
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        trades = JSON.parse(raw) || [];
       }
+    } catch (e) {
+      trades = [];
+    }
+  }
 
-      const saved = localStorage.getItem(STORAGE_KEY);
-      applyTheme(saved || "dark");
+  function recomputeBalanceFromTrades() {
+    // recompute total pnl from scratch from startingBalance
+    let totalMoney = 0;
+    trades.forEach(t => {
+      const pnlMoney = parseFloat(t.pnlMoney || 0);
+      totalMoney += pnlMoney;
+    });
+    accountBalance = startingBalance + totalMoney;
+  }
 
-      btn.addEventListener("click", () => {
-        const current = localStorage.getItem(STORAGE_KEY) || "dark";
-        applyTheme(current === "dark" ? "light" : "dark");
-      });
-    })();
+  // --------- UI RENDER ---------
+  function renderCriteria() {
+    const container = document.getElementById("criteria-list");
+    if (!container) return;
+    container.innerHTML = "";
+    criteriaConfig.forEach(c => {
+      const div = document.createElement("div");
+      div.className = "criterion";
+      div.innerHTML = `
+        <div class="criterion-left">
+          <input type="checkbox" id="crit-${c.id}" data-weight="${c.weight}" />
+          <div>
+            <div>${c.label}</div>
+            <div style="font-size:0.68rem; color:var(--text-soft);">${c.desc} • weight ${c.weight}</div>
+          </div>
+        </div>
+        <span class="badge">+${c.weight} pts</span>
+      `;
+      container.appendChild(div);
+    });
+  }
 
-    // ---------- PIN LOCK ----------
-    (function () {
-      const PIN_KEY = "aliPin";
-      const lockRoot = document.getElementById("lock-root");
-      const appRoot = document.getElementById("app-root");
-      const setupMode = document.getElementById("lock-mode-setup");
-      const loginMode = document.getElementById("lock-mode-login");
-      const setupInput = document.getElementById("pin-setup-input");
-      const setupBtn = document.getElementById("pin-setup-btn");
-      const loginInput = document.getElementById("pin-login-input");
-      const loginBtn = document.getElementById("pin-login-btn");
-      const lockError = document.getElementById("lock-error");
-      const lockReset = document.getElementById("lock-reset");
-      const lockBtn = document.getElementById("lock-btn");
+  function computeChecklistScore() {
+    let used = 0;
+    let max = 0;
+    criteriaConfig.forEach(c => {
+      const cb = document.getElementById("crit-" + c.id);
+      if (!cb) return;
+      max += c.weight;
+      if (cb.checked) used += c.weight;
+    });
+    const pct = max > 0 ? used / max : 0;
+    return { used, max, pct };
+  }
 
-      function showLock() {
-        appRoot.style.display = "none";
-        lockRoot.style.display = "flex";
-        const stored = localStorage.getItem(PIN_KEY);
-        if (stored) {
-          setupMode.style.display = "none";
-          loginMode.style.display = "block";
-        } else {
-          setupMode.style.display = "block";
-          loginMode.style.display = "none";
-        }
-      }
+  function classifyProbability(scorePct) {
+    if (scorePct >= 0.8) return "High";
+    if (scorePct >= 0.5) return "Medium";
+    return "Low";
+  }
 
-      function unlock() {
-        lockRoot.style.display = "none";
-        appRoot.style.display = "block";
-      }
+  function renderDashboard() {
+    const overall = calcSummary(trades);
+    const week = calcSummary(trades.filter(t => inLastNDays(t.date, 7)));
+    const month = calcSummary(trades.filter(t => inLastNDays(t.date, 30)));
 
-      setupBtn.addEventListener("click", () => {
-        const v = (setupInput.value || "").trim();
-        if (v.length < 4) {
-          lockError.textContent = "PIN must be at least 4 digits.";
-          return;
-        }
-        localStorage.setItem(PIN_KEY, v);
-        setupInput.value = "";
-        lockError.textContent = "";
-        unlock();
-      });
+    // overall KPIs
+    document.getElementById("kpi-winrate").textContent = formatPercent(overall.winRate);
+    document.getElementById("kpi-trade-count").textContent = `${overall.total} trade${overall.total === 1 ? "" : "s"}`;
+    document.getElementById("kpi-avg-r").textContent = overall.avgR.toFixed(2) + "R";
+    document.getElementById("kpi-equity-r").textContent = "Equity: " + overall.sumR.toFixed(2) + "R";
+    document.getElementById("kpi-discipline").textContent = overall.avgScore.toFixed(0);
+    document.getElementById("kpi-total-pnl").textContent = `${overall.sumR.toFixed(2)}R • ${formatMoney(overall.sumMoney)}`;
+    document.getElementById("kpi-balance").textContent = "Balance: " + formatMoney(accountBalance);
 
-      loginBtn.addEventListener("click", () => {
-        const v = (loginInput.value || "").trim();
-        const stored = localStorage.getItem(PIN_KEY);
-        if (!stored) {
-          lockError.textContent = "No PIN stored. Use reset and set a new one.";
-          return;
-        }
-        if (v !== stored) {
-          lockError.textContent = "Incorrect PIN.";
-          return;
-        }
-        loginInput.value = "";
-        lockError.textContent = "";
-        unlock();
-      });
+    // weekly / monthly
+    document.getElementById("wm-week-winrate").textContent = formatPercent(week.winRate) + " win";
+    document.getElementById("wm-week-pnl").textContent = `${week.sumR.toFixed(2)}R • ${formatMoney(week.sumMoney)} money`;
 
-      lockReset.addEventListener("click", () => {
-        if (
-          confirm(
-            "Reset PIN and clear all locally stored trades? This cannot be undone."
-          )
-        ) {
-          localStorage.removeItem(PIN_KEY);
-          localStorage.removeItem("aliTrades");
-          localStorage.removeItem("aliSettings");
-          window.location.reload();
-        }
-      });
+    document.getElementById("wm-month-winrate").textContent = formatPercent(month.winRate) + " win";
+    document.getElementById("wm-month-pnl").textContent = `${month.sumR.toFixed(2)}R • ${formatMoney(month.sumMoney)} money`;
 
-      lockBtn.addEventListener("click", () => {
-        showLock();
-      });
+    // balance fields
+    const startInput = document.getElementById("starting-balance");
+    const currentInput = document.getElementById("current-balance");
+    if (startInput) startInput.value = startingBalance || "";
+    if (currentInput) currentInput.value = formatMoney(accountBalance);
 
-      // on load
-      const stored = localStorage.getItem(PIN_KEY);
-      if (stored) {
-        showLock();
+    // coach feedback
+    const coach = document.getElementById("coach-feedback");
+    if (trades.length === 0) {
+      coach.textContent = "No trades logged yet. Focus on following your checklist and tagging emotions consistently.";
+    } else {
+      const recent = trades.slice(-10);
+      const recentSummary = calcSummary(recent);
+      if (recentSummary.winRate < 0.4 && recentSummary.avgScore < 60) {
+        coach.textContent = "Recent discipline and win rate are low. Consider reducing size, only taking A+ setups and reviewing your pre-trade checklist.";
+      } else if (recentSummary.winRate > 0.6 && recentSummary.avgScore >= 70) {
+        coach.textContent = "Good job. You're trading in sync with your plan. Keep journaling and avoid overconfidence after strong streaks.";
+      } else if (recentSummary.avgScore < 60) {
+        coach.textContent = "Your checklist score is slipping. Before each trade, pause and verify the key criteria instead of forcing entries.";
       } else {
-        showLock();
+        coach.textContent = "Mixed performance. Review losing trades, especially those with low checklist scores or emotional tags like FOMO or Revenge.";
       }
-    })();
+    }
 
-    // ---------- TRADING LOG + DASHBOARD ----------
-    (function () {
-      const STORAGE_KEY = "aliTrades";
-      const SETTINGS_KEY = "aliSettings";
+    renderCharts();
+  }
 
-      let trades = [];
-      let filteredTrades = [];
+  function renderTradesTable() {
+    const tbody = document.getElementById("trades-tbody");
+    if (!tbody) return;
 
-      // Charts
-      let probChart, equityChart, probHistoryChart;
+    const probFilter = document.getElementById("filter-prob").value || "";
+    const from = document.getElementById("filter-from").value || "";
+    const to = document.getElementById("filter-to").value || "";
 
-      const autosaveStatus = document.getElementById("autosave-status");
+    const fromDate = parseDateSafe(from);
+    const toDate = parseDateSafe(to);
 
-      // Inputs
-      const dateEl = document.getElementById("date");
-      const pairEl = document.getElementById("pair");
-      const directionEl = document.getElementById("direction");
-      const setupEl = document.getElementById("setup");
-      const riskEl = document.getElementById("risk");
-      const rrPlannedEl = document.getElementById("rr-planned");
-      const rrRealizedEl = document.getElementById("rr-realized");
-      const sessionEl = document.getElementById("session");
-      const emotionEl = document.getElementById("emotion");
-      const screenshotEl = document.getElementById("screenshot");
-      const tagsEl = document.getElementById("tags");
-      const notesEl = document.getElementById("notes");
-      const critChecks = Array.from(document.querySelectorAll(".crit-check"));
-      const criteriaSummary = document.getElementById("criteria-summary");
+    tbody.innerHTML = "";
 
-      const addTradeBtn = document.getElementById("add-trade-btn");
-      const clearFormBtn = document.getElementById("clear-form-btn");
+    let filtered = trades.slice();
+    filtered = filtered.filter(t => {
+      if (probFilter && t.probLabel !== probFilter) return false;
+      const d = parseDateSafe(t.date);
+      if (fromDate && (!d || d < fromDate)) return false;
+      if (toDate && (!d || d > toDate)) return false;
+      return true;
+    });
 
-      const winrateText = document.getElementById("winrate-text");
-      const winrateSub = document.getElementById("winrate-subtext");
-      const avgRText = document.getElementById("avgR-text");
-      const avgRSub = document.getElementById("avgR-subtext");
-      const discText = document.getElementById("disc-text");
-      const discSub = document.getElementById("disc-subtext");
-      const equitySummary = document.getElementById("equity-summary");
+    filtered.forEach((t, idx) => {
+      const tr = document.createElement("tr");
+      const probClass =
+        t.probLabel === "High"
+          ? "badge-prob-high"
+          : t.probLabel === "Medium"
+          ? "badge-prob-med"
+          : "badge-prob-low";
 
-      const probChartEl = document.getElementById("prob-chart");
-      const equityChartEl = document.getElementById("equity-chart");
-      const probHistoryChartEl = document.getElementById("prob-history-chart");
+      tr.innerHTML = `
+        <td>${idx + 1}</td>
+        <td>${t.date || ""}</td>
+        <td>${t.pair || ""}</td>
+        <td>${t.direction || ""}</td>
+        <td>${t.setup || ""}</td>
+        <td class="${probClass}">${t.probLabel || ""}</td>
+        <td>${(t.checklistScore || 0).toFixed(0)}</td>
+        <td>${(t.rrPlanned || 0).toFixed(2)}</td>
+        <td>${(t.rrRealized || 0).toFixed(2)}</td>
+        <td>${(t.pnlR || 0).toFixed(2)}</td>
+        <td>${formatMoney(t.pnlMoney || 0)}</td>
+        <td>${formatMoney(t.balanceAfter || 0)}</td>
+        <td>${t.session || ""}</td>
+        <td>${t.emotion || ""}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
 
-      const tableBody = document.querySelector("#trades-table tbody");
-
-      const filterTextEl = document.getElementById("filter-text");
-      const filterProbEl = document.getElementById("filter-prob");
-      const filterFromEl = document.getElementById("filter-from");
-      const filterToEl = document.getElementById("filter-to");
-      const filterClearBtn = document.getElementById("filter-clear");
-
-      const mistakeListEl = document.getElementById("mistake-list");
-      const mistakeCountEl = document.getElementById("mistake-count");
-      const coachTextEl = document.getElementById("ai-coach-text");
-
-      const exportJsonBtn = document.getElementById("export-json-btn");
-      const exportCsvBtn = document.getElementById("export-csv-btn");
-      const importJsonInput = document.getElementById("import-json-input");
-
-      const notifyTelegramEl = document.getElementById("notify-telegram");
-      const tgTokenEl = document.getElementById("tg-token");
-      const tgChatEl = document.getElementById("tg-chat");
-
-      // --- Helpers ---
-      function loadTrades() {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) return [];
-        try {
-          return JSON.parse(raw);
-        } catch (e) {
-          console.error("Failed to parse trades", e);
-          return [];
-        }
+  function renderCharts() {
+    const probCounts = { High: 0, Medium: 0, Low: 0 };
+    trades.forEach(t => {
+      if (t.probLabel && probCounts[t.probLabel] !== undefined) {
+        probCounts[t.probLabel]++;
       }
+    });
 
-      function saveTrades() {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(trades));
-      }
+    const probData = [probCounts.High, probCounts.Medium, probCounts.Low];
 
-      function loadSettings() {
-        const raw = localStorage.getItem(SETTINGS_KEY);
-        if (!raw) return {};
-        try {
-          return JSON.parse(raw);
-        } catch (e) {
-          return {};
-        }
-      }
-
-      function saveSettings() {
-        const settings = {
-          notifyTelegram: notifyTelegramEl.checked,
-          tgToken: tgTokenEl.value,
-          tgChat: tgChatEl.value,
-        };
-        localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-      }
-
-      function updateCriteriaSummary() {
-        const max = critChecks.reduce(
-          (sum, c) => sum + Number(c.dataset.weight || 0),
-          0
-        );
-        const used = critChecks
-          .filter((c) => c.checked)
-          .reduce((sum, c) => sum + Number(c.dataset.weight || 0), 0);
-        criteriaSummary.textContent = `${used} / ${max} weighted points selected.`;
-      }
-
-      critChecks.forEach((c) =>
-        c.addEventListener("change", updateCriteriaSummary)
-      );
-      updateCriteriaSummary();
-
-      // Load initial data
-      trades = loadTrades();
-      filteredTrades = [...trades];
-
-      // Load settings
-      (function initSettings() {
-        const s = loadSettings();
-        if (s.notifyTelegram) notifyTelegramEl.checked = true;
-        if (s.tgToken) tgTokenEl.value = s.tgToken;
-        if (s.tgChat) tgChatEl.value = s.tgChat;
-      })();
-
-      notifyTelegramEl.addEventListener("change", saveSettings);
-      tgTokenEl.addEventListener("input", saveSettings);
-      tgChatEl.addEventListener("input", saveSettings);
-
-      // Autosave indicator
-      setInterval(() => {
-        saveTrades();
-        autosaveStatus.textContent = "Local session • Last autosave: " + new Date().toLocaleTimeString();
-      }, 10000);
-
-      // --- Metrics + probability ---
-      function getProbabilityLabel(score, maxScore) {
-        if (!maxScore) return "Low";
-        const pct = score / maxScore;
-        if (pct >= 0.8) return "High";
-        if (pct >= 0.5) return "Medium";
-        return "Low";
-      }
-
-      function calcDisciplineScore(trade) {
-        // Base is criteria percentage * 70
-        const base = (trade.criteriaScore / trade.criteriaMax) * 70;
-
-        let bonus = 0;
-        switch (trade.emotion) {
-          case "Calm":
-          case "Disciplined":
-            bonus += 15;
-            break;
-          case "Confident":
-            bonus += 10;
-            break;
-          case "Neutral":
-            bonus += 5;
-            break;
-          case "FOMO":
-            bonus -= 10;
-            break;
-          case "Fearful":
-            bonus -= 5;
-            break;
-          case "Revenge":
-            bonus -= 20;
-            break;
-        }
-
-        switch (trade.session) {
-          case "London":
-            bonus += 5;
-            break;
-          case "New York":
-            bonus += 5;
-            break;
-          case "Asia":
-            bonus -= 5;
-            break;
-        }
-
-        if (trade.tags && trade.tags.some((t) => t.toLowerCase().includes("overlap"))) {
-          bonus -= 10;
-        }
-
-        let score = base + bonus;
-        if (trade.Rrealized < -3) score -= 10;
-        if (!Number.isFinite(score)) score = 0;
-        return Math.max(0, Math.min(100, Math.round(score)));
-      }
-
-      // --- Coach feedback ---
-      function generateCoachFeedback(trade) {
-        const msgs = [];
-
-        if (trade.probabilityLabel === "Low" && trade.Rrealized > 0) {
-          msgs.push(
-            "You made money on a low-probability setup. Good outcome, but don't let this trick your brain into always taking lower quality trades."
-          );
-        }
-
-        if (trade.probabilityLabel === "Low" && trade.Rrealized <= 0) {
-          msgs.push(
-            "Loss on low-probability setup. That's expected. Tighten your selection and focus on A/B quality trades only."
-          );
-        }
-
-        if (trade.probabilityLabel === "High" && trade.Rrealized < 0) {
-          msgs.push(
-            "You took a high-quality setup that lost. This is normal. The edge plays out over many trades as long as the execution stays consistent."
-          );
-        }
-
-        if (trade.disciplineScore >= 80 && trade.Rrealized <= 0) {
-          msgs.push(
-            "High discipline on a losing trade. This is exactly the behavior that builds long-term growth. Reward yourself for following process, not outcome."
-          );
-        }
-
-        if (trade.disciplineScore < 50) {
-          msgs.push(
-            "Discipline score is low. Review which rules you skipped and why. Consider journaling the trigger that pulled you into this trade."
-          );
-        }
-
-        if (trade.emotion === "FOMO") {
-          msgs.push(
-            "You tagged this as FOMO. Ask: 'If I see this exact setup tomorrow, under my rules, would I still take it?' If not, it's outside your plan."
-          );
-        }
-
-        if (!msgs.length) {
-          msgs.push(
-            "Solid execution. Keep repeating this playbook and let the numbers compound. Your only job is to show up and follow the rules."
-          );
-        }
-
-        return msgs.join(" ");
-      }
-
-      // --- Telegram alert ---
-      async function sendTelegramAlert(trade) {
-        const enabled = notifyTelegramEl.checked;
-        if (!enabled) return;
-
-        const token = tgTokenEl.value.trim();
-        const chat = tgChatEl.value.trim();
-        if (!token || !chat) return;
-
-        const text =
-          `New trade logged:\n` +
-          `${trade.date} ${trade.pair} ${trade.direction}\n` +
-          `Setup: ${trade.setup}\n` +
-          `Planned R:R: ${trade.Rplanned}, Realized: ${trade.Rrealized}R\n` +
-          `Prob: ${trade.probabilityLabel}, Disc: ${trade.disciplineScore}`;
-
-        const url = `https://api.telegram.org/bot${token}/sendMessage`;
-        try {
-          await fetch(url, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ chat_id: chat, text }),
-          });
-        } catch (e) {
-          console.error("Telegram error", e);
-        }
-      }
-
-      // --- Rendering ---
-      function computeRunningR(tradesArr) {
-        let sum = 0;
-        return tradesArr.map((t) => {
-          sum += t.Rrealized;
-          return sum;
-        });
-      }
-
-      function renderTable(data) {
-        tableBody.innerHTML = "";
-        const running = computeRunningR(data);
-
-        data.forEach((t, idx) => {
-          const tr = document.createElement("tr");
-
-          const cells = [
-            idx + 1,
-            t.date || "",
-            t.pair || "",
-            t.direction || "",
-            t.setup || "",
-          ];
-
-          cells.forEach((v) => {
-            const td = document.createElement("td");
-            td.textContent = v;
-            tr.appendChild(td);
-          });
-
-          // Prob pill
-          const probTd = document.createElement("td");
-          const span = document.createElement("span");
-          span.classList.add("prob-pill");
-          span.textContent = t.probabilityLabel || "Low";
-          if (t.probabilityLabel === "High") span.classList.add("prob-high");
-          else if (t.probabilityLabel === "Medium")
-            span.classList.add("prob-medium");
-          else span.classList.add("prob-low");
-          probTd.appendChild(span);
-          tr.appendChild(probTd);
-
-          const scoreTd = document.createElement("td");
-          const pct = t.criteriaMax
-            ? Math.round((t.criteriaScore / t.criteriaMax) * 100)
-            : 0;
-          scoreTd.textContent = `${pct}%`;
-          tr.appendChild(scoreTd);
-
-          const plannedTd = document.createElement("td");
-          plannedTd.textContent = t.Rplanned != null ? t.Rplanned.toFixed(1) : "";
-          tr.appendChild(plannedTd);
-
-          const realizedTd = document.createElement("td");
-          realizedTd.textContent =
-            t.Rrealized != null ? t.Rrealized.toFixed(2) : "";
-          tr.appendChild(realizedTd);
-
-          const runTd = document.createElement("td");
-          runTd.textContent = running[idx].toFixed(2);
-          tr.appendChild(runTd);
-
-          const sessionTd = document.createElement("td");
-          sessionTd.textContent = t.session || "";
-          tr.appendChild(sessionTd);
-
-          const emoTd = document.createElement("td");
-          emoTd.textContent = t.emotion || "";
-          tr.appendChild(emoTd);
-
-          const discTd = document.createElement("td");
-          discTd.textContent =
-            t.disciplineScore != null ? t.disciplineScore.toString() : "";
-          tr.appendChild(discTd);
-
-          const tagsTd = document.createElement("td");
-          tagsTd.textContent = (t.tags || []).join(", ");
-          tr.appendChild(tagsTd);
-
-          tableBody.appendChild(tr);
-        });
-      }
-
-      function updateSummaryCards(data) {
-        const total = data.length;
-        if (!total) {
-          winrateText.textContent = "0.0%";
-          winrateSub.textContent = "0 trades";
-          avgRText.textContent = "0.00R";
-          avgRSub.textContent = "Equity: 0.00R";
-          discText.textContent = "0";
-          discSub.textContent = "No trades yet";
-          equitySummary.textContent = "0.00R total";
-          return;
-        }
-
-        const wins = data.filter((t) => t.Rrealized > 0).length;
-        const winrate = (wins / total) * 100;
-        const avgR =
-          data.reduce((sum, t) => sum + (t.Rrealized || 0), 0) / total;
-        const equity = data.reduce((sum, t) => sum + (t.Rrealized || 0), 0);
-        const avgDisc =
-          data.reduce((sum, t) => sum + (t.disciplineScore || 0), 0) / total;
-
-        winrateText.textContent = winrate.toFixed(1) + "%";
-        winrateSub.textContent = `${total} trade${total === 1 ? "" : "s"}`;
-        avgRText.textContent = avgR.toFixed(2) + "R";
-        avgRSub.textContent = "Equity: " + equity.toFixed(2) + "R";
-        discText.textContent = Math.round(avgDisc).toString();
-        discSub.textContent = "Avg. discipline score";
-        equitySummary.textContent = equity.toFixed(2) + "R total";
-      }
-
-      function updateProbChart(data) {
-        const counts = { High: 0, Medium: 0, Low: 0 };
-        data.forEach((t) => {
-          counts[t.probabilityLabel || "Low"]++;
-        });
-
-        const values = [counts.High, counts.Medium, counts.Low];
-
-        if (probChart) probChart.destroy();
-        probChart = new Chart(probChartEl, {
-          type: "doughnut",
-          data: {
-            labels: ["High", "Medium", "Low"],
-            datasets: [
-              {
-                data: values,
-                backgroundColor: ["#22c55e", "#facc15", "#f97316"],
-                borderWidth: 0,
-              },
-            ],
-          },
-          options: {
-            cutout: "65%",
-            plugins: {
-              legend: {
-                display: false,
-              },
-            },
-          },
-        });
-      }
-
-      function updateEquityChart(data) {
-        const labels = data.map((t, i) => "#" + (i + 1));
-        const equity = computeRunningR(data);
-
-        if (equityChart) equityChart.destroy();
-        equityChart = new Chart(equityChartEl, {
-          type: "line",
-          data: {
-            labels,
-            datasets: [
-              {
-                label: "Equity (R)",
-                data: equity,
-                tension: 0.25,
-                pointRadius: 3,
-              },
-            ],
-          },
-          options: {
-            plugins: {
-              legend: { display: false },
-            },
-            scales: {
-              x: {
-                display: true,
-                ticks: { maxRotation: 0 },
-              },
-              y: {
-                display: true,
-              },
-            },
-          },
-        });
-      }
-
-      function updateProbHistoryChart(data) {
-        const sorted = [...data].sort((a, b) =>
-          (a.date || "").localeCompare(b.date || "")
-        );
-        const labels = sorted.map((t, i) => "#" + (i + 1));
-        const values = sorted.map((t) => {
-          if (t.probabilityLabel === "High") return 3;
-          if (t.probabilityLabel === "Medium") return 2;
-          return 1;
-        });
-
-        if (probHistoryChart) probHistoryChart.destroy();
-        probHistoryChart = new Chart(probHistoryChartEl, {
-          type: "line",
-          data: {
-            labels,
-            datasets: [
-              {
-                label: "Probability level",
-                data: values,
-                tension: 0.3,
-                pointRadius: 4,
-              },
-            ],
-          },
-          options: {
-            plugins: { legend: { display: false } },
-            scales: {
-              y: {
-                min: 1,
-                max: 3,
-                ticks: {
-                  stepSize: 1,
-                  callback: (v) =>
-                    ({ 1: "Low", 2: "Med", 3: "High" }[v] || v),
-                },
-              },
-            },
-          },
-        });
-      }
-
-      function updateMistakes(data) {
-        if (!data.length) {
-          mistakeListEl.textContent =
-            "No mistakes logged yet. Tag emotions & write notes to see patterns.";
-          mistakeCountEl.textContent = "None yet";
-          return;
-        }
-
-        const map = {};
-        data.forEach((t) => {
-          const emo = (t.emotion || "").toLowerCase();
-          if (!emo) return;
-          map[emo] = (map[emo] || 0) + 1;
-        });
-
-        const entries = Object.entries(map)
-          .sort((a, b) => b[1] - a[1])
-          .slice(0, 5);
-
-        if (!entries.length) {
-          mistakeListEl.textContent =
-            "No emotion tags yet. Start tagging to see behaviour patterns.";
-          mistakeCountEl.textContent = "0";
-          return;
-        }
-
-        mistakeCountEl.textContent = `${entries.length} emotions`;
-        mistakeListEl.innerHTML = entries
-          .map(
-            ([emo, count]) =>
-              `<div>${emo} <span style="color:var(--text-soft);">• ${count} trade(s)</span></div>`
-          )
-          .join("");
-      }
-
-      function applyFilters() {
-        const text = filterTextEl.value.trim().toLowerCase();
-        const prob = filterProbEl.value;
-        const from = filterFromEl.value;
-        const to = filterToEl.value;
-
-        filteredTrades = trades.filter((t) => {
-          const haystack = [
-            t.pair,
-            t.setup,
-            t.emotion,
-            t.session,
-            t.notes,
-            (t.tags || []).join(" "),
+    if (!probabilityChart) {
+      const ctx = document.getElementById("probabilityChart").getContext("2d");
+      probabilityChart = new Chart(ctx, {
+        type: "doughnut",
+        data: {
+          labels: ["High", "Medium", "Low"],
+          datasets: [
+            {
+              data: probData,
+              backgroundColor: ["#22c55e", "#fb923c", "#4b5563"]
+            }
           ]
-            .join(" ")
-            .toLowerCase();
-
-          if (text && !haystack.includes(text)) return false;
-
-          if (prob && t.probabilityLabel !== prob) return false;
-
-          if (from && (!t.date || t.date < from)) return false;
-          if (to && (!t.date || t.date > to)) return false;
-
-          return true;
-        });
-
-        renderAll();
-      }
-
-      function renderAll() {
-        renderTable(filteredTrades);
-        updateSummaryCards(filteredTrades);
-        updateProbChart(filteredTrades);
-        updateEquityChart(filteredTrades);
-        updateProbHistoryChart(filteredTrades);
-        updateMistakes(filteredTrades);
-      }
-
-      filterTextEl.addEventListener("input", applyFilters);
-      filterProbEl.addEventListener("change", applyFilters);
-      filterFromEl.addEventListener("change", applyFilters);
-      filterToEl.addEventListener("change", applyFilters);
-      filterClearBtn.addEventListener("click", () => {
-        filterTextEl.value = "";
-        filterProbEl.value = "";
-        filterFromEl.value = "";
-        filterToEl.value = "";
-        filteredTrades = [...trades];
-        renderAll();
-      });
-
-      // Initial render
-      filteredTrades = [...trades];
-      renderAll();
-
-      // Date default today
-      if (!dateEl.value) {
-        const today = new Date().toISOString().slice(0, 10);
-        dateEl.value = today;
-      }
-
-      function clearForm() {
-        pairEl.value = "";
-        directionEl.value = "";
-        setupEl.value = "";
-        riskEl.value = "";
-        rrPlannedEl.value = "";
-        rrRealizedEl.value = "";
-        sessionEl.value = "";
-        emotionEl.value = "";
-        screenshotEl.value = "";
-        tagsEl.value = "";
-        notesEl.value = "";
-        critChecks.forEach((c) => (c.checked = false));
-        updateCriteriaSummary();
-      }
-
-      clearFormBtn.addEventListener("click", clearForm);
-
-      addTradeBtn.addEventListener("click", () => {
-        const date = dateEl.value || new Date().toISOString().slice(0, 10);
-        const pair = pairEl.value.trim();
-        const direction = directionEl.value;
-        const setup = setupEl.value;
-        const risk = Number(riskEl.value) || 0;
-        const Rplanned = Number(rrPlannedEl.value) || 0;
-        const Rrealized = Number(rrRealizedEl.value) || 0;
-        const session = sessionEl.value;
-        const emotion = emotionEl.value;
-        const screenshot = screenshotEl.value.trim();
-        const tags = tagsEl.value
-          .split(",")
-          .map((t) => t.trim())
-          .filter(Boolean);
-        const notes = notesEl.value.trim();
-
-        const criteriaMax = critChecks.reduce(
-          (sum, c) => sum + Number(c.dataset.weight || 0),
-          0
-        );
-        const criteriaScore = critChecks
-          .filter((c) => c.checked)
-          .reduce((sum, c) => sum + Number(c.dataset.weight || 0), 0);
-
-        const probabilityLabel = getProbabilityLabel(criteriaScore, criteriaMax);
-
-        const trade = {
-          id: Date.now(),
-          date,
-          pair,
-          direction,
-          setup,
-          risk,
-          Rplanned,
-          Rrealized,
-          session,
-          emotion,
-          screenshot,
-          tags,
-          notes,
-          criteriaScore,
-          criteriaMax,
-          probabilityLabel,
-        };
-
-        trade.disciplineScore = calcDisciplineScore(trade);
-
-        trades.push(trade);
-        saveTrades();
-
-        filteredTrades = [...trades];
-        renderAll();
-
-        if (coachTextEl) {
-          coachTextEl.textContent = generateCoachFeedback(trade);
+        },
+        options: {
+          plugins: {
+            legend: {
+              labels: {
+                color: "#9ca3af",
+                font: { size: 10 }
+              }
+            }
+          },
+          cutout: "60%"
         }
-
-        sendTelegramAlert(trade);
-
-        clearForm();
       });
+    } else {
+      probabilityChart.data.datasets[0].data = probData;
+      probabilityChart.update();
+    }
 
-      // --- Export / Import ---
-      exportJsonBtn.addEventListener("click", () => {
-        const blob = new Blob([JSON.stringify(trades, null, 2)], {
-          type: "application/json",
-        });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "ali_trading_journal.json";
-        a.click();
-        URL.revokeObjectURL(url);
-      });
+    // Equity curve (R)
+    const labels = trades.map((t, i) => i + 1);
+    let runningR = 0;
+    const equityData = trades.map(t => {
+      runningR += parseFloat(t.pnlR || 0);
+      return runningR;
+    });
 
-      exportCsvBtn.addEventListener("click", () => {
-        const headers = [
-          "date",
-          "pair",
-          "direction",
-          "setup",
-          "probabilityLabel",
-          "criteriaScore",
-          "criteriaMax",
-          "Rplanned",
-          "Rrealized",
-          "session",
-          "emotion",
-          "disciplineScore",
-          "tags",
-          "notes",
-        ];
-
-        const rows = trades.map((t) =>
-          headers
-            .map((h) => {
-              let v = t[h];
-              if (h === "tags") v = (t.tags || []).join(";");
-              if (v == null) v = "";
-              const s = String(v).replace(/"/g, '""');
-              return `"${s}"`;
-            })
-            .join(",")
-        );
-
-        const csv = [headers.join(","), ...rows].join("\n");
-        const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "ali_trading_journal.csv";
-        a.click();
-        URL.revokeObjectURL(url);
-      });
-
-      importJsonInput.addEventListener("change", (e) => {
-        const file = e.target.files && e.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = (evt) => {
-          try {
-            const data = JSON.parse(evt.target.result);
-            if (!Array.isArray(data)) throw new Error("Invalid JSON");
-            trades = data;
-            saveTrades();
-            filteredTrades = [...trades];
-            renderAll();
-            alert("Trades imported successfully.");
-          } catch (err) {
-            alert("Failed to import JSON: " + err.message);
+    if (!equityChart) {
+      const ctx2 = document.getElementById("equityChart").getContext("2d");
+      equityChart = new Chart(ctx2, {
+        type: "line",
+        data: {
+          labels,
+          datasets: [
+            {
+              label: "Equity (R)",
+              data: equityData,
+              borderColor: "#22c55e",
+              backgroundColor: "rgba(34,197,94,0.15)",
+              tension: 0.25,
+              fill: true,
+              pointRadius: 2
+            }
+          ]
+        },
+        options: {
+          plugins: {
+            legend: { display: false }
+          },
+          scales: {
+            x: {
+              ticks: { color: "#6b7280", font: { size: 9 } },
+              grid: { display: false }
+            },
+            y: {
+              ticks: { color: "#6b7280", font: { size: 9 } },
+              grid: { color: "#111827" }
+            }
           }
-        };
-        reader.readAsText(file);
-        importJsonInput.value = "";
+        }
       });
-    })();
-  </script>
+    } else {
+      equityChart.data.labels = labels;
+      equityChart.data.datasets[0].data = equityData;
+      equityChart.update();
+    }
+
+    // Probability history (checklist score)
+    const probLabels = trades.map((_, i) => i + 1);
+    const probScores = trades.map(t => t.checklistScore || 0);
+
+    if (!probHistoryChart) {
+      const ctx3 = document.getElementById("probHistoryChart").getContext("2d");
+      probHistoryChart = new Chart(ctx3, {
+        type: "line",
+        data: {
+          labels: probLabels,
+          datasets: [
+            {
+              label: "Checklist score",
+              data: probScores,
+              borderColor: "#fb923c",
+              backgroundColor: "rgba(248,154,72,0.18)",
+              tension: 0.25,
+              fill: true,
+              pointRadius: 2
+            }
+          ]
+        },
+        options: {
+          plugins: { legend: { display: false } },
+          scales: {
+            x: {
+              ticks: { color: "#6b7280", font: { size: 9 } },
+              grid: { display: false }
+            },
+            y: {
+              ticks: { color: "#6b7280", font: { size: 9 } },
+              grid: { color: "#111827" },
+              suggestedMin: 0,
+              suggestedMax: 100
+            }
+          }
+        }
+      });
+    } else {
+      probHistoryChart.data.labels = probLabels;
+      probHistoryChart.data.datasets[0].data = probScores;
+      probHistoryChart.update();
+    }
+  }
+
+  // --------- FORM HANDLERS ---------
+  function addTradeFromForm() {
+    const date = document.getElementById("trade-date").value || nowIsoDate();
+    const pair = document.getElementById("trade-pair").value.trim();
+    const direction = document.getElementById("trade-direction").value;
+    const setup = document.getElementById("trade-setup").value;
+    const riskAmount = parseFloat(document.getElementById("risk-amount").value || "0");
+    const rrPlanned = parseFloat(document.getElementById("rr-planned").value || "0");
+    const rrRealized = parseFloat(document.getElementById("rr-realized").value || "0");
+    const session = document.getElementById("trade-session").value;
+    const emotion = document.getElementById("trade-emotion").value;
+    const screenshot = document.getElementById("screenshot-link").value.trim();
+    const tags = document.getElementById("trade-tags").value.trim();
+    const notes = document.getElementById("trade-notes").value.trim();
+
+    const { used, max, pct } = computeChecklistScore();
+    const probLabel = classifyProbability(pct);
+
+    const pnlR = rrRealized; // realized R
+    const pnlMoney = riskAmount * rrRealized;
+
+    accountBalance += pnlMoney;
+
+    const trade = {
+      id: Date.now(),
+      date,
+      pair,
+      direction,
+      setup,
+      riskAmount,
+      rrPlanned,
+      rrRealized,
+      pnlR,
+      pnlMoney,
+      balanceAfter: accountBalance,
+      session,
+      emotion,
+      screenshot,
+      tags,
+      notes,
+      checklistUsed: used,
+      checklistMax: max,
+      checklistScore: pct * 100,
+      probLabel
+    };
+
+    trades.push(trade);
+    scheduleAutosave();
+    renderDashboard();
+    renderTradesTable();
+  }
+
+  function clearForm() {
+    document.getElementById("trade-pair").value = "";
+    document.getElementById("trade-direction").value = "";
+    document.getElementById("trade-setup").value = "";
+    document.getElementById("risk-amount").value = "";
+    document.getElementById("rr-planned").value = "";
+    document.getElementById("rr-realized").value = "";
+    document.getElementById("trade-session").value = "";
+    document.getElementById("trade-emotion").value = "";
+    document.getElementById("screenshot-link").value = "";
+    document.getElementById("trade-tags").value = "";
+    document.getElementById("trade-notes").value = "";
+    criteriaConfig.forEach(c => {
+      const cb = document.getElementById("crit-" + c.id);
+      if (cb) cb.checked = false;
+    });
+  }
+
+  // --------- EXPORT / IMPORT ---------
+  function exportJSON() {
+    const payload = {
+      version: 3,
+      startingBalance,
+      accountBalance,
+      trades
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "ali_trading_session.json";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  function exportCSV() {
+    const header = [
+      "date",
+      "pair",
+      "direction",
+      "setup",
+      "probability",
+      "checklistScore",
+      "riskAmount",
+      "rrPlanned",
+      "rrRealized",
+      "pnlR",
+      "pnlMoney",
+      "balanceAfter",
+      "session",
+      "emotion",
+      "tags",
+      "notes"
+    ];
+    const rows = trades.map(t => [
+      t.date,
+      t.pair,
+      t.direction,
+      t.setup,
+      t.probLabel,
+      (t.checklistScore || 0).toFixed(0),
+      t.riskAmount,
+      t.rrPlanned,
+      t.rrRealized,
+      t.pnlR,
+      t.pnlMoney,
+      t.balanceAfter,
+      t.session,
+      t.emotion,
+      (t.tags || "").replace(/,/g, ";"),
+      '"' + (t.notes || "").replace(/"/g, '""') + '"'
+    ]);
+
+    const csv = [header.join(","), ...rows.map(r => r.join(","))].join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "ali_trading_session.csv";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  function importJSON(file) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      try {
+        const data = JSON.parse(e.target.result);
+        if (Array.isArray(data)) {
+          trades = data;
+          // older format
+        } else if (data && Array.isArray(data.trades)) {
+          trades = data.trades;
+          if (typeof data.startingBalance === "number") {
+            startingBalance = data.startingBalance;
+          }
+          if (typeof data.accountBalance === "number") {
+            accountBalance = data.accountBalance;
+          } else {
+            recomputeBalanceFromTrades();
+          }
+        }
+        scheduleAutosave();
+        renderDashboard();
+        renderTradesTable();
+      } catch (err) {
+        alert("Could not import JSON file.");
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  // --------- INIT ---------
+  document.addEventListener("DOMContentLoaded", () => {
+    renderCriteria();
+    loadState();
+    recomputeBalanceFromTrades();
+
+    const dateInput = document.getElementById("trade-date");
+    if (dateInput && !dateInput.value) {
+      dateInput.value = nowIsoDate();
+    }
+
+    // apply starting / current balance
+    const startInput = document.getElementById("starting-balance");
+    const currentInput = document.getElementById("current-balance");
+    if (startInput) startInput.value = startingBalance || "";
+    if (currentInput) currentInput.value = formatMoney(accountBalance);
+
+    // events
+    document.getElementById("add-trade-btn").addEventListener("click", () => {
+      addTradeFromForm();
+    });
+
+    document.getElementById("clear-form-btn").addEventListener("click", () => {
+      clearForm();
+    });
+
+    document.getElementById("starting-balance").addEventListener("change", e => {
+      const val = parseFloat(e.target.value || "0");
+      startingBalance = isNaN(val) ? 0 : val;
+      recomputeBalanceFromTrades();
+      scheduleAutosave();
+      renderDashboard();
+    });
+
+    document.getElementById("export-json-btn").addEventListener("click", exportJSON);
+    document.getElementById("export-csv-btn").addEventListener("click", exportCSV);
+
+    document.getElementById("import-json-input").addEventListener("change", e => {
+      const file = e.target.files[0];
+      if (file) importJSON(file);
+      e.target.value = "";
+    });
+
+    document.getElementById("clear-log-btn").addEventListener("click", () => {
+      if (confirm("Clear all local trades and reset balance?")) {
+        trades = [];
+        accountBalance = startingBalance;
+        scheduleAutosave();
+        renderDashboard();
+        renderTradesTable();
+      }
+    });
+
+    document.getElementById("clear-filters-btn").addEventListener("click", () => {
+      document.getElementById("filter-prob").value = "";
+      document.getElementById("filter-from").value = "";
+      document.getElementById("filter-to").value = "";
+      renderTradesTable();
+    });
+
+    ["filter-prob", "filter-from", "filter-to"].forEach(id => {
+      const el = document.getElementById(id);
+      el.addEventListener("change", renderTradesTable);
+    });
+
+    const lockBtn = document.getElementById("lock-btn");
+    lockBtn.addEventListener("click", () => {
+      const locked = lockBtn.dataset.locked === "true";
+      if (!locked) {
+        lockBtn.textContent = "🔓 Unlock";
+        lockBtn.dataset.locked = "true";
+      } else {
+        lockBtn.textContent = "🔒 Lock";
+        lockBtn.dataset.locked = "false";
+      }
+    });
+
+    renderDashboard();
+    renderTradesTable();
+  });
+</script>
 </body>
 </html>
-{
-  "name": "Ali's Trading System",
-  "short_name": "Ali Trading",
-  "start_url": "/ali-trading-dashboard/",
-  "display": "standalone",
-  "background_color": "#020617",
-  "theme_color": "#020617",
-  "icons": [
-    {
-      "src": "icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
-  ]
-}
-const CACHE_NAME = "ali-trading-cache-v1";
-const OFFLINE_URLS = ["/ali-trading-dashboard/"];
-
-self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(OFFLINE_URLS))
-  );
-});
-
-self.addEventListener("fetch", (event) => {
-  event.respondWith(
-    caches.match(event.request).then((res) => res || fetch(event.request))
-  );
-});
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("sw.js").catch(console.error);
-}
