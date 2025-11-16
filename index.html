@@ -2421,3 +2421,113 @@ fetch("https://your-worker.yourdomain.com/sync", {
   </script>
 </body>
 </html>
+<script>
+// ======================================================
+//  USD balance formatting + PnL recompute (FULL BLOCK)
+//  - Formats starting/current balance as $ with commas
+//  - Keeps numeric values for calculations
+//  - Updates "Total PnL & balance" card
+// ======================================================
+(function () {
+  // ---------- Helpers ----------
+  function parseMoney(raw) {
+    if (!raw) return 0;
+    return Number(String(raw).replace(/[^0-9.-]/g, "")) || 0;
+  }
+
+  function formatMoneyUSD(value) {
+    if (value === null || value === undefined || value === "") return "";
+    const num = typeof value === "number" ? value : parseMoney(value);
+    return num.toLocaleString("en-US", {
+      style: "currency",
+      currency: "USD",
+      maximumFractionDigits: 2
+    });
+  }
+
+  // ---------- DOM refs ----------
+  const startingBalanceInput = document.getElementById("starting-balance");
+  const currentBalanceInput  = document.getElementById("current-balance");
+  const balanceDisplayEl     = document.getElementById("balance-display");
+  const pnlTotalDisplayEl    = document.getElementById("pnl-total-display");
+
+  if (!startingBalanceInput || !currentBalanceInput) {
+    console.warn("[Ali dashboard] Balance inputs not found. " +
+      "Make sure you used ids 'starting-balance' and 'current-balance'.");
+    return;
+  }
+
+  // ---------- Get numeric balances ----------
+  function getBalances() {
+    const s = parseMoney(
+      startingBalanceInput.dataset.value || startingBalanceInput.value
+    );
+    const c = parseMoney(
+      currentBalanceInput.dataset.value || currentBalanceInput.value
+    );
+    return { starting: s, current: c };
+  }
+
+  // ---------- Recompute PnL & balance card ----------
+  function recomputeFromBalances() {
+    const { starting, current } = getBalances();
+    const totalPnLMoney = current - starting;
+    const totalR = starting !== 0 ? totalPnLMoney / starting : 0;
+
+    if (balanceDisplayEl) {
+      balanceDisplayEl.textContent = formatMoneyUSD(current);
+    }
+    if (pnlTotalDisplayEl) {
+      const rText = `${totalR.toFixed(2)}R`;
+      const moneyText = formatMoneyUSD(totalPnLMoney);
+      pnlTotalDisplayEl.textContent = `${rText} • ${moneyText}`;
+    }
+  }
+
+  // ---------- Attach formatting behaviour ----------
+  [startingBalanceInput, currentBalanceInput].forEach((input) => {
+    if (!input) return;
+
+    // When user focuses, show plain number for easier editing
+    input.addEventListener("focus", () => {
+      const stored = input.dataset.value;
+      if (stored !== undefined) {
+        input.value = stored;
+      } else {
+        input.value = parseMoney(input.value) || "";
+      }
+    });
+
+    // When user leaves, format as USD with commas and recalc PnL
+    input.addEventListener("blur", () => {
+      const num = parseMoney(input.value);
+      input.dataset.value = num;              // raw numeric value
+      input.value = formatMoneyUSD(num);      // pretty view
+      recomputeFromBalances();
+    });
+  });
+
+  // ---------- Initial default values (optional) ----------
+  // You can change these or remove them if you prefer manual input.
+  if (!startingBalanceInput.dataset.value && !startingBalanceInput.value) {
+    startingBalanceInput.dataset.value = 0;
+    startingBalanceInput.value = "";
+  }
+  if (!currentBalanceInput.dataset.value && !currentBalanceInput.value) {
+    currentBalanceInput.dataset.value = 0;
+    currentBalanceInput.value = "";
+  }
+
+  // Run once on load so cards don't show "undefined"
+  recomputeFromBalances();
+
+  // Expose for other scripts if needed
+  window.AliDashboardBalances = {
+    getBalances,
+    recomputeFromBalances,
+    parseMoney,
+    formatMoneyUSD
+  };
+})();
+</script>
+
