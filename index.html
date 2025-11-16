@@ -2530,4 +2530,97 @@ fetch("https://your-worker.yourdomain.com/sync", {
   };
 })();
 </script>
+<script>
+/* ============================================================
+   ⭐ AUTO-DETECT BALANCE INPUTS + FORMAT MONEY + PNL CALCULATION
+   No replacement needed. No ID changes. It works with your 
+   existing fields automatically.
+   ============================================================ */
+
+(function () {
+  // Try to detect the starting & current balance fields automatically
+  const startingInput =
+    document.querySelector("input[placeholder*='Starting'], input[id*='starting'], input[name*='starting']");
+  const currentInput =
+    document.querySelector("input[placeholder*='Current'], input[id*='current'], input[name*='current']");
+
+  if (!startingInput || !currentInput) {
+    console.warn("Balance fields not found — adjust selectors if needed.");
+    return;
+  }
+
+  // Dashboard elements
+  const pnlCard = document.querySelector("[data-pnl-total]"); 
+  const balanceCard = document.querySelector("[data-balance-total]");
+
+  /* ---------------- Helper functions ---------------- */
+  const parseMoney = (val) => {
+    if (!val) return 0;
+    return parseFloat(String(val).replace(/[^0-9.-]/g, "")) || 0;
+  };
+
+  const formatUSD = (num) =>
+    Number(num).toLocaleString("en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+
+  function saveLocal(starting, current) {
+    localStorage.setItem("ali_balances", JSON.stringify({ starting, current }));
+  }
+
+  function loadLocal() {
+    try {
+      return JSON.parse(localStorage.getItem("ali_balances")) || null;
+    } catch {
+      return null;
+    }
+  }
+
+  function updateDashboard() {
+    const starting = parseMoney(startingInput.dataset.value);
+    const current = parseMoney(currentInput.dataset.value);
+    const pnl = current - starting;
+    const r = starting !== 0 ? pnl / starting : 0;
+
+    if (pnlCard) pnlCard.textContent = `${r.toFixed(2)}R • ${formatUSD(pnl)}`;
+    if (balanceCard) balanceCard.textContent = formatUSD(current);
+  }
+
+  /* ---------------- Input behaviour ---------------- */
+  function attachMoneyInput(input) {
+    input.addEventListener("focus", () => {
+      const raw = input.dataset.value;
+      input.value = raw !== undefined ? raw : "";
+    });
+
+    input.addEventListener("blur", () => {
+      const raw = parseMoney(input.value);
+      input.dataset.value = raw;
+      input.value = formatUSD(raw);
+
+      const starting = parseMoney(startingInput.dataset.value);
+      const current = parseMoney(currentInput.dataset.value);
+      saveLocal(starting, current);
+      updateDashboard();
+    });
+  }
+
+  attachMoneyInput(startingInput);
+  attachMoneyInput(currentInput);
+
+  // Load saved balances on startup
+  const saved = loadLocal();
+  if (saved) {
+    startingInput.dataset.value = saved.starting;
+    currentInput.dataset.value = saved.current;
+    startingInput.value = formatUSD(saved.starting);
+    currentInput.value = formatUSD(saved.current);
+    updateDashboard();
+  }
+
+  updateDashboard();
+})();
+</script>
+
 
