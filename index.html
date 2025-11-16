@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+<head> <link rel="manifest" href="manifest.json" />
+
   <meta charset="UTF-8" />
-  <title>Ali's Trading System • Secure Web Dashboard</title>
+  <title>Ali's Trading System - Secure Web Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#020617" />
 
   <!-- Fonts & Chart.js -->
   <link
@@ -20,17 +22,26 @@
       --accent-soft: rgba(249, 115, 22, 0.16);
       --danger: #ef4444;
       --success: #22c55e;
-      --muted: #64748b;
-      --muted-soft: rgba(148, 163, 184, 0.12);
-      --border: #1e293b;
-      --text: #e2e8f0;
+      --text: #e5e7eb;
       --text-soft: #9ca3af;
-      --radius-lg: 18px;
-      --radius-sm: 10px;
-      --shadow-soft: 0 24px 60px rgba(15, 23, 42, 0.85);
-      --shadow-subtle: 0 14px 40px rgba(15, 23, 42, 0.6);
-      --danger-soft: rgba(248, 113, 113, 0.14);
-      --success-soft: rgba(34, 197, 94, 0.12);
+      --muted: #64748b;
+      --border: #1f2937;
+      --card-radius: 18px;
+    }
+
+    /* Light mode palette */
+    :root[data-theme="light"] {
+      --bg: #f4f4f5;
+      --bg-elevated: #ffffff;
+      --accent: #ea580c;
+      --accent-soft: rgba(234, 88, 12, 0.1);
+      --danger: #dc2626;
+      --success: #16a34a;
+      --text: #020617;
+      --text-soft: #4b5563;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --card-radius: 18px;
     }
 
     * {
@@ -39,249 +50,60 @@
 
     body {
       margin: 0;
-      min-height: 100vh;
       font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
         "Segoe UI", sans-serif;
-      background:
-        radial-gradient(circle at 0 0, #111827 0, #020617 52%, #000 100%);
+      background: radial-gradient(circle at top, #111827 45%, #020617 100%);
       color: var(--text);
-      display: flex;
-      justify-content: center;
-      align-items: stretch;
-      padding: 20px;
+      min-height: 100vh;
     }
 
-    /* Pin lock overlay */
-
-    .pin-overlay {
-      position: fixed;
-      inset: 0;
-      background: radial-gradient(circle at 0 0, #111827 0, #020617 50%, #000);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 999;
-    }
-
-    .pin-overlay.hidden {
-      display: none;
-    }
-
-    .pin-card {
-      width: 100%;
-      max-width: 420px;
-      background: linear-gradient(145deg, #020617, #020617, #0b1120);
-      border-radius: 26px;
-      padding: 26px 26px 22px;
-      border: 1px solid rgba(148, 163, 184, 0.22);
-      box-shadow: var(--shadow-soft);
-    }
-
-    .pin-title {
-      font-size: 1.1rem;
-      font-weight: 600;
-      margin: 0 0 4px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .pin-badge {
-      font-size: 0.55rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      padding: 3px 7px;
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.35);
-      color: var(--text-soft);
-    }
-
-    .pin-subtitle {
-      margin: 0 0 18px;
-      font-size: 0.82rem;
-      color: var(--text-soft);
-    }
-
-    .pin-label {
-      font-size: 0.78rem;
-      color: var(--muted);
-      margin-bottom: 6px;
-    }
-
-    .pin-input {
-      width: 100%;
-      padding: 10px 12px;
-      border-radius: 12px;
-      border: 1px solid rgba(148, 163, 184, 0.4);
-      background: rgba(15, 23, 42, 0.95);
-      color: var(--text);
-      font-size: 1rem;
-      letter-spacing: 0.18em;
-      text-align: center;
-    }
-
-    .pin-input:focus {
-      outline: 1px solid var(--accent);
-      box-shadow: 0 0 0 1px rgba(248, 113, 22, 0.65);
-    }
-
-    .pin-row {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-bottom: 16px;
-    }
-
-    .btn {
-      border-radius: 999px;
-      border: none;
-      padding: 9px 16px;
-      font-size: 0.85rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: transform 0.08s ease, box-shadow 0.1s ease,
-        background 0.12s ease;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, #f97316, #fb923c);
-      color: #020617;
-      box-shadow: 0 12px 35px rgba(249, 115, 22, 0.45);
-      width: 100%;
-      margin-bottom: 8px;
-    }
-
-    .btn-primary:active {
-      transform: translateY(1px) scale(0.99);
-      box-shadow: 0 8px 22px rgba(249, 115, 22, 0.4);
-    }
-
-    .btn-ghost {
-      background: transparent;
-      color: var(--text-soft);
-      border-radius: 999px;
-      padding-inline: 6px;
-    }
-
-    .btn-ghost:hover {
-      color: var(--accent);
-    }
-
-    .pin-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 6px;
-      font-size: 0.74rem;
-      color: var(--muted);
-    }
-
-    .pin-msg {
-      min-height: 16px;
-      font-size: 0.76rem;
-      margin: 4px 0 0;
-    }
-
-    .pin-msg.error {
-      color: var(--danger);
-    }
-
-    .pin-msg.ok {
-      color: var(--success);
-    }
-
-    .pin-meta {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.7rem;
-      color: var(--muted);
-      margin-bottom: 6px;
-    }
-
-    /* App shell */
-
-    .app {
-      width: 100%;
+    .app-shell {
       max-width: 1280px;
-      background: radial-gradient(circle at top left, #0b1120 0, #020617 46%, #000 100%);
-      border-radius: 28px;
-      border: 1px solid rgba(148, 163, 184, 0.25);
-      box-shadow: var(--shadow-soft);
-      padding: 18px 18px 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      overflow: hidden;
+      margin: 0 auto;
+      padding: 18px 16px 32px;
     }
 
-    .app-header {
+    .top-bar {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      gap: 10px;
-      padding-inline: 4px;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
     }
 
-    .app-title {
+    .top-left {
       display: flex;
       flex-direction: column;
       gap: 4px;
     }
 
-    .app-title-main {
-      font-size: 1.02rem;
+    .app-title {
+      font-size: 1.25rem;
       font-weight: 600;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.02em;
     }
 
-    .app-title-sub {
-      font-size: 0.78rem;
-      color: var(--muted);
+    .app-subtitle {
+      font-size: 0.8rem;
+      color: var(--text-soft);
     }
 
-    .app-chips {
+    .top-right {
       display: flex;
       flex-wrap: wrap;
-      gap: 6px;
-      font-size: 0.68rem;
-    }
-
-    .chip {
-      padding: 4px 8px;
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.32);
-      background: rgba(15, 23, 42, 0.7);
-    }
-
-    .chip-accent {
-      border-color: rgba(249, 115, 22, 0.55);
-      background: rgba(248, 113, 22, 0.08);
-      color: #fed7aa;
-    }
-
-    .chip-soft {
-      border-style: dashed;
-    }
-
-    .app-actions {
-      display: flex;
-      align-items: center;
       gap: 8px;
-      font-size: 0.75rem;
-      color: var(--muted);
+      align-items: center;
+      justify-content: flex-end;
     }
 
     .pill {
+      font-size: 0.72rem;
       padding: 4px 10px;
       border-radius: 999px;
-      background: rgba(15, 23, 42, 0.75);
-      border: 1px solid rgba(148, 163, 184, 0.28);
-      display: flex;
+      border: 1px solid var(--border);
+      background: rgba(15, 23, 42, 0.8);
+      color: var(--text-soft);
+      display: inline-flex;
       align-items: center;
       gap: 6px;
     }
@@ -289,1433 +111,1927 @@
     .pill-dot {
       width: 7px;
       height: 7px;
-      border-radius: 999px;
+      border-radius: 50%;
       background: #22c55e;
-      box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.18);
+    }
+
+    .btn-primary,
+    .btn-secondary {
+      border-radius: 999px;
+      padding: 8px 14px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      transition: transform 0.08s ease, box-shadow 0.08s ease,
+        background 0.12s;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #f97316, #fb923c);
+      color: #0b1120;
+      box-shadow: 0 12px 25px rgba(248, 113, 22, 0.45);
+    }
+
+    .btn-secondary {
+      background: rgba(15, 23, 42, 0.85);
+      color: var(--text-soft);
+      border: 1px solid var(--border);
+    }
+
+    button:active,
+    .btn-primary:active,
+    .btn-secondary:active {
+      transform: scale(0.97);
+      box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #fb923c, #f97316);
     }
 
     .layout {
       display: grid;
-      grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.3fr);
-      gap: 14px;
-      align-items: flex-start;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.2fr);
+      gap: 16px;
+    }
+
+    @media (max-width: 960px) {
+      .layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
     }
 
     .card {
-      background: radial-gradient(circle at top left, #020617 0, #020617 40%, #020617 100%);
-      border-radius: var(--radius-lg);
-      border: 1px solid rgba(148, 163, 184, 0.22);
-      padding: 14px 14px 12px;
-      box-shadow: var(--shadow-subtle);
+      background: radial-gradient(circle at top left, #020617, #020617 70%);
+      border-radius: var(--card-radius);
+      padding: 14px 14px 16px;
+      border: 1px solid var(--border);
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.75);
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.15s ease-out, box-shadow 0.15s ease-out,
+        background 0.15s;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 20px 45px rgba(15, 23, 42, 0.85);
     }
 
     .card-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 8px;
       margin-bottom: 10px;
     }
 
     .card-title {
-      font-size: 0.88rem;
+      font-size: 0.9rem;
       font-weight: 600;
     }
 
     .card-subtitle {
       font-size: 0.75rem;
-      color: var(--muted);
-    }
-
-    .tag {
-      font-size: 0.7rem;
-      padding: 3px 7px;
-      border-radius: 999px;
-      background: rgba(15, 23, 42, 0.9);
-      border: 1px solid rgba(148, 163, 184, 0.28);
       color: var(--text-soft);
     }
 
-    .tag-accent {
-      color: #fed7aa;
-      border-color: rgba(248, 113, 22, 0.6);
-      background: rgba(248, 113, 22, 0.08);
-    }
-
-    .tag-good {
-      color: #bbf7d0;
-      border-color: rgba(34, 197, 94, 0.5);
-      background: var(--success-soft);
-    }
-
-    .grid-2 {
+    .field-group {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 8px;
-      margin-bottom: 10px;
     }
 
-    .form-row {
+    @media (max-width: 720px) {
+      .field-group {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .field {
       display: flex;
       flex-direction: column;
       gap: 4px;
-      margin-bottom: 6px;
     }
 
     label {
-      font-size: 0.75rem;
-      color: var(--muted);
+      font-size: 0.72rem;
+      color: var(--text-soft);
     }
 
     input,
     select,
     textarea {
+      background: rgba(15, 23, 42, 0.85);
       border-radius: 10px;
-      border: 1px solid rgba(148, 163, 184, 0.4);
-      padding: 7px 10px;
-      background: rgba(15, 23, 42, 0.96);
-      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 6px 8px;
       font-size: 0.8rem;
+      color: var(--text);
+      outline: none;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: #6b7280;
     }
 
     input:focus,
     select:focus,
     textarea:focus {
-      outline: 1px solid var(--accent);
-      box-shadow: 0 0 0 1px rgba(248, 113, 22, 0.45);
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent-soft);
     }
 
     textarea {
-      min-height: 50px;
+      min-height: 64px;
       resize: vertical;
     }
 
     .criteria-grid {
+      margin-top: 10px;
+      border-top: 1px solid var(--border);
+      padding-top: 10px;
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 6px;
-      margin-top: 4px;
+      gap: 8px;
     }
 
-    .crit-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 6px;
-      font-size: 0.75rem;
+    @media (max-width: 720px) {
+      .criteria-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .criterion {
       padding: 6px 7px;
-      background: rgba(15, 23, 42, 0.95);
-      border-radius: var(--radius-sm);
-      border: 1px solid rgba(30, 64, 175, 0.6);
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      display: flex;
+      gap: 6px;
+      align-items: flex-start;
+      font-size: 0.75rem;
     }
 
-    .crit-item input {
+    .criterion input[type="checkbox"] {
       margin-top: 2px;
     }
 
-    .crit-label-main {
-      font-weight: 500;
-      font-size: 0.75rem;
+    .criterion-main {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
     }
 
-    .crit-weight {
+    .criterion-title {
+      font-weight: 500;
+    }
+
+    .criterion-meta {
       font-size: 0.7rem;
-      color: var(--muted);
+      color: var(--text-soft);
+    }
+
+    .criterion-tag {
+      font-size: 0.65rem;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid var(--border);
+    }
+
+    .criteria-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .small-muted {
+      font-size: 0.7rem;
+      color: var(--text-soft);
     }
 
     .btn-row {
       display: flex;
-      flex-wrap: wrap;
       gap: 8px;
-      align-items: center;
-      margin-top: 6px;
+      flex-wrap: wrap;
     }
 
-    .btn-small {
-      padding: 6px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.4);
-      background: rgba(15, 23, 42, 0.9);
-      color: var(--text-soft);
-      font-size: 0.72rem;
-      cursor: pointer;
-    }
-
-    .btn-small:hover {
-      border-color: var(--accent);
-      color: #fed7aa;
-    }
-
-    .btn-main {
-      background: linear-gradient(135deg, #f97316, #fb923c);
-      color: #020617;
-      border: none;
-      padding: 7px 16px;
-      border-radius: 999px;
-      font-size: 0.8rem;
-      font-weight: 600;
+    .chip {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      box-shadow: 0 14px 38px rgba(249, 115, 22, 0.4);
-      cursor: pointer;
+      gap: 4px;
+      font-size: 0.7rem;
+      padding: 2px 7px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(15, 23, 42, 0.8);
+      color: var(--text-soft);
     }
 
-    .btn-main:active {
-      transform: translateY(1px) scale(0.99);
-      box-shadow: 0 10px 26px rgba(249, 115, 22, 0.35);
+    .chip-dot-high {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #22c55e;
     }
 
-    .stats-grid {
+    .chip-dot-med {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #facc15;
+    }
+
+    .chip-dot-low {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #f97316;
+    }
+
+    .dashboard-grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 8px;
       margin-bottom: 10px;
     }
 
-    .stat {
-      padding: 8px 9px;
+    @media (max-width: 720px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .metric-card {
+      padding: 6px 8px;
       border-radius: 14px;
-      background: rgba(15, 23, 42, 0.96);
-      border: 1px solid rgba(148, 163, 184, 0.28);
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid var(--border);
     }
 
-    .stat-label {
+    .metric-label {
       font-size: 0.72rem;
-      color: var(--muted);
-      margin-bottom: 2px;
+      color: var(--text-soft);
+      margin-bottom: 4px;
     }
 
-    .stat-value {
+    .metric-value {
       font-size: 1.05rem;
       font-weight: 600;
     }
 
-    .stat-pill {
+    .metric-subtext {
       font-size: 0.7rem;
-      margin-top: 2px;
       color: var(--muted);
     }
 
-    .stat-positive {
-      color: var(--success);
-    }
-
-    .stat-negative {
-      color: var(--danger);
-    }
-
-    .charts-grid {
+    .chart-row {
       display: grid;
-      grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.1fr);
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.1fr);
       gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    @media (max-width: 960px) {
+      .chart-row {
+        grid-template-columns: 1fr;
+      }
     }
 
     .chart-container {
-      border-radius: 16px;
-      background: rgba(15, 23, 42, 0.96);
-      border: 1px solid rgba(148, 163, 184, 0.24);
-      padding: 8px 8px 6px;
+      padding: 10px 10px 8px;
+      border-radius: 14px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid var(--border);
+      animation: fadeInUp 0.35s ease-out;
     }
 
     .chart-title {
-      font-size: 0.76rem;
-      color: var(--muted);
-      margin-bottom: 4px;
+      font-size: 0.75rem;
+      color: var(--text-soft);
+      margin-bottom: 6px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 4px;
+      gap: 6px;
     }
 
-    .chart-title span {
-      font-weight: 500;
-      color: var(--text-soft);
+    .chart-legend {
+      display: inline-flex;
+      gap: 6px;
+      font-size: 0.7rem;
+      align-items: center;
     }
 
-    .table-card {
-      margin-top: 6px;
-      background: rgba(15, 23, 42, 0.96);
-      border-radius: 16px;
-      border: 1px solid rgba(148, 163, 184, 0.26);
-      padding: 8px;
-      max-height: 240px;
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+    }
+
+    .table-wrapper {
+      margin-top: 8px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(15, 23, 42, 0.95);
       overflow: auto;
-      font-size: 0.75rem;
+      max-height: 260px;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      min-width: 650px;
+      font-size: 0.72rem;
+      min-width: 800px;
+    }
+
+    thead {
+      position: sticky;
+      top: 0;
+      background: rgba(15, 23, 42, 0.98);
+      z-index: 2;
     }
 
     th,
     td {
-      padding: 5px 6px;
-      border-bottom: 1px solid rgba(30, 64, 175, 0.3);
+      padding: 6px 8px;
+      border-bottom: 1px solid rgba(31, 41, 55, 0.9);
       text-align: left;
+      white-space: nowrap;
     }
 
     th {
+      font-weight: 500;
+      color: var(--text-soft);
       font-size: 0.7rem;
-      color: var(--muted);
-      position: sticky;
-      top: 0;
-      background: rgba(15, 23, 42, 0.98);
-      backdrop-filter: blur(10px);
     }
 
-    tr:last-child td {
-      border-bottom: none;
+    tbody tr:nth-child(even) {
+      background: rgba(15, 23, 42, 0.6);
     }
 
-    .pill-high {
-      padding: 2px 8px;
+    .prob-pill {
       border-radius: 999px;
-      background: var(--success-soft);
-      color: #bbf7d0;
+      padding: 2px 8px;
       font-size: 0.7rem;
       display: inline-flex;
       align-items: center;
       gap: 4px;
     }
 
-    .pill-low {
-      padding: 2px 8px;
-      border-radius: 999px;
-      background: var(--danger-soft);
-      color: #fecaca;
-      font-size: 0.7rem;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
+    .prob-high {
+      background: rgba(34, 197, 94, 0.12);
+      color: #4ade80;
+      border: 1px solid rgba(34, 197, 94, 0.5);
     }
 
-    .footer {
-      margin-top: 2px;
+    .prob-medium {
+      background: rgba(250, 204, 21, 0.12);
+      color: #fde68a;
+      border: 1px solid rgba(250, 204, 21, 0.6);
+    }
+
+    .prob-low {
+      background: rgba(248, 113, 22, 0.12);
+      color: #fed7aa;
+      border: 1px solid rgba(248, 113, 22, 0.6);
+    }
+
+    .filters-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 6px;
+      align-items: center;
+    }
+
+    .filters-bar input,
+    .filters-bar select {
       font-size: 0.7rem;
-      color: var(--muted);
+      padding: 4px 8px;
+      border-radius: 999px;
+    }
+
+    .coach-card {
+      margin-top: 10px;
+      padding: 8px 10px;
+      border-radius: 14px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid var(--border);
+      font-size: 0.75rem;
+      color: var(--text-soft);
+    }
+
+    .coach-title {
+      font-size: 0.8rem;
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    .settings-chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .settings-chip {
+      font-size: 0.68rem;
+      padding: 2px 6px;
+      border-radius: 999px;
+      border: 1px dashed var(--border);
+      color: var(--text-soft);
+      background: rgba(15, 23, 42, 0.7);
+    }
+
+    .footer-bar {
       display: flex;
       justify-content: space-between;
+      gap: 8px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+
+    .export-row {
+      display: flex;
+      flex-wrap: wrap;
       gap: 6px;
       align-items: center;
     }
 
-    .footer-links {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-
-    .footer-links button {
+    .export-row button {
+      font-size: 0.72rem;
+      padding: 6px 10px;
       border-radius: 999px;
-      border: 1px dashed rgba(148, 163, 184, 0.45);
-      background: transparent;
+      border: 1px solid var(--border);
+      background: rgba(15, 23, 42, 0.9);
       color: var(--text-soft);
-      padding: 2px 8px;
-      font-size: 0.68rem;
       cursor: pointer;
     }
 
-    .footer-links button:hover {
-      border-color: var(--accent);
-      color: #fed7aa;
+    .export-row input[type="file"] {
+      display: none;
     }
 
-    .badge-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 99px;
-      background: var(--accent);
-    }
-
-    .mistakes-list {
-      padding: 2px 0 0;
-      list-style: none;
-      margin: 0;
+    .lock-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
       font-size: 0.72rem;
-      color: var(--muted);
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid var(--border);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
     }
 
-    .mistakes-list li {
+    .lock-badge span.dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #22c55e;
+    }
+
+    /* Lock screen */
+    .lock-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+    }
+
+    .lock-panel {
+      width: 100%;
+      max-width: 380px;
+      padding: 20px 18px 18px;
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      background: radial-gradient(circle at top left, #020617, #020617 70%);
+      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.9);
+    }
+
+    .lock-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .lock-text {
+      font-size: 0.78rem;
+      color: var(--text-soft);
+      margin-bottom: 12px;
+    }
+
+    .lock-input-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .lock-input-row input {
+      flex: 1;
+    }
+
+    .lock-footer {
+      margin-top: 10px;
       display: flex;
       justify-content: space-between;
-      gap: 6px;
-      padding-block: 2px;
+      gap: 8px;
+      font-size: 0.7rem;
+      color: var(--muted);
+      flex-wrap: wrap;
     }
 
-    .mistakes-count {
-      color: var(--text-soft);
+    .link-like {
+      color: var(--accent);
+      cursor: pointer;
+      text-decoration: underline;
     }
 
-    /* Mobile */
-
-    @media (max-width: 1024px) {
-      body {
-        padding: 10px;
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
       }
-
-      .app {
-        border-radius: 20px;
-        padding: 12px 10px 10px;
-      }
-
-      .layout {
-        grid-template-columns: minmax(0, 1fr);
-      }
-
-      .charts-grid {
-        grid-template-columns: minmax(0, 1fr);
-      }
-
-      .stats-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .card {
-        padding-inline: 10px;
-      }
-    }
-
-    @media (max-width: 640px) {
-      .stats-grid {
-        grid-template-columns: minmax(0, 1fr);
-      }
-
-      .criteria-grid {
-        grid-template-columns: minmax(0, 1fr);
-      }
-
-      .app-header {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .app-actions {
-        width: 100%;
-        justify-content: space-between;
-      }
-
-      table {
-        min-width: 560px;
+      to {
+        opacity: 1;
+        transform: translateY(0);
       }
     }
   </style>
 </head>
 <body>
-  <!-- PIN / Password Lock -->
-  <div class="pin-overlay" id="pinOverlay">
-    <div class="pin-card">
-      <div class="pin-meta">
-        <span class="badge-dot"></span>
-        <span>Ali's Trading System • Secure Mode</span>
-      </div>
-      <h1 class="pin-title">
-        Unlock dashboard
-        <span class="pin-badge" id="pinModeTag">First-time setup</span>
-      </h1>
-      <p class="pin-subtitle" id="pinSubtitle">
-        Set a 4-digit PIN to protect your trading journal. This only lives in this
-        browser.
-      </p>
-
-      <div class="pin-row">
-        <div class="pin-label" id="pinLabel">New PIN (4 digits)</div>
-        <input
-          id="pinInput"
-          class="pin-input"
-          type="password"
-          inputmode="numeric"
-          maxlength="12"
-          autocomplete="off"
-        />
-        <div class="pin-msg" id="pinMessage"></div>
+  <!-- LOCK SCREEN (PIN) -->
+  <div id="lock-root" class="lock-screen" style="display: none;">
+    <div class="lock-panel">
+      <div class="lock-title">Ali's Trading System</div>
+      <div id="lock-mode-setup">
+        <div class="lock-text">
+          First-time setup. Create a PIN to protect your dashboard on this
+          device.
+        </div>
+        <div class="lock-input-row">
+          <input
+            id="pin-setup-input"
+            type="password"
+            placeholder="4+ digits"
+          />
+          <button id="pin-setup-btn" class="btn-primary">Set PIN</button>
+        </div>
       </div>
 
-      <button class="btn btn-primary" id="pinSubmitBtn">
-        Continue
-      </button>
+      <div id="lock-mode-login" style="display: none;">
+        <div class="lock-text">
+          Enter PIN to unlock your dashboard on this device.
+        </div>
+        <div class="lock-input-row">
+          <input
+            id="pin-login-input"
+            type="password"
+            placeholder="PIN"
+          />
+          <button id="pin-login-btn" class="btn-primary">Unlock</button>
+        </div>
+      </div>
 
-      <div class="pin-footer">
-        <button class="btn btn-ghost" id="pinResetBtn">
-          Reset / Forgot PIN
-        </button>
-        <span>Encrypted-ish • Client-side only</span>
+      <div class="lock-footer">
+        <span class="small-muted">
+          PIN is stored locally only. Clearing browser data resets it.
+        </span>
+        <span id="lock-reset" class="link-like">Reset / forgot PIN</span>
+      </div>
+      <div id="lock-error" style="font-size:0.72rem;color:#fca5a5;margin-top:6px;"></div>
+    </div>
+  </div>
+
+  <!-- MAIN APP -->
+  <div id="app-root" style="display: none;">
+    <div class="app-shell">
+      <div class="top-bar">
+        <div class="top-left">
+          <div class="app-title">Ali's Trading System</div>
+          <div class="app-subtitle">
+            Probabilities • Discipline • R • Web-based execution journal
+          </div>
+        </div>
+        <div class="top-right">
+          <button id="theme-toggle" class="btn-secondary">🌙 Dark</button>
+          <button class="btn-secondary" id="lock-btn">Lock</button>
+          <span class="pill">
+            <span class="pill-dot"></span>
+            <span id="autosave-status">Local session • Auto-backup every 10s</span>
+          </span>
+        </div>
+      </div>
+
+      <div class="layout">
+        <!-- LEFT: NEW TRADE -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">New trade</div>
+              <div class="card-subtitle">
+                Fill the form, tick criteria, log trade. Scores &amp; probability
+                are calculated automatically.
+              </div>
+            </div>
+            <span class="chip">
+              Checklist + Execution
+            </span>
+          </div>
+
+          <div class="field-group">
+            <div class="field">
+              <label for="date">Date</label>
+              <input id="date" type="date" />
+            </div>
+            <div class="field">
+              <label for="pair">Pair</label>
+              <input id="pair" type="text" placeholder="e.g. GBPUSD" />
+            </div>
+            <div class="field">
+              <label for="direction">Direction</label>
+              <select id="direction">
+                <option value="">Select</option>
+                <option>Buy</option>
+                <option>Sell</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="setup">Setup</label>
+              <select id="setup">
+                <option value="">Select</option>
+                <option>Breakout with momentum</option>
+                <option>Retest continuation</option>
+                <option>Range fade / reversal</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="risk">Risk per trade (R)</label>
+              <input id="risk" type="number" step="0.01" placeholder="e.g. 1" />
+            </div>
+            <div class="field">
+              <label for="rr-planned">R:R planned</label>
+              <input
+                id="rr-planned"
+                type="number"
+                step="0.1"
+                placeholder="e.g. 2.5"
+              />
+            </div>
+            <div class="field">
+              <label for="rr-realized">R realized</label>
+              <input
+                id="rr-realized"
+                type="number"
+                step="0.01"
+                placeholder="e.g. 1.8"
+              />
+            </div>
+            <div class="field">
+              <label for="session">Session</label>
+              <select id="session">
+                <option value="">Select</option>
+                <option>London</option>
+                <option>New York</option>
+                <option>Asia</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="emotion">Emotion tag</label>
+              <select id="emotion">
+                <option value="">Select</option>
+                <option>Calm</option>
+                <option>Disciplined</option>
+                <option>Confident</option>
+                <option>Neutral</option>
+                <option>FOMO</option>
+                <option>Fearful</option>
+                <option>Revenge</option>
+                <option>Over-confident</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="screenshot">Screenshot / chart link</label>
+              <input
+                id="screenshot"
+                type="url"
+                placeholder="Paste TradingView / chart link"
+              />
+            </div>
+            <div class="field">
+              <label for="tags">Tags (comma-separated)</label>
+              <input
+                id="tags"
+                type="text"
+                placeholder="e.g. London open, news, A+"
+              />
+            </div>
+          </div>
+
+          <div class="field" style="margin-top:8px;">
+            <label for="notes">Journal notes</label>
+            <textarea
+              id="notes"
+              placeholder="What did you do well? What can you improve?"
+            ></textarea>
+          </div>
+
+          <!-- Criteria -->
+          <div class="criteria-grid">
+            <label style="grid-column:1/-1;font-size:0.75rem;color:var(--text-soft);">
+              Breakout / candle criteria (weighted). Tick only what was actually met.
+            </label>
+
+            <div class="criterion">
+              <input type="checkbox" data-weight="2" class="crit-check" id="crit1" />
+              <div class="criterion-main">
+                <span class="criterion-title">Clean close at level</span>
+                <span class="criterion-meta"
+                  >No big wicks both sides • weight 2</span
+                >
+              </div>
+            </div>
+
+            <div class="criterion">
+              <input type="checkbox" data-weight="2" class="crit-check" id="crit2" />
+              <div class="criterion-main">
+                <span class="criterion-title">No long wick against direction</span>
+                <span class="criterion-meta"
+                  >Wick profile matches bias • weight 2</span
+                >
+              </div>
+            </div>
+
+            <div class="criterion">
+              <input type="checkbox" data-weight="1" class="crit-check" id="crit3" />
+              <div class="criterion-main">
+                <span class="criterion-title">Structure matches plan</span>
+                <span class="criterion-meta"
+                  >Story + higher TF aligned • weight 1</span
+                >
+              </div>
+            </div>
+
+            <div class="criterion">
+              <input type="checkbox" data-weight="1" class="crit-check" id="crit4" />
+              <div class="criterion-main">
+                <span class="criterion-title">Not after huge candle</span>
+                <span class="criterion-meta"
+                  >Avoid chasing exhaustion moves • weight 1</span
+                >
+              </div>
+            </div>
+
+            <div class="criterion">
+              <input type="checkbox" data-weight="2" class="crit-check" id="crit5" />
+              <div class="criterion-main">
+                <span class="criterion-title">No flat / no-wick close</span>
+                <span class="criterion-meta"
+                  >Entry candle prints wick first then flips • weight 2</span
+                >
+              </div>
+            </div>
+
+            <div class="criterion">
+              <input type="checkbox" data-weight="2" class="crit-check" id="crit6" />
+              <div class="criterion-main">
+                <span class="criterion-title">Wick first, then flip entry</span>
+                <span class="criterion-meta"
+                  >Classic flip entry behaviour • weight 2</span
+                >
+              </div>
+            </div>
+          </div>
+
+          <div class="criteria-footer">
+            <div class="small-muted" id="criteria-summary">
+              0 / 10 weighted points selected.
+            </div>
+            <div class="btn-row">
+              <button id="add-trade-btn" class="btn-primary">
+                + Add trade to log
+              </button>
+              <button id="clear-form-btn" class="btn-secondary">
+                Clear form
+              </button>
+            </div>
+          </div>
+
+          <div class="settings-chip-row">
+            <span class="settings-chip">Weighted checklist</span>
+            <span class="settings-chip">Auto-score</span>
+            <span class="settings-chip">JSON / CSV export</span>
+            <span class="settings-chip">Local auto-backup</span>
+          </div>
+        </div>
+
+        <!-- RIGHT: DASHBOARD -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Dashboard</div>
+              <div class="card-subtitle">
+                Live performance breakdown, probability &amp; behaviour tracking.
+              </div>
+            </div>
+            <span class="chip">Auto-updated from left panel</span>
+          </div>
+
+          <div class="dashboard-grid">
+            <div class="metric-card">
+              <div class="metric-label">Win rate</div>
+              <div class="metric-value" id="winrate-text">0.0%</div>
+              <div class="metric-subtext" id="winrate-subtext">0 trades</div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-label">Avg R (realized)</div>
+              <div class="metric-value" id="avgR-text">0.00R</div>
+              <div class="metric-subtext" id="avgR-subtext">Equity: 0.00R</div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-label">Discipline score</div>
+              <div class="metric-value" id="disc-text">0</div>
+              <div class="metric-subtext" id="disc-subtext">No trades yet</div>
+            </div>
+          </div>
+
+          <div class="chart-row">
+            <div class="chart-container">
+              <div class="chart-title">
+                <span>High vs low probability</span>
+                <span class="chart-legend">
+                  <span class="legend-dot" style="background:#22c55e;"></span
+                  >High
+                  <span class="legend-dot" style="background:#facc15;"></span
+                  >Medium
+                  <span class="legend-dot" style="background:#f97316;"></span
+                  >Low
+                </span>
+              </div>
+              <canvas id="prob-chart" height="140"></canvas>
+            </div>
+
+            <div class="chart-container">
+              <div class="chart-title">
+                <span>Equity curve (R)</span>
+                <span id="equity-summary" style="font-size:0.7rem;color:var(--text-soft);">
+                  0.00R total
+                </span>
+              </div>
+              <canvas id="equity-chart" height="140"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-row">
+            <div class="chart-container">
+              <div class="chart-title">
+                <span>Probability history</span>
+                <span style="font-size:0.7rem;color:var(--text-soft);">
+                  1=Low • 2=Medium • 3=High
+                </span>
+              </div>
+              <canvas id="prob-history-chart" height="90"></canvas>
+            </div>
+
+            <div class="chart-container">
+              <div class="chart-title">
+                <span>Most common mistakes (last 30 trades)</span>
+                <span style="font-size:0.7rem;color:var(--text-soft);" id="mistake-count">
+                  None yet
+                </span>
+              </div>
+              <div id="mistake-list" style="font-size:0.74rem;color:var(--text-soft);">
+                No mistakes logged yet. Tag emotions &amp; write notes to see patterns.
+              </div>
+            </div>
+          </div>
+
+          <div class="coach-card">
+            <div class="coach-title">Coach’s feedback</div>
+            <div id="ai-coach-text">
+              Log a trade to see feedback based on probability, discipline and emotional tags.
+            </div>
+          </div>
+
+          <div style="margin-top:10px;">
+            <div class="chart-title" style="margin-bottom:4px;">
+              <span>Trade log</span>
+              <span style="font-size:0.7rem;color:var(--text-soft);">
+                Based on filters, tags &amp; date range.
+              </span>
+            </div>
+            <div class="filters-bar">
+              <input
+                id="filter-text"
+                type="text"
+                placeholder="Filter by tag, pair, setup or notes…"
+              />
+              <select id="filter-prob">
+                <option value="">All probabilities</option>
+                <option value="High">High only</option>
+                <option value="Medium">Medium only</option>
+                <option value="Low">Low only</option>
+              </select>
+              <input id="filter-from" type="date" />
+              <input id="filter-to" type="date" />
+              <button id="filter-clear" class="btn-secondary" style="padding:4px 10px;">
+                Clear filters
+              </button>
+            </div>
+
+            <div class="table-wrapper">
+              <table id="trades-table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Date</th>
+                    <th>Pair</th>
+                    <th>Dir</th>
+                    <th>Setup</th>
+                    <th>Prob</th>
+                    <th>Score</th>
+                    <th>R planned</th>
+                    <th>R realized</th>
+                    <th>Run R</th>
+                    <th>Session</th>
+                    <th>Emotion</th>
+                    <th>Discipline</th>
+                    <th>Tags</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="footer-bar">
+            <div class="export-row">
+              <button id="export-json-btn">Export JSON</button>
+              <button id="export-csv-btn">Export CSV</button>
+
+              <label class="btn-secondary" style="padding:4px 10px;cursor:pointer;">
+                Import JSON
+                <input id="import-json-input" type="file" accept=".json" />
+              </label>
+            </div>
+
+            <div style="max-width:320px;">
+              Save this file somewhere easy to open. You can host it on Netlify /
+              Vercel / GitHub Pages (like now) to access it from anywhere.
+            </div>
+          </div>
+
+          <!-- Telegram (optional) -->
+          <div class="coach-card" style="margin-top:10px;">
+            <div class="coach-title">Notifications (optional)</div>
+            <div class="small-muted" style="margin-bottom:6px;">
+              Add a Telegram bot token + chat ID to receive a message each time
+              you log a new trade. Data goes straight from your browser to Telegram.
+            </div>
+            <div class="field-group">
+              <div class="field" style="flex:1 1 50%;">
+                <label>
+                  <input type="checkbox" id="notify-telegram" />
+                  Enable Telegram alert on new trade
+                </label>
+              </div>
+              <div class="field">
+                <label for="tg-token">Telegram bot token</label>
+                <input id="tg-token" type="password" placeholder="123456:ABC-DEF..." />
+              </div>
+              <div class="field">
+                <label for="tg-chat">Telegram chat ID</label>
+                <input id="tg-chat" type="text" placeholder="Your chat ID" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:10px;font-size:0.7rem;color:var(--muted);text-align:center;">
+        upgrade v2 • client-side only • PIN + local backup • hosted on GitHub Pages
       </div>
     </div>
   </div>
 
-  <!-- APP -->
-  <div class="app" id="app" style="display:none;">
-    <header class="app-header">
-      <div class="app-title">
-        <div class="app-title-main">Ali's Trading System</div>
-        <div class="app-title-sub">
-          Probabilities • Discipline • R • Web-based execution journal
-        </div>
-        <div class="app-chips">
-          <div class="chip chip-accent">Weighted checklist • Auto-score</div>
-          <div class="chip chip-soft">JSON / CSV export • Import</div>
-          <div class="chip chip-soft">Local auto-backup</div>
-        </div>
-      </div>
-      <div class="app-actions">
-        <div class="pill">
-          <span class="pill-dot"></span>
-          <span id="sessionInfo">Local session • Unsynced</span>
-        </div>
-        <button class="btn-small" id="lockBtn">Lock</button>
-      </div>
-    </header>
-
-    <main class="layout">
-      <!-- LEFT: Trade form + criteria -->
-      <section class="card">
-        <div class="card-header">
-          <div>
-            <div class="card-title">New trade</div>
-            <div class="card-subtitle">
-              Fill the form, tick criteria, log the trade. Scores &amp; probability
-              are calculated automatically.
-            </div>
-          </div>
-          <span class="tag tag-accent">Checklist + Execution</span>
-        </div>
-
-        <div class="grid-2">
-          <div class="form-row">
-            <label for="dateInput">Date</label>
-            <input id="dateInput" type="date" />
-          </div>
-          <div class="form-row">
-            <label for="pairInput">Pair</label>
-            <input id="pairInput" placeholder="e.g. GBPUSD" />
-          </div>
-        </div>
-
-        <div class="grid-2">
-          <div class="form-row">
-            <label for="directionInput">Direction</label>
-            <select id="directionInput">
-              <option value="">Select</option>
-              <option value="Buy">Buy</option>
-              <option value="Sell">Sell</option>
-            </select>
-          </div>
-          <div class="form-row">
-            <label for="setupInput">Setup</label>
-            <select id="setupInput">
-              <option value="">Select</option>
-              <option value="Breakout with momentum">
-                Breakout with momentum
-              </option>
-              <option value="Close above/below level">
-                Candle close above/below level
-              </option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="grid-2">
-          <div class="form-row">
-            <label for="riskInput">Risk per trade (R)</label>
-            <input
-              id="riskInput"
-              type="number"
-              step="0.01"
-              placeholder="e.g. 1"
-            />
-          </div>
-          <div class="form-row">
-            <label for="rrPlannedInput">R:R planned</label>
-            <input
-              id="rrPlannedInput"
-              type="number"
-              step="0.1"
-              placeholder="e.g. 2.5"
-            />
-          </div>
-        </div>
-
-        <div class="grid-2">
-          <div class="form-row">
-            <label for="rrRealizedInput">R realized</label>
-            <input
-              id="rrRealizedInput"
-              type="number"
-              step="0.1"
-              placeholder="e.g. 1.5"
-            />
-          </div>
-          <div class="form-row">
-            <label for="sessionInput">Session</label>
-            <select id="sessionInput">
-              <option value="">Select</option>
-              <option value="London">London</option>
-              <option value="New York">New York</option>
-              <option value="Asia">Asia</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="grid-2">
-          <div class="form-row">
-            <label for="emotionInput">Emotion tag</label>
-            <select id="emotionInput">
-              <option value="">Select</option>
-              <option value="Calm">Calm</option>
-              <option value="Disciplined">Disciplined</option>
-              <option value="Confident">Confident</option>
-              <option value="Neutral">Neutral</option>
-              <option value="FOMO">FOMO</option>
-              <option value="Fearful">Fearful</option>
-              <option value="Revenge">Revenge</option>
-              <option value="Overtrading">Overtrading</option>
-            </select>
-          </div>
-          <div class="form-row">
-            <label for="screenshotInput">Screenshot link</label>
-            <input
-              id="screenshotInput"
-              placeholder="Paste TradingView / chart link"
-            />
-          </div>
-        </div>
-
-        <div class="form-row">
-          <label for="notesInput">Journal notes</label>
-          <textarea
-            id="notesInput"
-            placeholder="What did you do well? What can you improve?"
-          ></textarea>
-        </div>
-
-        <div class="card-subtitle" style="margin-top: 8px;">
-          Breakout / candle criteria (weighted). Tick only what was actually met.
-        </div>
-        <div class="criteria-grid">
-          <label class="crit-item">
-            <input type="checkbox" class="crit-checkbox" data-weight="2" />
-            <div>
-              <div class="crit-label-main">
-                Clean close at level
-              </div>
-              <div class="crit-weight">
-                No big wicks both sides &bull; weight 2
-              </div>
-            </div>
-          </label>
-          <label class="crit-item">
-            <input type="checkbox" class="crit-checkbox" data-weight="2" />
-            <div>
-              <div class="crit-label-main">
-                No long wick against direction
-              </div>
-              <div class="crit-weight">
-                Wick profile matches bias &bull; weight 2
-              </div>
-            </div>
-          </label>
-          <label class="crit-item">
-            <input type="checkbox" class="crit-checkbox" data-weight="1" />
-            <div>
-              <div class="crit-label-main">
-                Structure matches plan
-              </div>
-              <div class="crit-weight">
-                Story + higher TF aligned &bull; weight 1
-              </div>
-            </div>
-          </label>
-          <label class="crit-item">
-            <input type="checkbox" class="crit-checkbox" data-weight="1" />
-            <div>
-              <div class="crit-label-main">
-                Not after huge candle
-              </div>
-              <div class="crit-weight">
-                Avoid exhaustion move &bull; weight 1
-              </div>
-            </div>
-          </label>
-          <label class="crit-item">
-            <input type="checkbox" class="crit-checkbox" data-weight="2" />
-            <div>
-              <div class="crit-label-main">
-                No flat / no-wick close
-              </div>
-              <div class="crit-weight">
-                Entry candle prints wick first then flips &bull; weight 2
-              </div>
-            </div>
-          </label>
-          <label class="crit-item">
-            <input type="checkbox" class="crit-checkbox" data-weight="2" />
-            <div>
-              <div class="crit-label-main">
-                Wick first, then flip entry
-              </div>
-              <div class="crit-weight">
-                Classic flip entry behaviour &bull; weight 2
-              </div>
-            </div>
-          </label>
-        </div>
-
-        <div class="btn-row">
-          <button class="btn-main" id="addTradeBtn">
-            + Add trade to log
-          </button>
-          <button class="btn-small" id="clearFormBtn" type="button">
-            Clear form
-          </button>
-          <span class="card-subtitle" id="formInfo">
-            Checklist score and probability will be calculated automatically.
-          </span>
-        </div>
-      </section>
-
-      <!-- RIGHT: Dashboard -->
-      <section class="card">
-        <div class="card-header">
-          <div>
-            <div class="card-title">Dashboard</div>
-            <div class="card-subtitle">
-              Live performance breakdown, probability &amp; behaviour tracking.
-            </div>
-          </div>
-          <span class="tag tag-good">Auto-updated from left panel</span>
-        </div>
-
-        <div class="stats-grid">
-          <div class="stat">
-            <div class="stat-label">Win rate</div>
-            <div class="stat-value" id="winRateStat">0%</div>
-            <div class="stat-pill">
-              <span id="totalTradesStat">0</span> trades
-            </div>
-          </div>
-          <div class="stat">
-            <div class="stat-label">Avg R (realized)</div>
-            <div class="stat-value" id="avgRStat">0.0R</div>
-            <div class="stat-pill">
-              Equity: <span id="equityStat">0.0R</span>
-            </div>
-          </div>
-          <div class="stat">
-            <div class="stat-label">Discipline score</div>
-            <div class="stat-value" id="disciplineStat">0</div>
-            <div class="stat-pill" id="disciplineLabel">No trades yet</div>
-          </div>
-        </div>
-
-        <div class="charts-grid">
-          <div class="chart-container">
-            <div class="chart-title">
-              <span>High vs low probability</span>
-              <span id="probabilitySummary">0 high • 0 low</span>
-            </div>
-            <canvas id="probChart" height="130"></canvas>
-          </div>
-          <div class="chart-container">
-            <div class="chart-title">
-              <span>Equity curve (R)</span>
-              <span id="equitySummary">0R start</span>
-            </div>
-            <canvas id="equityChart" height="130"></canvas>
-          </div>
-        </div>
-
-        <div class="chart-container" style="margin-top: 8px;">
-          <div class="chart-title">
-            <span>Most common mistakes (last 30 trades)</span>
-            <span style="font-size:0.7rem;color:var(--muted);">
-              based on emotion &amp; notes tags
-            </span>
-          </div>
-          <ul class="mistakes-list" id="mistakesList">
-            <li><span>None yet</span><span class="mistakes-count">0</span></li>
-          </ul>
-        </div>
-
-        <div class="table-card">
-          <table>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Date</th>
-                <th>Pair</th>
-                <th>Dir</th>
-                <th>Setup</th>
-                <th>Prob</th>
-                <th>Score</th>
-                <th>R planned</th>
-                <th>R realized</th>
-                <th>Run R</th>
-                <th>Session</th>
-                <th>Emotion</th>
-                <th>Discipline</th>
-              </tr>
-            </thead>
-            <tbody id="tradesTableBody"></tbody>
-          </table>
-        </div>
-      </section>
-    </main>
-
-    <footer class="footer">
-      <div>Data is stored locally &amp; never leaves your browser.</div>
-      <div class="footer-links">
-        <button id="exportJsonBtn">Export JSON</button>
-        <button id="exportCsvBtn">Export CSV</button>
-        <button id="importJsonBtn">Import JSON</button>
-        <input
-          id="importFileInput"
-          type="file"
-          accept="application/json"
-          style="display:none"
-        />
-      </div>
-    </footer>
-  </div>
-
   <script>
-    // ------- Core State & Constants -------
+    // ---------- THEME ----------
+    (function () {
+      const root = document.documentElement;
+      const btn = document.getElementById("theme-toggle");
+      if (!btn) return;
 
-    const STORAGE_KEY = "ali_trading_dashboard_v2";
-    const PIN_KEY = "ali_trading_pin_v1";
+      const STORAGE_KEY = "aliTheme";
 
-    let state = {
-      trades: [],
-      runningEquity: 0,
-      createdAt: new Date().toISOString(),
-    };
-
-    let probChart = null;
-    let equityChart = null;
-
-    // ------- Helpers -------
-
-    function saveState() {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-      } catch (e) {
-        console.warn("Could not save state", e);
-      }
-    }
-
-    function loadState() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (raw) {
-          const parsed = JSON.parse(raw);
-          if (Array.isArray(parsed.trades)) {
-            state = parsed;
-          }
+      function applyTheme(theme) {
+        if (theme === "light") {
+          root.setAttribute("data-theme", "light");
+          btn.textContent = "☀️ Light";
+        } else {
+          root.removeAttribute("data-theme");
+          btn.textContent = "🌙 Dark";
+          theme = "dark";
         }
-      } catch (e) {
-        console.warn("Could not load state", e);
-      }
-    }
-
-    function formatPercent(v) {
-      return isFinite(v) ? v.toFixed(1) + "%" : "0%";
-    }
-
-    function formatR(v) {
-      return (isFinite(v) ? v.toFixed(2) : 0).toString() + "R";
-    }
-
-    function computeDisciplineScore(trade) {
-      // Base on emotion, session & whether R:R was followed
-      let score = 50;
-
-      const goodEmotions = ["Calm", "Disciplined", "Confident", "Neutral"];
-      const badEmotions = ["FOMO", "Fearful", "Revenge", "Overtrading"];
-
-      if (goodEmotions.includes(trade.emotion)) score += 15;
-      if (badEmotions.includes(trade.emotion)) score -= 15;
-
-      if (trade.session === "London") score += 5;
-      if (trade.session === "New York") score += 5;
-      if (trade.session === "Asia") score -= 5;
-
-      if (typeof trade.rrPlanned === "number" &&
-          typeof trade.rrRealized === "number") {
-        if (trade.rrRealized < -1.2 * trade.rrPlanned) score -= 10;
-        if (trade.rrRealized > 0.8 * trade.rrPlanned) score += 5;
+        localStorage.setItem(STORAGE_KEY, theme);
       }
 
-      if (trade.scorePercent >= 0.8) score += 10;
-      if (trade.scorePercent < 0.5) score -= 10;
+      const saved = localStorage.getItem(STORAGE_KEY);
+      applyTheme(saved || "dark");
 
-      return Math.max(0, Math.min(100, score));
-    }
+      btn.addEventListener("click", () => {
+        const current = localStorage.getItem(STORAGE_KEY) || "dark";
+        applyTheme(current === "dark" ? "light" : "dark");
+      });
+    })();
 
-    function probabilityLabel(pctScore) {
-      if (pctScore >= 0.8) return "High";
-      if (pctScore >= 0.6) return "Medium";
-      return "Low";
-    }
+    // ---------- PIN LOCK ----------
+    (function () {
+      const PIN_KEY = "aliPin";
+      const lockRoot = document.getElementById("lock-root");
+      const appRoot = document.getElementById("app-root");
+      const setupMode = document.getElementById("lock-mode-setup");
+      const loginMode = document.getElementById("lock-mode-login");
+      const setupInput = document.getElementById("pin-setup-input");
+      const setupBtn = document.getElementById("pin-setup-btn");
+      const loginInput = document.getElementById("pin-login-input");
+      const loginBtn = document.getElementById("pin-login-btn");
+      const lockError = document.getElementById("lock-error");
+      const lockReset = document.getElementById("lock-reset");
+      const lockBtn = document.getElementById("lock-btn");
 
-    function aggregateMistakes(lastTrades) {
-      const buckets = {};
-      lastTrades.forEach((t) => {
-        const emo = t.emotion || "None";
-        if (!buckets[emo]) buckets[emo] = 0;
-        if (["FOMO", "Fearful", "Revenge", "Overtrading"].includes(emo)) {
-          buckets[emo] += 1;
+      function showLock() {
+        appRoot.style.display = "none";
+        lockRoot.style.display = "flex";
+        const stored = localStorage.getItem(PIN_KEY);
+        if (stored) {
+          setupMode.style.display = "none";
+          loginMode.style.display = "block";
+        } else {
+          setupMode.style.display = "block";
+          loginMode.style.display = "none";
         }
-      });
-      return buckets;
-    }
-
-    // ------- Charts -------
-
-    function initCharts() {
-      const probCtx = document.getElementById("probChart").getContext("2d");
-      const eqCtx = document.getElementById("equityChart").getContext("2d");
-
-      probChart = new Chart(probCtx, {
-        type: "doughnut",
-        data: {
-          labels: ["High", "Medium", "Low"],
-          datasets: [
-            {
-              data: [0, 0, 1],
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: {
-              position: "bottom",
-              labels: {
-                color: "#cbd5f5",
-                font: { size: 11 },
-              },
-            },
-          },
-          cutout: "65%",
-        },
-      });
-
-      equityChart = new Chart(eqCtx, {
-        type: "line",
-        data: {
-          labels: [],
-          datasets: [
-            {
-              label: "Equity (R)",
-              data: [],
-              tension: 0.25,
-              borderWidth: 2,
-              pointRadius: 2.5,
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: { display: false },
-          },
-          scales: {
-            x: {
-              ticks: { color: "#94a3b8", font: { size: 10 } },
-              grid: { color: "rgba(30,64,175,0.4)" },
-            },
-            y: {
-              ticks: { color: "#94a3b8", font: { size: 10 } },
-              grid: { color: "rgba(30,64,175,0.4)" },
-            },
-          },
-        },
-      });
-    }
-
-    function updateCharts() {
-      if (!probChart || !equityChart) return;
-      const trades = state.trades || [];
-
-      // Probability distribution
-      let high = 0,
-        med = 0,
-        low = 0;
-      trades.forEach((t) => {
-        if (t.probLabel === "High") high++;
-        else if (t.probLabel === "Medium") med++;
-        else low++;
-      });
-
-      probChart.data.datasets[0].data = [high, med, low || 1];
-      probChart.update("none");
-
-      // Equity curve
-      const labels = [];
-      const data = [];
-      let running = 0;
-      trades.forEach((t, idx) => {
-        running += t.rrRealized || 0;
-        labels.push(idx + 1);
-        data.push(running);
-      });
-      equityChart.data.labels = labels;
-      equityChart.data.datasets[0].data = data;
-      equityChart.update("none");
-    }
-
-    // ------- Rendering -------
-
-    function renderStats() {
-      const trades = state.trades || [];
-
-      const total = trades.length;
-      const wins = trades.filter((t) => (t.rrRealized || 0) > 0).length;
-      const losses = trades.filter((t) => (t.rrRealized || 0) < 0).length;
-      const sumR = trades.reduce((acc, t) => acc + (t.rrRealized || 0), 0);
-      const winRate = total ? (wins / total) * 100 : 0;
-      const avgR = total ? sumR / total : 0;
-
-      state.runningEquity = sumR;
-
-      document.getElementById("winRateStat").textContent =
-        formatPercent(winRate);
-      document.getElementById("avgRStat").textContent = formatR(avgR);
-      document.getElementById("equityStat").textContent = formatR(sumR);
-      document.getElementById("totalTradesStat").textContent = total;
-
-      // Discipline aggregate
-      const avgDisc =
-        total > 0
-          ? trades.reduce((acc, t) => acc + (t.disciplineScore || 0), 0) /
-            total
-          : 0;
-      document.getElementById("disciplineStat").textContent = Math.round(
-        avgDisc
-      ).toString();
-      const labelEl = document.getElementById("disciplineLabel");
-      if (total === 0) {
-        labelEl.textContent = "No trades yet";
-      } else if (avgDisc >= 80) {
-        labelEl.textContent = "Elite discipline";
-      } else if (avgDisc >= 65) {
-        labelEl.textContent = "Solid execution";
-      } else if (avgDisc >= 50) {
-        labelEl.textContent = "Inconsistent – review rules";
-      } else {
-        labelEl.textContent = "Danger zone – slow down";
-      }
-
-      // Probability summary
-      const high = trades.filter((t) => t.probLabel === "High").length;
-      const low = trades.filter((t) => t.probLabel === "Low").length;
-      document.getElementById(
-        "probabilitySummary"
-      ).textContent = `${high} high • ${low} low`;
-
-      // Equity summary
-      document.getElementById(
-        "equitySummary"
-      ).textContent = `${formatR(sumR)} total`;
-    }
-
-    function renderTradesTable() {
-      const body = document.getElementById("tradesTableBody");
-      body.innerHTML = "";
-      const trades = state.trades || [];
-      let running = 0;
-
-      trades.forEach((t, idx) => {
-        running += t.rrRealized || 0;
-        const row = document.createElement("tr");
-
-        const probBadge =
-          t.probLabel === "High"
-            ? `<span class="pill-high">High</span>`
-            : t.probLabel === "Medium"
-            ? `<span class="pill-high" style="background:rgba(56,189,248,0.12);color:#bae6fd;">Medium</span>`
-            : `<span class="pill-low">Low</span>`;
-
-        row.innerHTML = `
-          <td>${idx + 1}</td>
-          <td>${t.date || ""}</td>
-          <td>${t.pair || ""}</td>
-          <td>${t.direction || ""}</td>
-          <td>${t.setup || ""}</td>
-          <td>${probBadge}</td>
-          <td>${Math.round((t.scorePercent || 0) * 100)}%</td>
-          <td>${t.rrPlanned ?? ""}</td>
-          <td>${t.rrRealized ?? ""}</td>
-          <td>${running.toFixed(2)}</td>
-          <td>${t.session || ""}</td>
-          <td>${t.emotion || ""}</td>
-          <td>${Math.round(t.disciplineScore || 0)}</td>
-        `;
-        body.appendChild(row);
-      });
-    }
-
-    function renderMistakes() {
-      const list = document.getElementById("mistakesList");
-      list.innerHTML = "";
-      const trades = state.trades || [];
-      const last = trades.slice(-30);
-      const buckets = aggregateMistakes(last);
-      const entries = Object.entries(buckets).sort((a, b) => b[1] - a[1]);
-      if (entries.length === 0) {
-        const li = document.createElement("li");
-        li.innerHTML = `<span>None yet</span><span class="mistakes-count">0</span>`;
-        list.appendChild(li);
-        return;
-      }
-      entries.forEach(([name, count]) => {
-        const li = document.createElement("li");
-        li.innerHTML = `<span>${name}</span><span class="mistakes-count">${count}</span>`;
-        list.appendChild(li);
-      });
-    }
-
-    function renderAll() {
-      renderStats();
-      renderTradesTable();
-      renderMistakes();
-      updateCharts();
-    }
-
-    // ------- Form handling -------
-
-    function getCheckedCriteria() {
-      const boxes = Array.from(
-        document.querySelectorAll(".crit-checkbox")
-      );
-      const weights = boxes.map((b) => Number(b.dataset.weight || "0"));
-      const usedWeights = boxes
-        .filter((b) => b.checked)
-        .map((b) => Number(b.dataset.weight || "0"));
-      const total = weights.reduce((a, b) => a + b, 0) || 1;
-      const met = usedWeights.reduce((a, b) => a + b, 0);
-      const percent = met / total;
-      return { totalWeight: total, metWeight: met, percent };
-    }
-
-    function clearForm() {
-      document.getElementById("dateInput").value = "";
-      document.getElementById("pairInput").value = "";
-      document.getElementById("directionInput").value = "";
-      document.getElementById("setupInput").value = "";
-      document.getElementById("riskInput").value = "";
-      document.getElementById("rrPlannedInput").value = "";
-      document.getElementById("rrRealizedInput").value = "";
-      document.getElementById("sessionInput").value = "";
-      document.getElementById("emotionInput").value = "";
-      document.getElementById("screenshotInput").value = "";
-      document.getElementById("notesInput").value = "";
-      document
-        .querySelectorAll(".crit-checkbox")
-        .forEach((cb) => (cb.checked = false));
-      document.getElementById("formInfo").textContent =
-        "Checklist score and probability will be calculated automatically.";
-    }
-
-    function addTradeFromForm() {
-      const date = document.getElementById("dateInput").value;
-      const pair = document.getElementById("pairInput").value.trim();
-      const direction = document.getElementById("directionInput").value;
-      const setup = document.getElementById("setupInput").value;
-      const risk = Number(document.getElementById("riskInput").value) || 0;
-      const rrPlanned =
-        Number(document.getElementById("rrPlannedInput").value) || 0;
-      const rrRealized =
-        Number(document.getElementById("rrRealizedInput").value) || 0;
-      const session = document.getElementById("sessionInput").value;
-      const emotion = document.getElementById("emotionInput").value;
-      const screenshot = document.getElementById("screenshotInput").value;
-      const notes = document.getElementById("notesInput").value;
-
-      if (!date || !pair || !direction || !setup) {
-        document.getElementById("formInfo").textContent =
-          "Please fill at least date, pair, direction & setup.";
-        return;
-      }
-
-      const crit = getCheckedCriteria();
-      const probLbl = probabilityLabel(crit.percent);
-      const disciplineScore = computeDisciplineScore({
-        rrPlanned,
-        rrRealized,
-        session,
-        emotion,
-        scorePercent: crit.percent,
-      });
-
-      const trade = {
-        id: Date.now(),
-        date,
-        pair,
-        direction,
-        setup,
-        risk,
-        rrPlanned,
-        rrRealized,
-        session,
-        emotion,
-        screenshot,
-        notes,
-        scorePercent: crit.percent,
-        totalCriteriaWeight: crit.totalWeight,
-        metCriteriaWeight: crit.metWeight,
-        probLabel: probLbl,
-        disciplineScore,
-      };
-
-      state.trades.push(trade);
-      saveState();
-      renderAll();
-
-      document.getElementById("formInfo").textContent =
-        `Trade added • Score: ${Math.round(
-          crit.percent * 100
-        )}% • Probability: ${probLbl}`;
-    }
-
-    // ------- Export / Import -------
-
-    function exportJson() {
-      const blob = new Blob([JSON.stringify(state, null, 2)], {
-        type: "application/json",
-      });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      const date = new Date().toISOString().slice(0, 10);
-      a.href = url;
-      a.download = `ali_trading_backup_${date}.json`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
-    }
-
-    function exportCsv() {
-      const trades = state.trades || [];
-      const header = [
-        "id",
-        "date",
-        "pair",
-        "direction",
-        "setup",
-        "probability",
-        "scorePercent",
-        "rrPlanned",
-        "rrRealized",
-        "session",
-        "emotion",
-        "disciplineScore",
-        "screenshot",
-        "notes",
-      ];
-      const rows = trades.map((t) =>
-        header
-          .map((key) => {
-            const v =
-              key === "probability" ? t.probLabel : t[key] ?? "";
-            const escaped =
-              typeof v === "string" && v.includes(",")
-                ? `"${v.replace(/"/g, '""')}"`
-                : v;
-            return escaped;
-          })
-          .join(",")
-      );
-      const csv = [header.join(","), ...rows].join("\n");
-      const blob = new Blob([csv], { type: "text/csv" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      const date = new Date().toISOString().slice(0, 10);
-      a.href = url;
-      a.download = `ali_trading_log_${date}.csv`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
-    }
-
-    function importJsonFromFile(file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        try {
-          const parsed = JSON.parse(e.target.result);
-          if (parsed && Array.isArray(parsed.trades)) {
-            state = parsed;
-            saveState();
-            renderAll();
-            alert("Session imported successfully.");
-          } else {
-            alert("Invalid file format – no trades array found.");
-          }
-        } catch (err) {
-          console.error(err);
-          alert("Could not parse JSON file.");
-        }
-      };
-      reader.readAsText(file);
-    }
-
-    // ------- PIN / Lock -------
-
-    function getPinHash() {
-      return localStorage.getItem(PIN_KEY);
-    }
-
-    function setPinHash(pin) {
-      // Not true crypto, but better than plain text; for offline use it's fine
-      const hash = btoa("ali_salt__" + pin);
-      localStorage.setItem(PIN_KEY, hash);
-    }
-
-    function checkPin(pin) {
-      const stored = getPinHash();
-      if (!stored) return false;
-      const hash = btoa("ali_salt__" + pin);
-      return stored === hash;
-    }
-
-    function resetPin() {
-      if (
-        confirm(
-          "Reset PIN and clear all stored data? This cannot be undone."
-        )
-      ) {
-        localStorage.removeItem(PIN_KEY);
-        localStorage.removeItem(STORAGE_KEY);
-        state = { trades: [], runningEquity: 0 };
-        location.reload();
-      }
-    }
-
-    function initPinOverlay() {
-      const overlay = document.getElementById("pinOverlay");
-      const app = document.getElementById("app");
-      const modeTag = document.getElementById("pinModeTag");
-      const subtitle = document.getElementById("pinSubtitle");
-      const label = document.getElementById("pinLabel");
-      const input = document.getElementById("pinInput");
-      const msg = document.getElementById("pinMessage");
-      const submitBtn = document.getElementById("pinSubmitBtn");
-      const resetBtn = document.getElementById("pinResetBtn");
-      const lockBtn = document.getElementById("lockBtn");
-
-      const hasPin = !!getPinHash();
-      let mode = hasPin ? "unlock" : "set";
-
-      if (mode === "unlock") {
-        modeTag.textContent = "Locked";
-        subtitle.textContent =
-          "Enter your PIN to unlock Ali's trading dashboard in this browser.";
-        label.textContent = "PIN";
-      } else {
-        modeTag.textContent = "First-time setup";
-        subtitle.textContent =
-          "Set a 4-digit PIN to protect your trading journal. This stays only on this device.";
-        label.textContent = "New PIN (4 digits)";
       }
 
       function unlock() {
-        overlay.classList.add("hidden");
-        app.style.display = "flex";
+        lockRoot.style.display = "none";
+        appRoot.style.display = "block";
       }
 
-      submitBtn.addEventListener("click", () => {
-        const pin = input.value.trim();
-        msg.classList.remove("error", "ok");
-        if (!pin || pin.length < 4) {
-          msg.textContent = "PIN should be at least 4 digits.";
-          msg.classList.add("error");
+      setupBtn.addEventListener("click", () => {
+        const v = (setupInput.value || "").trim();
+        if (v.length < 4) {
+          lockError.textContent = "PIN must be at least 4 digits.";
+          return;
+        }
+        localStorage.setItem(PIN_KEY, v);
+        setupInput.value = "";
+        lockError.textContent = "";
+        unlock();
+      });
+
+      loginBtn.addEventListener("click", () => {
+        const v = (loginInput.value || "").trim();
+        const stored = localStorage.getItem(PIN_KEY);
+        if (!stored) {
+          lockError.textContent = "No PIN stored. Use reset and set a new one.";
+          return;
+        }
+        if (v !== stored) {
+          lockError.textContent = "Incorrect PIN.";
+          return;
+        }
+        loginInput.value = "";
+        lockError.textContent = "";
+        unlock();
+      });
+
+      lockReset.addEventListener("click", () => {
+        if (
+          confirm(
+            "Reset PIN and clear all locally stored trades? This cannot be undone."
+          )
+        ) {
+          localStorage.removeItem(PIN_KEY);
+          localStorage.removeItem("aliTrades");
+          localStorage.removeItem("aliSettings");
+          window.location.reload();
+        }
+      });
+
+      lockBtn.addEventListener("click", () => {
+        showLock();
+      });
+
+      // on load
+      const stored = localStorage.getItem(PIN_KEY);
+      if (stored) {
+        showLock();
+      } else {
+        showLock();
+      }
+    })();
+
+    // ---------- TRADING LOG + DASHBOARD ----------
+    (function () {
+      const STORAGE_KEY = "aliTrades";
+      const SETTINGS_KEY = "aliSettings";
+
+      let trades = [];
+      let filteredTrades = [];
+
+      // Charts
+      let probChart, equityChart, probHistoryChart;
+
+      const autosaveStatus = document.getElementById("autosave-status");
+
+      // Inputs
+      const dateEl = document.getElementById("date");
+      const pairEl = document.getElementById("pair");
+      const directionEl = document.getElementById("direction");
+      const setupEl = document.getElementById("setup");
+      const riskEl = document.getElementById("risk");
+      const rrPlannedEl = document.getElementById("rr-planned");
+      const rrRealizedEl = document.getElementById("rr-realized");
+      const sessionEl = document.getElementById("session");
+      const emotionEl = document.getElementById("emotion");
+      const screenshotEl = document.getElementById("screenshot");
+      const tagsEl = document.getElementById("tags");
+      const notesEl = document.getElementById("notes");
+      const critChecks = Array.from(document.querySelectorAll(".crit-check"));
+      const criteriaSummary = document.getElementById("criteria-summary");
+
+      const addTradeBtn = document.getElementById("add-trade-btn");
+      const clearFormBtn = document.getElementById("clear-form-btn");
+
+      const winrateText = document.getElementById("winrate-text");
+      const winrateSub = document.getElementById("winrate-subtext");
+      const avgRText = document.getElementById("avgR-text");
+      const avgRSub = document.getElementById("avgR-subtext");
+      const discText = document.getElementById("disc-text");
+      const discSub = document.getElementById("disc-subtext");
+      const equitySummary = document.getElementById("equity-summary");
+
+      const probChartEl = document.getElementById("prob-chart");
+      const equityChartEl = document.getElementById("equity-chart");
+      const probHistoryChartEl = document.getElementById("prob-history-chart");
+
+      const tableBody = document.querySelector("#trades-table tbody");
+
+      const filterTextEl = document.getElementById("filter-text");
+      const filterProbEl = document.getElementById("filter-prob");
+      const filterFromEl = document.getElementById("filter-from");
+      const filterToEl = document.getElementById("filter-to");
+      const filterClearBtn = document.getElementById("filter-clear");
+
+      const mistakeListEl = document.getElementById("mistake-list");
+      const mistakeCountEl = document.getElementById("mistake-count");
+      const coachTextEl = document.getElementById("ai-coach-text");
+
+      const exportJsonBtn = document.getElementById("export-json-btn");
+      const exportCsvBtn = document.getElementById("export-csv-btn");
+      const importJsonInput = document.getElementById("import-json-input");
+
+      const notifyTelegramEl = document.getElementById("notify-telegram");
+      const tgTokenEl = document.getElementById("tg-token");
+      const tgChatEl = document.getElementById("tg-chat");
+
+      // --- Helpers ---
+      function loadTrades() {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return [];
+        try {
+          return JSON.parse(raw);
+        } catch (e) {
+          console.error("Failed to parse trades", e);
+          return [];
+        }
+      }
+
+      function saveTrades() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(trades));
+      }
+
+      function loadSettings() {
+        const raw = localStorage.getItem(SETTINGS_KEY);
+        if (!raw) return {};
+        try {
+          return JSON.parse(raw);
+        } catch (e) {
+          return {};
+        }
+      }
+
+      function saveSettings() {
+        const settings = {
+          notifyTelegram: notifyTelegramEl.checked,
+          tgToken: tgTokenEl.value,
+          tgChat: tgChatEl.value,
+        };
+        localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+      }
+
+      function updateCriteriaSummary() {
+        const max = critChecks.reduce(
+          (sum, c) => sum + Number(c.dataset.weight || 0),
+          0
+        );
+        const used = critChecks
+          .filter((c) => c.checked)
+          .reduce((sum, c) => sum + Number(c.dataset.weight || 0), 0);
+        criteriaSummary.textContent = `${used} / ${max} weighted points selected.`;
+      }
+
+      critChecks.forEach((c) =>
+        c.addEventListener("change", updateCriteriaSummary)
+      );
+      updateCriteriaSummary();
+
+      // Load initial data
+      trades = loadTrades();
+      filteredTrades = [...trades];
+
+      // Load settings
+      (function initSettings() {
+        const s = loadSettings();
+        if (s.notifyTelegram) notifyTelegramEl.checked = true;
+        if (s.tgToken) tgTokenEl.value = s.tgToken;
+        if (s.tgChat) tgChatEl.value = s.tgChat;
+      })();
+
+      notifyTelegramEl.addEventListener("change", saveSettings);
+      tgTokenEl.addEventListener("input", saveSettings);
+      tgChatEl.addEventListener("input", saveSettings);
+
+      // Autosave indicator
+      setInterval(() => {
+        saveTrades();
+        autosaveStatus.textContent = "Local session • Last autosave: " + new Date().toLocaleTimeString();
+      }, 10000);
+
+      // --- Metrics + probability ---
+      function getProbabilityLabel(score, maxScore) {
+        if (!maxScore) return "Low";
+        const pct = score / maxScore;
+        if (pct >= 0.8) return "High";
+        if (pct >= 0.5) return "Medium";
+        return "Low";
+      }
+
+      function calcDisciplineScore(trade) {
+        // Base is criteria percentage * 70
+        const base = (trade.criteriaScore / trade.criteriaMax) * 70;
+
+        let bonus = 0;
+        switch (trade.emotion) {
+          case "Calm":
+          case "Disciplined":
+            bonus += 15;
+            break;
+          case "Confident":
+            bonus += 10;
+            break;
+          case "Neutral":
+            bonus += 5;
+            break;
+          case "FOMO":
+            bonus -= 10;
+            break;
+          case "Fearful":
+            bonus -= 5;
+            break;
+          case "Revenge":
+            bonus -= 20;
+            break;
+        }
+
+        switch (trade.session) {
+          case "London":
+            bonus += 5;
+            break;
+          case "New York":
+            bonus += 5;
+            break;
+          case "Asia":
+            bonus -= 5;
+            break;
+        }
+
+        if (trade.tags && trade.tags.some((t) => t.toLowerCase().includes("overlap"))) {
+          bonus -= 10;
+        }
+
+        let score = base + bonus;
+        if (trade.Rrealized < -3) score -= 10;
+        if (!Number.isFinite(score)) score = 0;
+        return Math.max(0, Math.min(100, Math.round(score)));
+      }
+
+      // --- Coach feedback ---
+      function generateCoachFeedback(trade) {
+        const msgs = [];
+
+        if (trade.probabilityLabel === "Low" && trade.Rrealized > 0) {
+          msgs.push(
+            "You made money on a low-probability setup. Good outcome, but don't let this trick your brain into always taking lower quality trades."
+          );
+        }
+
+        if (trade.probabilityLabel === "Low" && trade.Rrealized <= 0) {
+          msgs.push(
+            "Loss on low-probability setup. That's expected. Tighten your selection and focus on A/B quality trades only."
+          );
+        }
+
+        if (trade.probabilityLabel === "High" && trade.Rrealized < 0) {
+          msgs.push(
+            "You took a high-quality setup that lost. This is normal. The edge plays out over many trades as long as the execution stays consistent."
+          );
+        }
+
+        if (trade.disciplineScore >= 80 && trade.Rrealized <= 0) {
+          msgs.push(
+            "High discipline on a losing trade. This is exactly the behavior that builds long-term growth. Reward yourself for following process, not outcome."
+          );
+        }
+
+        if (trade.disciplineScore < 50) {
+          msgs.push(
+            "Discipline score is low. Review which rules you skipped and why. Consider journaling the trigger that pulled you into this trade."
+          );
+        }
+
+        if (trade.emotion === "FOMO") {
+          msgs.push(
+            "You tagged this as FOMO. Ask: 'If I see this exact setup tomorrow, under my rules, would I still take it?' If not, it's outside your plan."
+          );
+        }
+
+        if (!msgs.length) {
+          msgs.push(
+            "Solid execution. Keep repeating this playbook and let the numbers compound. Your only job is to show up and follow the rules."
+          );
+        }
+
+        return msgs.join(" ");
+      }
+
+      // --- Telegram alert ---
+      async function sendTelegramAlert(trade) {
+        const enabled = notifyTelegramEl.checked;
+        if (!enabled) return;
+
+        const token = tgTokenEl.value.trim();
+        const chat = tgChatEl.value.trim();
+        if (!token || !chat) return;
+
+        const text =
+          `New trade logged:\n` +
+          `${trade.date} ${trade.pair} ${trade.direction}\n` +
+          `Setup: ${trade.setup}\n` +
+          `Planned R:R: ${trade.Rplanned}, Realized: ${trade.Rrealized}R\n` +
+          `Prob: ${trade.probabilityLabel}, Disc: ${trade.disciplineScore}`;
+
+        const url = `https://api.telegram.org/bot${token}/sendMessage`;
+        try {
+          await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ chat_id: chat, text }),
+          });
+        } catch (e) {
+          console.error("Telegram error", e);
+        }
+      }
+
+      // --- Rendering ---
+      function computeRunningR(tradesArr) {
+        let sum = 0;
+        return tradesArr.map((t) => {
+          sum += t.Rrealized;
+          return sum;
+        });
+      }
+
+      function renderTable(data) {
+        tableBody.innerHTML = "";
+        const running = computeRunningR(data);
+
+        data.forEach((t, idx) => {
+          const tr = document.createElement("tr");
+
+          const cells = [
+            idx + 1,
+            t.date || "",
+            t.pair || "",
+            t.direction || "",
+            t.setup || "",
+          ];
+
+          cells.forEach((v) => {
+            const td = document.createElement("td");
+            td.textContent = v;
+            tr.appendChild(td);
+          });
+
+          // Prob pill
+          const probTd = document.createElement("td");
+          const span = document.createElement("span");
+          span.classList.add("prob-pill");
+          span.textContent = t.probabilityLabel || "Low";
+          if (t.probabilityLabel === "High") span.classList.add("prob-high");
+          else if (t.probabilityLabel === "Medium")
+            span.classList.add("prob-medium");
+          else span.classList.add("prob-low");
+          probTd.appendChild(span);
+          tr.appendChild(probTd);
+
+          const scoreTd = document.createElement("td");
+          const pct = t.criteriaMax
+            ? Math.round((t.criteriaScore / t.criteriaMax) * 100)
+            : 0;
+          scoreTd.textContent = `${pct}%`;
+          tr.appendChild(scoreTd);
+
+          const plannedTd = document.createElement("td");
+          plannedTd.textContent = t.Rplanned != null ? t.Rplanned.toFixed(1) : "";
+          tr.appendChild(plannedTd);
+
+          const realizedTd = document.createElement("td");
+          realizedTd.textContent =
+            t.Rrealized != null ? t.Rrealized.toFixed(2) : "";
+          tr.appendChild(realizedTd);
+
+          const runTd = document.createElement("td");
+          runTd.textContent = running[idx].toFixed(2);
+          tr.appendChild(runTd);
+
+          const sessionTd = document.createElement("td");
+          sessionTd.textContent = t.session || "";
+          tr.appendChild(sessionTd);
+
+          const emoTd = document.createElement("td");
+          emoTd.textContent = t.emotion || "";
+          tr.appendChild(emoTd);
+
+          const discTd = document.createElement("td");
+          discTd.textContent =
+            t.disciplineScore != null ? t.disciplineScore.toString() : "";
+          tr.appendChild(discTd);
+
+          const tagsTd = document.createElement("td");
+          tagsTd.textContent = (t.tags || []).join(", ");
+          tr.appendChild(tagsTd);
+
+          tableBody.appendChild(tr);
+        });
+      }
+
+      function updateSummaryCards(data) {
+        const total = data.length;
+        if (!total) {
+          winrateText.textContent = "0.0%";
+          winrateSub.textContent = "0 trades";
+          avgRText.textContent = "0.00R";
+          avgRSub.textContent = "Equity: 0.00R";
+          discText.textContent = "0";
+          discSub.textContent = "No trades yet";
+          equitySummary.textContent = "0.00R total";
           return;
         }
 
-        if (mode === "set") {
-          setPinHash(pin);
-          msg.textContent = "PIN saved. Unlocking…";
-          msg.classList.add("ok");
-          setTimeout(unlock, 400);
-        } else {
-          if (checkPin(pin)) {
-            msg.textContent = "Unlocked.";
-            msg.classList.add("ok");
-            setTimeout(unlock, 200);
-          } else {
-            msg.textContent = "Incorrect PIN.";
-            msg.classList.add("error");
-          }
-        }
-      });
+        const wins = data.filter((t) => t.Rrealized > 0).length;
+        const winrate = (wins / total) * 100;
+        const avgR =
+          data.reduce((sum, t) => sum + (t.Rrealized || 0), 0) / total;
+        const equity = data.reduce((sum, t) => sum + (t.Rrealized || 0), 0);
+        const avgDisc =
+          data.reduce((sum, t) => sum + (t.disciplineScore || 0), 0) / total;
 
-      input.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") submitBtn.click();
-      });
+        winrateText.textContent = winrate.toFixed(1) + "%";
+        winrateSub.textContent = `${total} trade${total === 1 ? "" : "s"}`;
+        avgRText.textContent = avgR.toFixed(2) + "R";
+        avgRSub.textContent = "Equity: " + equity.toFixed(2) + "R";
+        discText.textContent = Math.round(avgDisc).toString();
+        discSub.textContent = "Avg. discipline score";
+        equitySummary.textContent = equity.toFixed(2) + "R total";
+      }
 
-      resetBtn.addEventListener("click", resetPin);
-
-      lockBtn.addEventListener("click", () => {
-        app.style.display = "none";
-        overlay.classList.remove("hidden");
-        modeTag.textContent = "Locked";
-        subtitle.textContent =
-          "Enter your PIN to unlock Ali's trading dashboard in this browser.";
-        label.textContent = "PIN";
-        mode = "unlock";
-        input.value = "";
-        msg.textContent = "";
-      });
-    }
-
-    // ------- Init -------
-
-    document.addEventListener("DOMContentLoaded", () => {
-      loadState();
-      initCharts();
-      renderAll();
-      initPinOverlay();
-
-      // Auto-backup indicator
-      const sessionInfo = document.getElementById("sessionInfo");
-      sessionInfo.textContent = "Local session • Auto-backup every 10s";
-
-      // Auto backup every 10 seconds
-      setInterval(saveState, 10000);
-
-      // Buttons
-      document
-        .getElementById("addTradeBtn")
-        .addEventListener("click", addTradeFromForm);
-      document
-        .getElementById("clearFormBtn")
-        .addEventListener("click", clearForm);
-      document
-        .getElementById("exportJsonBtn")
-        .addEventListener("click", exportJson);
-      document
-        .getElementById("exportCsvBtn")
-        .addEventListener("click", exportCsv);
-      document
-        .getElementById("importJsonBtn")
-        .addEventListener("click", () =>
-          document.getElementById("importFileInput").click()
-        );
-      document
-        .getElementById("importFileInput")
-        .addEventListener("change", (e) => {
-          const file = e.target.files[0];
-          if (file) importJsonFromFile(file);
-          e.target.value = "";
+      function updateProbChart(data) {
+        const counts = { High: 0, Medium: 0, Low: 0 };
+        data.forEach((t) => {
+          counts[t.probabilityLabel || "Low"]++;
         });
 
-      // Pre-fill today's date
-      const today = new Date().toISOString().slice(0, 10);
-      document.getElementById("dateInput").value = today;
-    });
+        const values = [counts.High, counts.Medium, counts.Low];
+
+        if (probChart) probChart.destroy();
+        probChart = new Chart(probChartEl, {
+          type: "doughnut",
+          data: {
+            labels: ["High", "Medium", "Low"],
+            datasets: [
+              {
+                data: values,
+                backgroundColor: ["#22c55e", "#facc15", "#f97316"],
+                borderWidth: 0,
+              },
+            ],
+          },
+          options: {
+            cutout: "65%",
+            plugins: {
+              legend: {
+                display: false,
+              },
+            },
+          },
+        });
+      }
+
+      function updateEquityChart(data) {
+        const labels = data.map((t, i) => "#" + (i + 1));
+        const equity = computeRunningR(data);
+
+        if (equityChart) equityChart.destroy();
+        equityChart = new Chart(equityChartEl, {
+          type: "line",
+          data: {
+            labels,
+            datasets: [
+              {
+                label: "Equity (R)",
+                data: equity,
+                tension: 0.25,
+                pointRadius: 3,
+              },
+            ],
+          },
+          options: {
+            plugins: {
+              legend: { display: false },
+            },
+            scales: {
+              x: {
+                display: true,
+                ticks: { maxRotation: 0 },
+              },
+              y: {
+                display: true,
+              },
+            },
+          },
+        });
+      }
+
+      function updateProbHistoryChart(data) {
+        const sorted = [...data].sort((a, b) =>
+          (a.date || "").localeCompare(b.date || "")
+        );
+        const labels = sorted.map((t, i) => "#" + (i + 1));
+        const values = sorted.map((t) => {
+          if (t.probabilityLabel === "High") return 3;
+          if (t.probabilityLabel === "Medium") return 2;
+          return 1;
+        });
+
+        if (probHistoryChart) probHistoryChart.destroy();
+        probHistoryChart = new Chart(probHistoryChartEl, {
+          type: "line",
+          data: {
+            labels,
+            datasets: [
+              {
+                label: "Probability level",
+                data: values,
+                tension: 0.3,
+                pointRadius: 4,
+              },
+            ],
+          },
+          options: {
+            plugins: { legend: { display: false } },
+            scales: {
+              y: {
+                min: 1,
+                max: 3,
+                ticks: {
+                  stepSize: 1,
+                  callback: (v) =>
+                    ({ 1: "Low", 2: "Med", 3: "High" }[v] || v),
+                },
+              },
+            },
+          },
+        });
+      }
+
+      function updateMistakes(data) {
+        if (!data.length) {
+          mistakeListEl.textContent =
+            "No mistakes logged yet. Tag emotions & write notes to see patterns.";
+          mistakeCountEl.textContent = "None yet";
+          return;
+        }
+
+        const map = {};
+        data.forEach((t) => {
+          const emo = (t.emotion || "").toLowerCase();
+          if (!emo) return;
+          map[emo] = (map[emo] || 0) + 1;
+        });
+
+        const entries = Object.entries(map)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 5);
+
+        if (!entries.length) {
+          mistakeListEl.textContent =
+            "No emotion tags yet. Start tagging to see behaviour patterns.";
+          mistakeCountEl.textContent = "0";
+          return;
+        }
+
+        mistakeCountEl.textContent = `${entries.length} emotions`;
+        mistakeListEl.innerHTML = entries
+          .map(
+            ([emo, count]) =>
+              `<div>${emo} <span style="color:var(--text-soft);">• ${count} trade(s)</span></div>`
+          )
+          .join("");
+      }
+
+      function applyFilters() {
+        const text = filterTextEl.value.trim().toLowerCase();
+        const prob = filterProbEl.value;
+        const from = filterFromEl.value;
+        const to = filterToEl.value;
+
+        filteredTrades = trades.filter((t) => {
+          const haystack = [
+            t.pair,
+            t.setup,
+            t.emotion,
+            t.session,
+            t.notes,
+            (t.tags || []).join(" "),
+          ]
+            .join(" ")
+            .toLowerCase();
+
+          if (text && !haystack.includes(text)) return false;
+
+          if (prob && t.probabilityLabel !== prob) return false;
+
+          if (from && (!t.date || t.date < from)) return false;
+          if (to && (!t.date || t.date > to)) return false;
+
+          return true;
+        });
+
+        renderAll();
+      }
+
+      function renderAll() {
+        renderTable(filteredTrades);
+        updateSummaryCards(filteredTrades);
+        updateProbChart(filteredTrades);
+        updateEquityChart(filteredTrades);
+        updateProbHistoryChart(filteredTrades);
+        updateMistakes(filteredTrades);
+      }
+
+      filterTextEl.addEventListener("input", applyFilters);
+      filterProbEl.addEventListener("change", applyFilters);
+      filterFromEl.addEventListener("change", applyFilters);
+      filterToEl.addEventListener("change", applyFilters);
+      filterClearBtn.addEventListener("click", () => {
+        filterTextEl.value = "";
+        filterProbEl.value = "";
+        filterFromEl.value = "";
+        filterToEl.value = "";
+        filteredTrades = [...trades];
+        renderAll();
+      });
+
+      // Initial render
+      filteredTrades = [...trades];
+      renderAll();
+
+      // Date default today
+      if (!dateEl.value) {
+        const today = new Date().toISOString().slice(0, 10);
+        dateEl.value = today;
+      }
+
+      function clearForm() {
+        pairEl.value = "";
+        directionEl.value = "";
+        setupEl.value = "";
+        riskEl.value = "";
+        rrPlannedEl.value = "";
+        rrRealizedEl.value = "";
+        sessionEl.value = "";
+        emotionEl.value = "";
+        screenshotEl.value = "";
+        tagsEl.value = "";
+        notesEl.value = "";
+        critChecks.forEach((c) => (c.checked = false));
+        updateCriteriaSummary();
+      }
+
+      clearFormBtn.addEventListener("click", clearForm);
+
+      addTradeBtn.addEventListener("click", () => {
+        const date = dateEl.value || new Date().toISOString().slice(0, 10);
+        const pair = pairEl.value.trim();
+        const direction = directionEl.value;
+        const setup = setupEl.value;
+        const risk = Number(riskEl.value) || 0;
+        const Rplanned = Number(rrPlannedEl.value) || 0;
+        const Rrealized = Number(rrRealizedEl.value) || 0;
+        const session = sessionEl.value;
+        const emotion = emotionEl.value;
+        const screenshot = screenshotEl.value.trim();
+        const tags = tagsEl.value
+          .split(",")
+          .map((t) => t.trim())
+          .filter(Boolean);
+        const notes = notesEl.value.trim();
+
+        const criteriaMax = critChecks.reduce(
+          (sum, c) => sum + Number(c.dataset.weight || 0),
+          0
+        );
+        const criteriaScore = critChecks
+          .filter((c) => c.checked)
+          .reduce((sum, c) => sum + Number(c.dataset.weight || 0), 0);
+
+        const probabilityLabel = getProbabilityLabel(criteriaScore, criteriaMax);
+
+        const trade = {
+          id: Date.now(),
+          date,
+          pair,
+          direction,
+          setup,
+          risk,
+          Rplanned,
+          Rrealized,
+          session,
+          emotion,
+          screenshot,
+          tags,
+          notes,
+          criteriaScore,
+          criteriaMax,
+          probabilityLabel,
+        };
+
+        trade.disciplineScore = calcDisciplineScore(trade);
+
+        trades.push(trade);
+        saveTrades();
+
+        filteredTrades = [...trades];
+        renderAll();
+
+        if (coachTextEl) {
+          coachTextEl.textContent = generateCoachFeedback(trade);
+        }
+
+        sendTelegramAlert(trade);
+
+        clearForm();
+      });
+
+      // --- Export / Import ---
+      exportJsonBtn.addEventListener("click", () => {
+        const blob = new Blob([JSON.stringify(trades, null, 2)], {
+          type: "application/json",
+        });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "ali_trading_journal.json";
+        a.click();
+        URL.revokeObjectURL(url);
+      });
+
+      exportCsvBtn.addEventListener("click", () => {
+        const headers = [
+          "date",
+          "pair",
+          "direction",
+          "setup",
+          "probabilityLabel",
+          "criteriaScore",
+          "criteriaMax",
+          "Rplanned",
+          "Rrealized",
+          "session",
+          "emotion",
+          "disciplineScore",
+          "tags",
+          "notes",
+        ];
+
+        const rows = trades.map((t) =>
+          headers
+            .map((h) => {
+              let v = t[h];
+              if (h === "tags") v = (t.tags || []).join(";");
+              if (v == null) v = "";
+              const s = String(v).replace(/"/g, '""');
+              return `"${s}"`;
+            })
+            .join(",")
+        );
+
+        const csv = [headers.join(","), ...rows].join("\n");
+        const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "ali_trading_journal.csv";
+        a.click();
+        URL.revokeObjectURL(url);
+      });
+
+      importJsonInput.addEventListener("change", (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+          try {
+            const data = JSON.parse(evt.target.result);
+            if (!Array.isArray(data)) throw new Error("Invalid JSON");
+            trades = data;
+            saveTrades();
+            filteredTrades = [...trades];
+            renderAll();
+            alert("Trades imported successfully.");
+          } catch (err) {
+            alert("Failed to import JSON: " + err.message);
+          }
+        };
+        reader.readAsText(file);
+        importJsonInput.value = "";
+      });
+    })();
   </script>
 </body>
 </html>
-upgrade v2
+{
+  "name": "Ali's Trading System",
+  "short_name": "Ali Trading",
+  "start_url": "/ali-trading-dashboard/",
+  "display": "standalone",
+  "background_color": "#020617",
+  "theme_color": "#020617",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
+const CACHE_NAME = "ali-trading-cache-v1";
+const OFFLINE_URLS = ["/ali-trading-dashboard/"];
+
+self.addEventListener("install", (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(OFFLINE_URLS))
+  );
+});
+
+self.addEventListener("fetch", (event) => {
+  event.respondWith(
+    caches.match(event.request).then((res) => res || fetch(event.request))
+  );
+});
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("sw.js").catch(console.error);
+}
