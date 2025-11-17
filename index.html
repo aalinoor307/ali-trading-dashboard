@@ -635,8 +635,11 @@
     {id:"flip-entry",label:"Wick first, then flip entry",description:"Classic flip entry behaviour",weight:2}
   ];
   const checklistInputs = [];
+
   function renderChecklist(){
     checklistContainer.innerHTML="";
+    checklistInputs.length = 0; // just in case
+
     checklistRules.forEach(rule=>{
       const wrapper=document.createElement("label");
       wrapper.className="rule-chip";
@@ -647,6 +650,7 @@
       const cb=document.createElement("input");
       cb.type="checkbox";
       cb.dataset.weight=String(rule.weight);
+      cb.dataset.ruleId=rule.id;              // <--- link checkbox to rule
       cb.style.marginRight="4px";
       right.appendChild(cb);
       const wSpan=document.createElement("span");
@@ -659,18 +663,57 @@
     });
     checklistInputs.forEach(cb=>cb.addEventListener("change",updateChecklistScore));
   }
+
+  // --------- per-setup probability scoring ----------
   function updateChecklistScore(){
+    // 1) Base score (for discipline) – sum of weights of all checked rules
     let score=0;
     checklistInputs.forEach(cb=>{
       if(cb.checked) score+=parseNumber(cb.dataset.weight);
     });
     const maxScore=checklistRules.reduce((s,r)=>s+r.weight,0);
-    checklistScoreLabel.textContent=`${score} / ${maxScore} pts`;
+
+    // 2) Determine which rules belong to the current setup
+    const setupText=(tradeSetupInput.value||"").toLowerCase();
+
+    let relevantIds=[];
+    if(setupText.includes("momentum")){
+      // ENTRY WITH MOMENTUM: clean close + no flat / no-wick + no long wick against direction
+      relevantIds=["clean-close","no-flat","no-against-wick"];
+    }else if(
+      setupText.includes("close above/below") ||
+      setupText.includes("close above") ||
+      setupText.includes("close below")
+    ){
+      // CLOSE ABOVE/BELOW: not after huge candle + wick first + no flat / no-wick
+      relevantIds=["no-exhaustion","flip-entry","no-flat"];
+    }else{
+      // Any other setup → use all rules as fallback
+      relevantIds=checklistRules.map(r=>r.id);
+    }
+
+    let relevantMet=0;
+    const totalRelevant=relevantIds.length;
+
+    relevantIds.forEach(id=>{
+      const cb=checklistInputs.find(input=>input.dataset.ruleId===id);
+      if(cb && cb.checked) relevantMet++;
+    });
+
+    const ratio = totalRelevant ? relevantMet/totalRelevant : 0;
+    const percent = Math.round(ratio*100);
+
+    // 3) Map ratio -> probability label
     let label="Low",cls="prob-low";
-    if(score>=maxScore*0.75){label="High";cls="prob-high";}
-    else if(score>=maxScore*0.4){label="Medium";cls="prob-medium";}
+    if(ratio>=0.9){label="High";cls="prob-high";}
+    else if(ratio>=0.6){label="Medium";cls="prob-medium";}
+
+    // 4) Update UI
+    checklistScoreLabel.textContent=`${score} / ${maxScore} pts (${percent}%)`;
     probabilityPill.textContent=label;
     probabilityPill.className=`probability-pill ${cls}`;
+
+    // Return both raw score (for discipline) and probability label (for trade log)
     return {score,probLabel:label};
   }
 
@@ -691,9 +734,7 @@
     data:{labels:[],datasets:[{label:"Equity R",data:[],
       borderColor:"rgba(245,194,75,.95)",backgroundColor:"rgba(245,194,75,.3)",
       borderWidth:2,tension:.25,pointRadius:2}]},
-    options:{plugins:{legend:{labels:{color:"#e5e7eb",font:{size:11}}}},
-      scales:{x:{ticks:{color:"#9ca3af",font:{size:10}},grid:{color:"rgba(148,163,184,.12)"}},
-              y:{ticks:{color:"#9ca3af",font:{size:10}},grid:{color:"rgba(148,163,184,.12)"}}}}
+    options:{plugins:{legend:{labels:{color:"#e5e7eb",font:{size:11}}}}},
   });
 
   // --------- balances ----------
@@ -841,7 +882,7 @@
     }
     disciplineEl.textContent=disciplineScore;
 
-    // PnL & balances (money FIX)
+    // PnL & balances (money)
     const starting=getStartingBalance();
     let totalPnLMoney=0;
     trades.forEach(t=>totalPnLMoney+=t.pnlMoney);
