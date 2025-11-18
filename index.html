@@ -2,55 +2,47 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>TredLog – Smart Trading Journal & Performance Analytics</title>
+  <title>TredLog • Trading Journal & PnL Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#202617" />
 
-  <!-- SEO -->
-  <meta name="description" content="Track your trades, analyze performance, and improve your discipline with TredLog — a modern trading journal with advanced analytics, strategy tagging, calendar stats and broker sync-ready CSV import." />
-  <meta name="robots" content="index,follow" />
-  <meta name="keywords" content="trading journal, trade log, TredLog, forex journal, prop firm trading, trade tracker, trading analytics" />
+  <!-- Basic SEO -->
+  <meta name="description" content="TredLog is Ali's probability-based trading journal for tracking setups, R-multiples, PnL and discipline in one elegant web dashboard." />
+  <meta name="keywords" content="tredlog, trading journal, forex journal, trade log, PnL tracker, R multiple, Ali's trading system" />
+  <meta name="author" content="Ali Noor" />
+  <link rel="canonical" href="https://tredlog.com/" />
 
-  <!-- Open Graph / Social -->
+  <!-- Open Graph / Social Preview -->
+  <meta property="og:title" content="TredLog • Trading Journal & PnL Dashboard" />
+  <meta property="og:description" content="Log trades, track R-multiples and PnL, and get structured feedback on probability and discipline." />
+  <meta property="og:url" content="https://tredlog.com/" />
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="TredLog – Smart Trading Journal & Performance Analytics" />
-  <meta property="og:description" content="Log trades, track PnL in R and USD, see your calendar PnL, and sharpen your edge with a disciplined trading journal built for prop traders." />
-  <meta property="og:url" content="https://tredlog.com" />
-  <meta property="og:site_name" content="TredLog" />
+  <!-- Replace with your real social preview image when you have one -->
+  <meta property="og:image" content="https://tredlog.com/social-preview.png" />
 
-  <!-- Favicon (inline SVG) -->
-  <link
-    rel="icon"
-    type="image/svg+xml"
-    href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Crect%20width='64'%20height='64'%20rx='14'%20ry='14'%20fill='%23111322'/%3E%3Ctext%20x='50%25'%20y='54%25'%20text-anchor='middle'%20font-size='34'%20fill='%23f5c24b'%20font-family='Inter,system-ui,sans-serif'%3ET%3C/text%3E%3C/svg%3E"
-  />
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="TredLog • Trading Journal & PnL Dashboard" />
+  <meta name="twitter:description" content="A clean trading journal for probability, R & PnL, and behaviour tracking." />
+  <meta name="twitter:image" content="https://tredlog.com/social-preview.png" />
+
+  <!-- Favicon (upload favicon.ico and/or favicon.png to the repo root) -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
 
   <!-- Fonts & Chart.js -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  <!-- Analytics (replace IDs to activate) -->
-  <!-- Google Analytics 4 -->
+  <!-- Google Analytics (replace G-XXXXXXXXXX with your real Measurement ID) -->
+  <!-- If you don't have GA yet, you can leave this as-is or comment it out. -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-XXXXXXXXXX'); // TODO: replace with your GA4 ID
+    function gtag(){ dataLayer.push(arguments); }
+    gtag("js", new Date());
+    gtag("config", "G-XXXXXXXXXX");
   </script>
-
-  <!-- Microsoft Clarity -->
-  <script type="text/javascript">
-    (function(c,l,a,r,i,t,y){
-      c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-      t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-      y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-    })(window, document, "clarity", "script", "YOUR_CLARITY_ID"); // TODO: replace with Clarity ID or remove
-  </script>
-
-  <!-- Plausible Analytics -->
-  <!-- Remove if you don't use Plausible -->
-  <script defer data-domain="tredlog.com" src="https://plausible.io/js/script.js"></script>
 
   <style>
     :root{
@@ -87,24 +79,18 @@
       flex-wrap:wrap;
       margin-bottom:16px;
     }
-    .app-logo{
+    .app-header-left{
       display:flex;
       align-items:center;
       gap:10px;
     }
-    .logo-mark{
-      width:34px;
-      height:34px;
-      border-radius:14px;
-      background:radial-gradient(circle at 30% 10%,#fde68a 0,#f59e0b 35%,#92400e 100%);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-weight:700;
-      color:#111322;
-      font-size:16px;
-      box-shadow:0 12px 28px rgba(0,0,0,.7);
-      letter-spacing:.06em;
+    .app-logo{
+      width:32px;
+      height:32px;
+      border-radius:10px;
+      object-fit:contain;
+      background:rgba(0,0,0,.35);
+      border:1px solid rgba(255,255,255,.18);
     }
     .app-title{font-size:20px;font-weight:700;}
     .app-subtitle{font-size:12px;color:var(--muted);}
@@ -337,87 +323,36 @@
     .cal-negative{color:var(--danger);}
     .cal-trades{font-size:9px;color:var(--muted);}
 
-    /* Password gate */
-    .password-gate{
-      position:fixed;
-      inset:0;
-      background:radial-gradient(circle at top,#020617 0,#02040b 60%);
+    /* Footer */
+    .site-footer{
+      max-width:1440px;
+      margin:0 auto 32px;
+      padding:0 16px;
+      font-size:11px;
+      color:var(--muted);
       display:flex;
-      align-items:center;
-      justify-content:center;
-      z-index:9999;
-      opacity:1;
-      transition:opacity .25s ease;
+      justify-content:space-between;
+      gap:8px;
+      flex-wrap:wrap;
     }
-    .password-card{
-      background:rgba(10,12,28,.98);
-      border-radius:18px;
-      padding:24px 22px;
-      max-width:360px;
-      width:90%;
-      border:1px solid var(--border);
-      box-shadow:0 26px 60px rgba(0,0,0,.85);
-      text-align:left;
-    }
-    .password-title{
-      font-size:16px;
-      font-weight:600;
-      margin-bottom:6px;
-    }
-    .password-sub{
-      font-size:12px;
-      color:var(--muted);
-      margin-bottom:14px;
-    }
-    .password-card input{
-      margin-bottom:10px;
-    }
-    .password-error{
-      font-size:11px;
-      color:var(--danger);
-      min-height:14px;
-    }
-
-    /* Simple footer */
-    .footer{
-      margin-top:18px;
-      font-size:11px;
-      color:var(--muted);
-      text-align:right;
-    }
-    .footer a{
-      color:var(--accent);
-      text-decoration:none;
-    }
-    .footer a:hover{text-decoration:underline;}
+    .site-footer a{color:var(--accent);text-decoration:none;}
+    .site-footer a:hover{text-decoration:underline;}
   </style>
 </head>
 <body>
 
-<!-- Password gate (front-end only). Change password in JS or set to "" to disable -->
-<div id="password-gate" class="password-gate">
-  <div class="password-card">
-    <div class="password-title">Enter dashboard password</div>
-    <p class="password-sub">
-      This TredLog trading journal is private. Enter your access password to continue.
-    </p>
-    <input id="password-input" type="password" placeholder="Password" />
-    <button id="password-submit" class="btn" style="width:100%;justify-content:center;">Unlock</button>
-    <div id="password-error" class="password-error"></div>
-  </div>
-</div>
-
 <div class="app-shell">
   <header class="app-header">
-    <div class="app-logo">
-      <div class="logo-mark">TL</div>
+    <div class="app-header-left">
+      <!-- Replace /logo.png with your own logo file -->
+      <img src="/logo.png" alt="TredLog logo" class="app-logo" />
       <div>
-        <div class="app-title">TredLog – Ali's Trading System</div>
+        <div class="app-title">TredLog • Ali's Trading System</div>
         <div class="app-subtitle">Probabilities • Discipline • R &amp; PnL • Web-based execution journal</div>
       </div>
     </div>
     <div class="pill">
-      <span class="pill-dot"></span> Local session • Data stored in your browser • Contact: <a href="mailto:admin@tredlog.com" style="color:var(--accent);text-decoration:none;">admin@tredlog.com</a>
+      <span class="pill-dot"></span> Local session • Data stored in your browser
     </div>
   </header>
 
@@ -480,4 +415,768 @@
           </div>
           <div>
             <label>R:R planned</label>
-            <input id="trade-r-planned" type
+            <input id="trade-r-planned" type="number" step="0.1" placeholder="e.g. 2.5" />
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div>
+            <label>R realized</label>
+            <input id="trade-r-realized" type="number" step="0.1" placeholder="e.g. 1.8 or -1" />
+          </div>
+          <div>
+            <label>Session</label>
+            <select id="trade-session">
+              <option value="">Select</option>
+              <option value="London">London</option>
+              <option value="New York">New York</option>
+              <option value="Asia">Asia</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div>
+            <label>Emotion tag</label>
+            <select id="trade-emotion">
+              <option value="">Select</option>
+              <option value="Calm">Calm</option>
+              <option value="Disciplined">Disciplined</option>
+              <option value="Confident">Confident</option>
+              <option value="Neutral">Neutral</option>
+              <option value="FOMO">FOMO</option>
+              <option value="Fearful">Fearful</option>
+              <option value="Revenge">Revenge</option>
+            </select>
+          </div>
+          <div>
+            <label>Screenshot / chart link</label>
+            <input id="trade-screenshot" type="text" placeholder="Paste TradingView / chart link" />
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div>
+            <label>Tags (comma-separated)</label>
+            <input id="trade-tags" type="text" placeholder="London open, A+, news" />
+          </div>
+          <div>
+            <label>Timeframe</label>
+            <input id="trade-timeframe" type="text" placeholder="4H/M15" />
+          </div>
+        </div>
+
+        <div>
+          <label>Journal notes</label>
+          <textarea id="trade-notes" placeholder="What did you do well? What can you improve?"></textarea>
+        </div>
+      </div>
+
+      <!-- Checklist -->
+      <div>
+        <div class="card-header" style="padding:0;margin-bottom:4px;">
+          <div class="card-title">Weighted checklist</div>
+          <div class="card-sub">Tick only what was actually met.</div>
+        </div>
+        <div id="checklist-container" class="checklist-grid"></div>
+        <div class="checklist-summary">
+          <div>
+            <span id="checklist-score-label">0 / 10 pts</span>
+            <span style="margin-left:6px;font-size:10px;color:var(--muted)">Higher score → higher probability.</span>
+          </div>
+          <div id="probability-pill" class="probability-pill prob-low">Low</div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:8px;justify-content:space-between;">
+        <button id="btn-add-trade" class="btn" style="flex:1;">+ Add trade to log</button>
+        <button id="btn-export-json" class="btn-secondary btn">Export JSON</button>
+        <button id="btn-import-json" class="btn-secondary btn">Import JSON</button>
+      </div>
+    </section>
+
+    <!-- RIGHT: DASHBOARD + CALENDAR + LOG -->
+    <section class="space-y-8">
+
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Dashboard</div>
+            <div class="card-sub">Probability, PnL, behaviour tracking &amp; calendar.</div>
+          </div>
+        </div>
+
+        <div class="stat-grid">
+          <div class="stat-card">
+            <div class="stat-label">Win rate</div>
+            <div id="stat-winrate" class="stat-main">0.0%</div>
+            <div id="stat-trade-count" class="stat-sub">0 trades</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Avg R (realized)</div>
+            <div id="stat-avg-r" class="stat-main">0.00R</div>
+            <div id="stat-equity-r" class="stat-sub">Equity: 0.00R</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Discipline score</div>
+            <div id="stat-discipline" class="stat-main">0</div>
+            <div class="stat-sub">Checklist score (0–100)</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Total PnL &amp; balance</div>
+            <div id="stat-total-pnl" class="stat-main green">0.00R • 0.00</div>
+            <div id="stat-account-balance" class="stat-sub">Balance: 0.00</div>
+          </div>
+        </div>
+
+        <div class="charts-grid">
+          <div class="card" style="padding:10px 12px;">
+            <div class="stat-label">High vs medium vs low probability</div>
+            <canvas id="probability-chart" height="150"></canvas>
+          </div>
+          <div class="card" style="padding:10px 12px;">
+            <div class="stat-label">Equity curve (R)</div>
+            <canvas id="equity-chart" height="150"></canvas>
+          </div>
+        </div>
+
+        <div class="calendar-wrap">
+          <div class="calendar-header">
+            <div>
+              <span class="stat-label">Calendar view</span><br />
+              <span style="font-size:10px;color:var(--muted);">
+                Daily PnL (money) &amp; trade count.
+              </span>
+            </div>
+            <div style="display:flex;gap:6px;align-items:center;">
+              <button id="cal-prev" class="btn-secondary btn" style="padding:4px 8px;font-size:10px;">◀</button>
+              <span id="cal-month-label" style="font-size:11px;"></span>
+              <button id="cal-next" class="btn-secondary btn" style="padding:4px 8px;font-size:10px;">▶</button>
+            </div>
+          </div>
+          <div class="calendar-grid" id="calendar-grid">
+            <!-- days injected here -->
+          </div>
+        </div>
+
+        <div class="coach-box">
+          <div class="coach-heading">Coach's feedback</div>
+          <div id="coach-feedback-text">
+            No trades logged yet. Use the checklist and emotion tags every time to build consistent data. The more structured the journal, the sharper your edge.
+          </div>
+        </div>
+      </div>
+
+      <!-- Trade log -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Trade log</div>
+            <div class="card-sub">All trades with PnL, balance and tags.</div>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Date</th>
+                <th>Pair</th>
+                <th>Dir</th>
+                <th>Setup</th>
+                <th>Prob</th>
+                <th>Score</th>
+                <th>R planned</th>
+                <th>R realized</th>
+                <th>PnL (R)</th>
+                <th>PnL ($)</th>
+                <th>Balance</th>
+                <th>Session</th>
+                <th>Emotion</th>
+                <th>Tags</th>
+              </tr>
+            </thead>
+            <tbody id="trade-log-body"></tbody>
+          </table>
+        </div>
+
+        <div class="toolbar">
+          <button id="btn-export-csv" class="btn-secondary btn">Export CSV</button>
+          <label class="btn-secondary btn" style="cursor:pointer;">
+            Import CSV
+            <input id="csv-input" type="file" accept=".csv" style="display:none;" />
+          </label>
+          <button id="btn-clear-all" class="btn-secondary btn">Clear all data</button>
+        </div>
+      </div>
+
+    </section>
+  </main>
+</div>
+
+<footer class="site-footer">
+  <div>© <span id="footer-year"></span> TredLog • Ali's Trading System.</div>
+  <div>Contact: <a href="mailto:admin@tredlog.com">admin@tredlog.com</a></div>
+</footer>
+
+<script>
+(function(){
+  // Footer year
+  document.getElementById("footer-year").textContent = new Date().getFullYear();
+
+  // ---------------- Helpers ----------------
+  function parseMoney(value){
+    if(value==null) return 0;
+    const n = Number(String(value).replace(/,/g,"").replace(/[^0-9.-]/g,""));
+    return Number.isFinite(n)?n:0;
+  }
+  function formatMoneyUSD(num){
+    return Number(num||0).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+  }
+  function parseNumber(v){
+    const n = Number(v);
+    return Number.isFinite(n)?n:0;
+  }
+  function ymd(date){
+    if(!date) return "";
+    const d = new Date(date);
+    if(Number.isNaN(d.getTime())) return "";
+    const y = d.getFullYear();
+    const m = String(d.getMonth()+1).padStart(2,"0");
+    const day = String(d.getDate()).padStart(2,"0");
+    return `${y}-${m}-${day}`;
+  }
+
+  // --------- state ----------
+  const state = {
+    trades:[],
+    calendarOffset:0 // months from current
+  };
+
+  // --------- DOM refs ----------
+  const startingBalanceInput = document.getElementById("starting-balance");
+  const currentBalanceInput  = document.getElementById("current-balance");
+
+  const tradeDateInput       = document.getElementById("trade-date");
+  const tradePairInput       = document.getElementById("trade-pair");
+  const tradeDirectionInput  = document.getElementById("trade-direction");
+  const tradeSetupInput      = document.getElementById("trade-setup");
+  const tradeRiskMoneyInput  = document.getElementById("trade-risk-money");
+  const tradeRPlannedInput   = document.getElementById("trade-r-planned");
+  const tradeRRealizedInput  = document.getElementById("trade-r-realized");
+  const tradeSessionInput    = document.getElementById("trade-session");
+  const tradeEmotionInput    = document.getElementById("trade-emotion");
+  const tradeScreenshotInput = document.getElementById("trade-screenshot");
+  const tradeTagsInput       = document.getElementById("trade-tags");
+  const tradeTimeframeInput  = document.getElementById("trade-timeframe");
+  const tradeNotesInput      = document.getElementById("trade-notes");
+
+  const checklistContainer   = document.getElementById("checklist-container");
+  const checklistScoreLabel  = document.getElementById("checklist-score-label");
+  const probabilityPill      = document.getElementById("probability-pill");
+
+  const winrateEl            = document.getElementById("stat-winrate");
+  const tradeCountEl         = document.getElementById("stat-trade-count");
+  const avgREl               = document.getElementById("stat-avg-r");
+  const equityREl            = document.getElementById("stat-equity-r");
+  const disciplineEl         = document.getElementById("stat-discipline");
+  const totalPnLEl           = document.getElementById("stat-total-pnl");
+  const accountBalanceEl     = document.getElementById("stat-account-balance");
+  const coachFeedbackEl      = document.getElementById("coach-feedback-text");
+
+  const calendarGrid         = document.getElementById("calendar-grid");
+  const calMonthLabel        = document.getElementById("cal-month-label");
+  const calPrevBtn           = document.getElementById("cal-prev");
+  const calNextBtn           = document.getElementById("cal-next");
+
+  const tradeLogBody         = document.getElementById("trade-log-body");
+
+  const btnAddTrade          = document.getElementById("btn-add-trade");
+  const btnClearForm         = document.getElementById("btn-clear-form");
+  const btnClearAll          = document.getElementById("btn-clear-all");
+  const btnExportJSON        = document.getElementById("btn-export-json");
+  const btnImportJSON        = document.getElementById("btn-import-json");
+  const btnExportCSV         = document.getElementById("btn-export-csv");
+  const csvInput             = document.getElementById("csv-input");
+
+  // --------- checklist ----------
+  // Your momentum + above/below rules combined into weighted items
+  const checklistRules = [
+    {id:"clean-close",label:"Clean close at level",description:"No big wicks both sides (body close at level)",weight:2},
+    {id:"no-double-wick",label:"No double wick candle at level",description:"Avoid candles with both top & bottom long wicks",weight:2},
+    {id:"no-against-wick",label:"No long wick against direction",description:"For buys no long top wick, for sells no long bottom wick",weight:2},
+    {id:"no-huge-candle",label:"Not a huge exhaustion candle",description:"Skip huge candle closes above/below level",weight:1},
+    {id:"wick-first",label:"Wick first then flip entry",description:"Entry candle creates wick first then flips into direction",weight:2},
+    {id:"no-flat-close",label:"No candle close without wick",description:"Avoid flat/no-wick closes at key level",weight:1}
+  ];
+  const checklistInputs = [];
+  function renderChecklist(){
+    checklistContainer.innerHTML="";
+    checklistRules.forEach(rule=>{
+      const wrapper=document.createElement("label");
+      wrapper.className="rule-chip";
+      const left=document.createElement("div");
+      left.innerHTML=`<div class="rule-main">${rule.label}</div><div class="rule-sub">${rule.description}</div>`;
+      const right=document.createElement("div");
+      right.className="rule-right";
+      const cb=document.createElement("input");
+      cb.type="checkbox";
+      cb.dataset.weight=String(rule.weight);
+      cb.style.marginRight="4px";
+      right.appendChild(cb);
+      const wSpan=document.createElement("span");
+      wSpan.textContent=`+${rule.weight} pts`;
+      right.appendChild(wSpan);
+      wrapper.appendChild(left);
+      wrapper.appendChild(right);
+      checklistContainer.appendChild(wrapper);
+      checklistInputs.push(cb);
+    });
+    checklistInputs.forEach(cb=>cb.addEventListener("change",updateChecklistScore));
+  }
+  function updateChecklistScore(){
+    let score=0;
+    checklistInputs.forEach(cb=>{
+      if(cb.checked) score+=parseNumber(cb.dataset.weight);
+    });
+    const maxScore=checklistRules.reduce((s,r)=>s+r.weight,0);
+    checklistScoreLabel.textContent=`${score} / ${maxScore} pts`;
+    let label="Low",cls="prob-low";
+    if(score>=maxScore*0.75){label="High";cls="prob-high";}
+    else if(score>=maxScore*0.4){label="Medium";cls="prob-medium";}
+    probabilityPill.textContent=label;
+    probabilityPill.className=`probability-pill ${cls}`;
+    return {score,probLabel:label};
+  }
+
+  // --------- charts ----------
+  const probCtx=document.getElementById("probability-chart").getContext("2d");
+  const eqCtx=document.getElementById("equity-chart").getContext("2d");
+
+  const probabilityChart=new Chart(probCtx,{
+    type:"doughnut",
+    data:{labels:["High","Medium","Low"],datasets:[{data:[0,0,0],
+      backgroundColor:["rgba(34,197,94,.75)","rgba(245,194,75,.9)","rgba(248,113,113,.9)"],
+      borderWidth:0}]},
+    options:{plugins:{legend:{labels:{color:"#e5e7eb",font:{size:11}}}}}
+  });
+
+  const equityChart=new Chart(eqCtx,{
+    type:"line",
+    data:{labels:[],datasets:[{label:"Equity R",data:[],
+      borderColor:"rgba(245,194,75,.95)",backgroundColor:"rgba(245,194,75,.3)",
+      borderWidth:2,tension:.25,pointRadius:2}]},
+    options:{plugins:{legend:{labels:{color:"#e5e7eb",font:{size:11}}}},
+      scales:{x:{ticks:{color:"#9ca3af",font:{size:10}},grid:{color:"rgba(148,163,184,.12)"}},
+              y:{ticks:{color:"#9ca3af",font:{size:10}},grid:{color:"rgba(148,163,184,.12)"}}}}
+  });
+
+  // --------- balances ----------
+  function getStartingBalance(){
+    const raw = startingBalanceInput.dataset.raw;
+    if(raw!==undefined) return parseMoney(raw);
+    return parseMoney(startingBalanceInput.value);
+  }
+  function setStartingBalance(v){
+    startingBalanceInput.dataset.raw=String(v);
+    startingBalanceInput.value=v?formatMoneyUSD(v):"";
+  }
+  function setCurrentBalance(v){
+    currentBalanceInput.dataset.raw=String(v);
+    currentBalanceInput.value=v?formatMoneyUSD(v):"";
+  }
+  startingBalanceInput.addEventListener("focus",()=>{
+    const raw=startingBalanceInput.dataset.raw;
+    if(raw!==undefined) startingBalanceInput.value=raw;
+  });
+  startingBalanceInput.addEventListener("blur",()=>{
+    const n=parseMoney(startingBalanceInput.value);
+    setStartingBalance(n);
+    recomputeAll();
+  });
+
+  // --------- calendar ----------
+  function recomputeCalendar(){
+    const base=new Date();
+    base.setMonth(base.getMonth()+state.calendarOffset);
+    const year=base.getFullYear();
+    const month=base.getMonth(); // 0-11
+    const monthName=base.toLocaleString("default",{month:"long",year:"numeric"});
+    calMonthLabel.textContent=monthName;
+
+    // aggregate pnl per day
+    const daily={}; // yyy-mm-dd -> {pnl, count}
+    state.trades.forEach(t=>{
+      const d=ymd(t.date);
+      if(!d) return;
+      const dt=new Date(d);
+      if(dt.getFullYear()!==year || dt.getMonth()!==month) return;
+      if(!daily[d]) daily[d]={pnl:0,count:0};
+      daily[d].pnl+=t.pnlMoney;
+      daily[d].count+=1;
+    });
+
+    calendarGrid.innerHTML="";
+    const firstDay=new Date(year,month,1);
+    const startWeekday=firstDay.getDay(); // 0=Sun
+    const daysInMonth=new Date(year,month+1,0).getDate();
+
+    // weekday headers
+    const weekdays=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+    weekdays.forEach(w=>{
+      const h=document.createElement("div");
+      h.textContent=w;
+      h.style.textAlign="center";
+      h.style.fontSize="9px";
+      h.style.color="var(--muted)";
+      calendarGrid.appendChild(h);
+    });
+
+    // empty cells
+    for(let i=0;i<startWeekday;i++){
+      const cell=document.createElement("div");
+      cell.className="cal-cell cal-cell-empty";
+      calendarGrid.appendChild(cell);
+    }
+
+    for(let day=1;day<=daysInMonth;day++){
+      const cell=document.createElement("div");
+      cell.className="cal-cell";
+      const dateStr=ymd(new Date(year,month,day));
+      const header=document.createElement("div");
+      header.className="cal-date";
+      header.textContent=day;
+      const pnlDiv=document.createElement("div");
+      pnlDiv.className="cal-pnl";
+      const tradesInfo=daily[dateStr];
+      if(tradesInfo){
+        const pnl=tradesInfo.pnl;
+        pnlDiv.textContent=formatMoneyUSD(pnl);
+        pnlDiv.classList.add(pnl>=0?"cal-positive":"cal-negative");
+        const tSpan=document.createElement("div");
+        tSpan.className="cal-trades";
+        tSpan.textContent=`${tradesInfo.count} trade${tradesInfo.count===1?"":"s"}`;
+        cell.appendChild(header);
+        cell.appendChild(pnlDiv);
+        cell.appendChild(tSpan);
+      }else{
+        pnlDiv.textContent=" ";
+        cell.appendChild(header);
+        cell.appendChild(pnlDiv);
+      }
+      calendarGrid.appendChild(cell);
+    }
+  }
+
+  // --------- stats + log + feedback ----------
+  function recomputeAll(){
+    const trades=state.trades;
+    const count=trades.length;
+
+    // win rate
+    const wins=trades.filter(t=>t.rRealized>0).length;
+    const winrate=count?(wins/count)*100:0;
+    winrateEl.textContent=`${winrate.toFixed(1)}%`;
+    tradeCountEl.textContent=`${count} trade${count===1?"":"s"}`;
+
+    // avg R & equity R
+    let totalR=0;
+    trades.forEach(t=>totalR+=t.pnlR);
+    const avgR=count?totalR/count:0;
+    avgREl.textContent=`${avgR.toFixed(2)}R`;
+    equityREl.textContent=`Equity: ${totalR.toFixed(2)}R`;
+
+    // probability counts
+    const pc={High:0,Medium:0,Low:0};
+    trades.forEach(t=>{
+      const p=t.probability||"Low";
+      if(pc[p]!=null) pc[p]++;
+    });
+    probabilityChart.data.datasets[0].data=[pc.High,pc.Medium,pc.Low];
+    probabilityChart.update();
+
+    // equity curve
+    const labels=[],data=[];
+    let runningR=0;
+    trades.forEach((t,i)=>{
+      runningR+=t.pnlR;
+      labels.push(String(i+1));
+      data.push(runningR.toFixed(2));
+    });
+    equityChart.data.labels=labels;
+    equityChart.data.datasets[0].data=data;
+    equityChart.update();
+
+    // discipline score from last trade
+    let disciplineScore=0;
+    if(count){
+      const last=trades[trades.length-1];
+      const maxScore=checklistRules.reduce((s,r)=>s+r.weight,0);
+      disciplineScore=Math.round((last.score/maxScore)*100);
+    }
+    disciplineEl.textContent=disciplineScore;
+
+    // PnL & balances (money)
+    const starting=getStartingBalance();
+    let totalPnLMoney=0;
+    trades.forEach(t=>totalPnLMoney+=t.pnlMoney);
+    const current=starting+totalPnLMoney;
+
+    setCurrentBalance(current);
+    totalPnLEl.textContent=`${totalR.toFixed(2)}R • ${formatMoneyUSD(totalPnLMoney)}`;
+    accountBalanceEl.textContent=`Balance: ${formatMoneyUSD(current)}`;
+
+    // calendar + log + feedback
+    renderTradeLog();
+    recomputeCalendar();
+    renderCoachFeedback();
+  }
+
+  function renderTradeLog(){
+    tradeLogBody.innerHTML="";
+    state.trades.forEach((t,idx)=>{
+      const tr=document.createElement("tr");
+      tr.innerHTML=`
+        <td>${idx+1}</td>
+        <td>${t.date||""}</td>
+        <td>${t.pair||""}</td>
+        <td>${t.direction||""}</td>
+        <td>${t.setup||""}</td>
+        <td>${t.probability||""}</td>
+        <td>${t.score}</td>
+        <td>${t.rPlanned.toFixed(1)}</td>
+        <td>${t.rRealized.toFixed(1)}</td>
+        <td>${t.pnlR.toFixed(2)}</td>
+        <td>${formatMoneyUSD(t.pnlMoney)}</td>
+        <td>${formatMoneyUSD(t.balanceAfter)}</td>
+        <td>${t.session||""}</td>
+        <td>${t.emotion||""}</td>
+        <td>${t.tags||""}</td>
+      `;
+      tradeLogBody.appendChild(tr);
+    });
+  }
+
+  function renderCoachFeedback(){
+    const trades=state.trades;
+    if(!trades.length){
+      coachFeedbackEl.textContent="No trades logged yet. Use the checklist and emotion tags every time to build consistent data. The more structured the journal, the sharper your edge.";
+      return;
+    }
+    const last=trades[trades.length-1]||{};
+    const prob=String(last.probability||"").toUpperCase();
+    const emotion=String(last.emotion||"").toLowerCase();
+    const disciplineScore=parseNumber(disciplineEl.textContent);
+    const parts=[];
+
+    if(prob==="HIGH"){
+      parts.push("Last trade was HIGH probability. Great execution – keep repeating the same checklist conditions and sessions.");
+    }else if(prob==="MEDIUM"){
+      parts.push("Last trade was MEDIUM probability. See if one more condition (wick behaviour, structure, session) could have upgraded it to HIGH.");
+    }else if(prob==="LOW"){
+      parts.push("Last trade was LOW probability. Only take A-setups where structure, wick behaviour and session are all aligned.");
+    }else{
+      parts.push("Probability wasn’t clearly tagged. Mark each trade as Low / Medium / High so the dashboard can coach you better.");
+    }
+
+    if(disciplineScore<60){
+      parts.push("Discipline score is below 60. Tighten your rules and avoid impulsive entries.");
+    }else if(disciplineScore<80){
+      parts.push("Discipline is decent but not elite yet. Remove borderline setups and respect your daily risk limit strictly.");
+    }else{
+      parts.push("Discipline score is strong (80+). Keep sample size growing and avoid system hopping during small drawdowns.");
+    }
+
+    if(emotion.includes("fomo")){
+      parts.push("FOMO is showing up. Let price come to your levels – no chasing candles after the move has already happened.");
+    }else if(emotion.includes("revenge")){
+      parts.push("Revenge-like emotions detected. After any tilt or big loss, stop trading for the day.");
+    }else if(emotion.includes("fear")){
+      parts.push("Fear is present. Reduce risk per trade so outcomes feel emotionally small and easier to execute.");
+    }
+
+    coachFeedbackEl.textContent=parts.join(" ");
+  }
+
+  // --------- add trade ----------
+  function handleAddTrade(){
+    const {score,probLabel}=updateChecklistScore();
+
+    const date       = tradeDateInput.value;
+    const pair       = tradePairInput.value.trim();
+    const direction  = tradeDirectionInput.value||"";
+    const setup      = tradeSetupInput.value.trim();
+    const riskMoney  = parseMoney(tradeRiskMoneyInput.value);
+    const rPlanned   = parseNumber(tradeRPlannedInput.value);
+    const rRealized  = parseNumber(tradeRRealizedInput.value);
+    const session    = tradeSessionInput.value||"";
+    const emotion    = tradeEmotionInput.value||"";
+    const screenshot = tradeScreenshotInput.value.trim();
+    const tags       = tradeTagsInput.value.trim();
+    const timeframe  = tradeTimeframeInput.value.trim();
+    const notes      = tradeNotesInput.value.trim();
+
+    const pnlR       = rRealized;
+    const pnlMoney   = riskMoney * pnlR;
+
+    const starting   = getStartingBalance();
+    let previousPnL  = 0;
+    state.trades.forEach(t=>previousPnL+=t.pnlMoney);
+    const balanceAfter = starting + previousPnL + pnlMoney;
+
+    state.trades.push({
+      date,pair,direction,setup,riskMoney,rPlanned,rRealized,
+      pnlR,pnlMoney,balanceAfter,
+      probability:probLabel,score,session,emotion,screenshot,tags,timeframe,notes
+    });
+
+    recomputeAll();
+  }
+
+  // --------- clear form / all ----------
+  function clearForm(){
+    tradePairInput.value="";
+    tradeDirectionInput.value="";
+    tradeSetupInput.value="";
+    tradeRiskMoneyInput.value="";
+    tradeRPlannedInput.value="";
+    tradeRRealizedInput.value="";
+    tradeSessionInput.value="";
+    tradeEmotionInput.value="";
+    tradeScreenshotInput.value="";
+    tradeTagsInput.value="";
+    tradeTimeframeInput.value="";
+    tradeNotesInput.value="";
+    checklistInputs.forEach(cb=>cb.checked=false);
+    updateChecklistScore();
+  }
+  function clearAllData(){
+    if(!confirm("This will remove ALL trades and reset the dashboard. Continue?")) return;
+    state.trades=[];
+    recomputeAll();
+  }
+
+  // --------- JSON export / import ----------
+  function exportJSON(){
+    const data={startingBalance:getStartingBalance(),trades:state.trades};
+    const blob=new Blob([JSON.stringify(data)],{type:"application/json"});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement("a");
+    a.href=url;
+    a.download="ali_trading_session.json";
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+  function importJSON(){
+    const input=document.createElement("input");
+    input.type="file";
+    input.accept="application/json";
+    input.onchange=e=>{
+      const file=e.target.files[0];
+      if(!file) return;
+      const reader=new FileReader();
+      reader.onload=ev=>{
+        try{
+          const obj=JSON.parse(ev.target.result);
+          const start=parseMoney(obj.startingBalance);
+          setStartingBalance(start);
+          state.trades=(Array.isArray(obj.trades)?obj.trades:[]).map(t=>({
+            ...t,
+            riskMoney:parseMoney(t.riskMoney),
+            rPlanned:parseNumber(t.rPlanned),
+            rRealized:parseNumber(t.rRealized),
+            pnlR:parseNumber(t.pnlR),
+            pnlMoney:parseMoney(t.pnlMoney),
+            balanceAfter:parseMoney(t.balanceAfter)
+          }));
+          recomputeAll();
+        }catch(err){
+          alert("Could not read JSON file.");
+        }
+      };
+      reader.readAsText(file);
+    };
+    input.click();
+  }
+
+  // --------- CSV export / import ----------
+  function exportCSV(){
+    const headers=["Date","Pair","Direction","Setup","RiskMoney","RPlanned","RRealized","PnlR","PnlMoney","BalanceAfter","Probability","Score","Session","Emotion","Tags"];
+    const rows=state.trades.map(t=>[
+      t.date||"",t.pair||"",t.direction||"",t.setup||"",t.riskMoney,t.rPlanned,t.rRealized,t.pnlR,t.pnlMoney,t.balanceAfter,t.probability||"",t.score,t.session||"",t.emotion||"",t.tags||""
+    ]);
+    const csv=[headers,...rows].map(r=>r.map(c=>{
+      const s=String(c);
+      return s.includes(",")?`"${s.replace(/"/g,'""')}"`:s;
+    }).join(",")).join("\n");
+    const blob=new Blob([csv],{type:"text/csv"});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement("a");
+    a.href=url;
+    a.download="ali_trading_log.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+  function importCSV(file){
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      const text=String(ev.target.result||"");
+      const lines=text.split(/\r?\n/).filter(l=>l.trim().length);
+      if(!lines.length) return;
+      const headers=lines[0].split(",").map(h=>h.trim());
+      const idx=name=>headers.indexOf(name);
+      const iDate=idx("Date"),iPair=idx("Pair"),iDir=idx("Direction");
+      const iRReal=idx("RRealized"),iRisk=idx("RiskMoney"),iSession=idx("Session");
+      for(let i=1;i<lines.length;i++){
+        const cols=lines[i].split(",");
+        const date=cols[iDate]||"";
+        const pair=cols[iPair]||"";
+        const direction=cols[iDir]||"";
+        const rRealized=parseNumber(cols[iRReal]);
+        const riskMoney=parseMoney(cols[iRisk]);
+        const session=cols[iSession]||"";
+        const rPlanned=2;
+        const {score,probLabel}=updateChecklistScore();
+        const pnlR=rRealized;
+        const pnlMoney=riskMoney*pnlR;
+        const starting=getStartingBalance();
+        let prevPnL=0;
+        state.trades.forEach(t=>prevPnL+=t.pnlMoney);
+        const balanceAfter=starting+prevPnL+pnlMoney;
+        state.trades.push({
+          date,pair,direction,setup:"",riskMoney,rPlanned,rRealized,
+          pnlR,pnlMoney,balanceAfter,
+          probability:probLabel,score,session,emotion:"",screenshot:"",tags:"",timeframe:"",notes:""
+        });
+      }
+      recomputeAll();
+    };
+    reader.readAsText(file);
+  }
+
+  // --------- events ----------
+  btnAddTrade.addEventListener("click",e=>{e.preventDefault();handleAddTrade();});
+  btnClearForm.addEventListener("click",e=>{e.preventDefault();clearForm();});
+  btnClearAll.addEventListener("click",e=>{e.preventDefault();clearAllData();});
+  btnExportJSON.addEventListener("click",e=>{e.preventDefault();exportJSON();});
+  btnImportJSON.addEventListener("click",e=>{e.preventDefault();importJSON();});
+  btnExportCSV.addEventListener("click",e=>{e.preventDefault();exportCSV();});
+  csvInput.addEventListener("change",e=>{
+    const file=e.target.files[0];
+    if(file) importCSV(file);
+    csvInput.value="";
+  });
+  calPrevBtn.addEventListener("click",()=>{state.calendarOffset--;recomputeCalendar();});
+  calNextBtn.addEventListener("click",()=>{state.calendarOffset++;recomputeCalendar();});
+
+  // --------- init ----------
+  renderChecklist();
+  updateChecklistScore();
+  const today=new Date().toISOString().slice(0,10);
+  tradeDateInput.value=today;
+  recomputeAll(); // also draws empty calendar
+})();
+</script>
+</body>
+</html>
