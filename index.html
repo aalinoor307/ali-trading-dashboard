@@ -2,47 +2,30 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>TredLog • Trading Journal & PnL Dashboard</title>
+  <title>TredLog • Web-based Trading Journal</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#202617" />
 
-  <!-- Basic SEO -->
-  <meta name="description" content="TredLog is Ali's probability-based trading journal for tracking setups, R-multiples, PnL and discipline in one elegant web dashboard." />
-  <meta name="keywords" content="tredlog, trading journal, forex journal, trade log, PnL tracker, R multiple, Ali's trading system" />
-  <meta name="author" content="Ali Noor" />
-  <link rel="canonical" href="https://tredlog.com/" />
-
-  <!-- Open Graph / Social Preview -->
-  <meta property="og:title" content="TredLog • Trading Journal & PnL Dashboard" />
-  <meta property="og:description" content="Log trades, track R-multiples and PnL, and get structured feedback on probability and discipline." />
-  <meta property="og:url" content="https://tredlog.com/" />
+  <!-- SEO -->
+  <meta name="description" content="TredLog is a web-based trading journal that tracks R, PnL, probability and discipline for each trade." />
+  <meta name="keywords" content="TredLog, trading journal, R multiple, FTMO, prop firm, probability, discipline, forex, dashboard" />
+  <meta property="og:title" content="TredLog • Web-based Trading Journal" />
+  <meta property="og:description" content="Log trades, track discipline, and review your edge with a beautiful R &amp; PnL dashboard." />
   <meta property="og:type" content="website" />
-  <!-- Replace with your real social preview image when you have one -->
-  <meta property="og:image" content="https://tredlog.com/social-preview.png" />
+  <meta property="og:url" content="https://tredlog.com" />
+  <meta property="og:site_name" content="TredLog" />
 
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="TredLog • Trading Journal & PnL Dashboard" />
-  <meta name="twitter:description" content="A clean trading journal for probability, R & PnL, and behaviour tracking." />
-  <meta name="twitter:image" content="https://tredlog.com/social-preview.png" />
+  <!-- Favicon & app icons (upload these files to repo root) -->
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
 
-  <!-- Favicon (upload favicon.ico and/or favicon.png to the repo root) -->
-  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-  <link rel="icon" type="image/png" href="/favicon.png" />
+  <!-- Analytics (optional – replace with your provider) -->
+  <!-- <script defer data-domain="tredlog.com" src="https://plausible.io/js/script.js"></script> -->
 
   <!-- Fonts & Chart.js -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-  <!-- Google Analytics (replace G-XXXXXXXXXX with your real Measurement ID) -->
-  <!-- If you don't have GA yet, you can leave this as-is or comment it out. -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){ dataLayer.push(arguments); }
-    gtag("js", new Date());
-    gtag("config", "G-XXXXXXXXXX");
-  </script>
 
   <style>
     :root{
@@ -68,7 +51,7 @@
     }
     .app-shell{
       max-width:1440px;
-      margin:24px auto 40px;
+      margin:24px auto 24px;
       padding:0 16px;
     }
     .app-header{
@@ -79,18 +62,17 @@
       flex-wrap:wrap;
       margin-bottom:16px;
     }
-    .app-header-left{
+    .brand{
       display:flex;
       align-items:center;
       gap:10px;
     }
-    .app-logo{
-      width:32px;
-      height:32px;
-      border-radius:10px;
-      object-fit:contain;
-      background:rgba(0,0,0,.35);
-      border:1px solid rgba(255,255,255,.18);
+    .brand-logo{
+      width:28px;
+      height:28px;
+      border-radius:8px;
+      object-fit:cover;
+      background:#111322;
     }
     .app-title{font-size:20px;font-weight:700;}
     .app-subtitle{font-size:12px;color:var(--muted);}
@@ -322,37 +304,28 @@
     .cal-positive{color:var(--success);}
     .cal-negative{color:var(--danger);}
     .cal-trades{font-size:9px;color:var(--muted);}
-
-    /* Footer */
-    .site-footer{
-      max-width:1440px;
-      margin:0 auto 32px;
-      padding:0 16px;
-      font-size:11px;
-      color:var(--muted);
-      display:flex;
-      justify-content:space-between;
-      gap:8px;
-      flex-wrap:wrap;
-    }
-    .site-footer a{color:var(--accent);text-decoration:none;}
-    .site-footer a:hover{text-decoration:underline;}
   </style>
 </head>
 <body>
-
 <div class="app-shell">
   <header class="app-header">
-    <div class="app-header-left">
-      <!-- Replace /logo.png with your own logo file -->
-      <img src="/logo.png" alt="TredLog logo" class="app-logo" />
+    <div class="brand">
+      <img src="logo.png" alt="TredLog logo" class="brand-logo" />
       <div>
-        <div class="app-title">TredLog • Ali's Trading System</div>
-        <div class="app-subtitle">Probabilities • Discipline • R &amp; PnL • Web-based execution journal</div>
+        <div class="app-title">TredLog</div>
+        <div class="app-subtitle">Web-based execution journal</div>
       </div>
     </div>
-    <div class="pill">
-      <span class="pill-dot"></span> Local session • Data stored in your browser
+
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+      <!-- UI only – real auth/payments need backend later -->
+      <button class="btn-secondary btn" style="font-size:11px;padding-inline:10px;">Sign in with Google</button>
+      <button class="btn-secondary btn" style="font-size:11px;padding-inline:10px;">Sign in with Apple</button>
+      <button class="btn" style="font-size:11px;padding-inline:10px;">Upgrade / Payments</button>
+
+      <div class="pill">
+        <span class="pill-dot"></span> Local session • Data stored in your browser
+      </div>
     </div>
   </header>
 
@@ -404,7 +377,7 @@
           </div>
           <div>
             <label>Setup / Strategy</label>
-            <input id="trade-setup" type="text" placeholder="Breakout with momentum" />
+            <input id="trade-setup" type="text" placeholder="Entry with momentum / Close above/below" />
           </div>
         </div>
 
@@ -481,7 +454,7 @@
         <div id="checklist-container" class="checklist-grid"></div>
         <div class="checklist-summary">
           <div>
-            <span id="checklist-score-label">0 / 10 pts</span>
+            <span id="checklist-score-label">0 / 3 rules (0%)</span>
             <span style="margin-left:6px;font-size:10px;color:var(--muted)">Higher score → higher probability.</span>
           </div>
           <div id="probability-pill" class="probability-pill prob-low">Low</div>
@@ -615,17 +588,14 @@
   </main>
 </div>
 
-<footer class="site-footer">
-  <div>© <span id="footer-year"></span> TredLog • Ali's Trading System.</div>
-  <div>Contact: <a href="mailto:admin@tredlog.com">admin@tredlog.com</a></div>
+<footer style="max-width:1440px;margin:0 auto 24px;padding:0 16px;font-size:10px;color:var(--muted);display:flex;justify-content:space-between;align-items:center;">
+  <span>© 2025 TredLog.</span>
+  <span>Contact: <a href="mailto:admin@tredlog.com" style="color:var(--text-soft);text-decoration:none;">admin@tredlog.com</a></span>
 </footer>
 
 <script>
 (function(){
-  // Footer year
-  document.getElementById("footer-year").textContent = new Date().getFullYear();
-
-  // ---------------- Helpers ----------------
+  // --------- helpers ----------
   function parseMoney(value){
     if(value==null) return 0;
     const n = Number(String(value).replace(/,/g,"").replace(/[^0-9.-]/g,""));
@@ -701,53 +671,100 @@
   const csvInput             = document.getElementById("csv-input");
 
   // --------- checklist ----------
-  // Your momentum + above/below rules combined into weighted items
+  // Two setups:
+  // - "Entry with momentum": first 3 rules (group: "momentum")
+  // - "Close above/below": last 3 rules (group: "close")
   const checklistRules = [
-    {id:"clean-close",label:"Clean close at level",description:"No big wicks both sides (body close at level)",weight:2},
-    {id:"no-double-wick",label:"No double wick candle at level",description:"Avoid candles with both top & bottom long wicks",weight:2},
-    {id:"no-against-wick",label:"No long wick against direction",description:"For buys no long top wick, for sells no long bottom wick",weight:2},
-    {id:"no-huge-candle",label:"Not a huge exhaustion candle",description:"Skip huge candle closes above/below level",weight:1},
-    {id:"wick-first",label:"Wick first then flip entry",description:"Entry candle creates wick first then flips into direction",weight:2},
-    {id:"no-flat-close",label:"No candle close without wick",description:"Avoid flat/no-wick closes at key level",weight:1}
+    { id:"clean-close",     group:"momentum", label:"Clean close at level",           description:"No big wicks both sides (body close at level)" },
+    { id:"no-double-wick",  group:"momentum", label:"No double wick candle at level", description:"Avoid candles with both top & bottom long wicks" },
+    { id:"no-against-wick", group:"momentum", label:"No long wick against direction", description:"For buys no long top wick, for sells no long bottom wick" },
+
+    { id:"no-huge-candle",  group:"close",    label:"Not a huge exhaustion candle",   description:"Skip huge candle closes above/below level" },
+    { id:"flip-entry",      group:"close",    label:"Wick first then flip entry",     description:"Entry candle creates wick first then flips into direction" },
+    { id:"no-nowick-close", group:"close",    label:"No candle close without wick",   description:"Avoid flat/no-wick closes at key level" }
   ];
+
   const checklistInputs = [];
+
   function renderChecklist(){
-    checklistContainer.innerHTML="";
-    checklistRules.forEach(rule=>{
-      const wrapper=document.createElement("label");
-      wrapper.className="rule-chip";
-      const left=document.createElement("div");
-      left.innerHTML=`<div class="rule-main">${rule.label}</div><div class="rule-sub">${rule.description}</div>`;
-      const right=document.createElement("div");
-      right.className="rule-right";
-      const cb=document.createElement("input");
-      cb.type="checkbox";
-      cb.dataset.weight=String(rule.weight);
-      cb.style.marginRight="4px";
+    checklistContainer.innerHTML = "";
+    checklistInputs.length = 0;
+
+    checklistRules.forEach(rule => {
+      const wrapper = document.createElement("label");
+      wrapper.className = "rule-chip";
+
+      const left = document.createElement("div");
+      left.innerHTML = `
+        <div class="rule-main">${rule.label}</div>
+        <div class="rule-sub">${rule.description}</div>
+      `;
+
+      const right = document.createElement("div");
+      right.className = "rule-right";
+
+      const cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.style.marginRight = "4px";
       right.appendChild(cb);
-      const wSpan=document.createElement("span");
-      wSpan.textContent=`+${rule.weight} pts`;
+
+      const wSpan = document.createElement("span");
+      wSpan.textContent = rule.group === "momentum" ? "Momentum setup" : "Close above/below";
       right.appendChild(wSpan);
+
       wrapper.appendChild(left);
       wrapper.appendChild(right);
       checklistContainer.appendChild(wrapper);
+
       checklistInputs.push(cb);
     });
-    checklistInputs.forEach(cb=>cb.addEventListener("change",updateChecklistScore));
+
+    checklistInputs.forEach(cb => cb.addEventListener("change", updateChecklistScore));
   }
+
+  function getSetupGroup(){
+    const raw = (tradeSetupInput.value || "").toLowerCase();
+    if (raw.includes("momentum")) return "momentum";
+    if (raw.includes("close above") || raw.includes("close below") || raw.includes("close above/below"))
+      return "close";
+    return "all"; // if unknown, consider all rules
+  }
+
   function updateChecklistScore(){
-    let score=0;
-    checklistInputs.forEach(cb=>{
-      if(cb.checked) score+=parseNumber(cb.dataset.weight);
+    const group = getSetupGroup();
+    const activeRules = checklistRules.filter(r => group === "all" || r.group === group);
+    const max = activeRules.length || checklistRules.length;
+
+    let checked = 0;
+    checklistInputs.forEach((cb, idx) => {
+      const rule = checklistRules[idx];
+      if (group === "all" || rule.group === group) {
+        if (cb.checked) checked++;
+      }
     });
-    const maxScore=checklistRules.reduce((s,r)=>s+r.weight,0);
-    checklistScoreLabel.textContent=`${score} / ${maxScore} pts`;
-    let label="Low",cls="prob-low";
-    if(score>=maxScore*0.75){label="High";cls="prob-high";}
-    else if(score>=maxScore*0.4){label="Medium";cls="prob-medium";}
-    probabilityPill.textContent=label;
-    probabilityPill.className=`probability-pill ${cls}`;
-    return {score,probLabel:label};
+
+    const ratio = max ? checked / max : 0;
+    let probLabel = "Low";
+    let probClass = "prob-low";
+
+    if (ratio >= 0.99) {           // 3/3
+      probLabel = "High";
+      probClass = "prob-high";
+    } else if (ratio >= 0.66) {    // 2/3
+      probLabel = "Medium";
+      probClass = "prob-medium";
+    } else {                       // 0 or 1/3
+      probLabel = "Low";
+      probClass = "prob-low";
+    }
+
+    const disciplineScore = Math.round(ratio * 100);
+
+    checklistScoreLabel.textContent = `${checked} / ${max} rules (${disciplineScore}%)`;
+    probabilityPill.textContent = probLabel;
+    probabilityPill.className = `probability-pill ${probClass}`;
+
+    return { checked, max, disciplineScore, probLabel };
   }
 
   // --------- charts ----------
@@ -908,16 +925,15 @@
     equityChart.data.datasets[0].data=data;
     equityChart.update();
 
-    // discipline score from last trade
+    // discipline score from last trade (already 0–100)
     let disciplineScore=0;
     if(count){
       const last=trades[trades.length-1];
-      const maxScore=checklistRules.reduce((s,r)=>s+r.weight,0);
-      disciplineScore=Math.round((last.score/maxScore)*100);
+      disciplineScore=Math.round(parseNumber(last.score));
     }
     disciplineEl.textContent=disciplineScore;
 
-    // PnL & balances (money)
+    // PnL & balances (money FIX)
     const starting=getStartingBalance();
     let totalPnLMoney=0;
     trades.forEach(t=>totalPnLMoney+=t.pnlMoney);
@@ -1001,7 +1017,7 @@
 
   // --------- add trade ----------
   function handleAddTrade(){
-    const {score,probLabel}=updateChecklistScore();
+    const { disciplineScore, probLabel } = updateChecklistScore();
 
     const date       = tradeDateInput.value;
     const pair       = tradePairInput.value.trim();
@@ -1028,7 +1044,7 @@
     state.trades.push({
       date,pair,direction,setup,riskMoney,rPlanned,rRealized,
       pnlR,pnlMoney,balanceAfter,
-      probability:probLabel,score,session,emotion,screenshot,tags,timeframe,notes
+      probability:probLabel,score:disciplineScore,session,emotion,screenshot,tags,timeframe,notes
     });
 
     recomputeAll();
@@ -1064,7 +1080,7 @@
     const url=URL.createObjectURL(blob);
     const a=document.createElement("a");
     a.href=url;
-    a.download="ali_trading_session.json";
+    a.download="tredlog_session.json";
     a.click();
     URL.revokeObjectURL(url);
   }
@@ -1088,7 +1104,8 @@
             rRealized:parseNumber(t.rRealized),
             pnlR:parseNumber(t.pnlR),
             pnlMoney:parseMoney(t.pnlMoney),
-            balanceAfter:parseMoney(t.balanceAfter)
+            balanceAfter:parseMoney(t.balanceAfter),
+            score:parseNumber(t.score)
           }));
           recomputeAll();
         }catch(err){
@@ -1114,7 +1131,7 @@
     const url=URL.createObjectURL(blob);
     const a=document.createElement("a");
     a.href=url;
-    a.download="ali_trading_log.csv";
+    a.download="tredlog_trades.csv";
     a.click();
     URL.revokeObjectURL(url);
   }
@@ -1137,7 +1154,7 @@
         const riskMoney=parseMoney(cols[iRisk]);
         const session=cols[iSession]||"";
         const rPlanned=2;
-        const {score,probLabel}=updateChecklistScore();
+        const { disciplineScore, probLabel } = updateChecklistScore();
         const pnlR=rRealized;
         const pnlMoney=riskMoney*pnlR;
         const starting=getStartingBalance();
@@ -1147,7 +1164,7 @@
         state.trades.push({
           date,pair,direction,setup:"",riskMoney,rPlanned,rRealized,
           pnlR,pnlMoney,balanceAfter,
-          probability:probLabel,score,session,emotion:"",screenshot:"",tags:"",timeframe:"",notes:""
+          probability:probLabel,score:disciplineScore,session,emotion:"",screenshot:"",tags:"",timeframe:"",notes:""
         });
       }
       recomputeAll();
