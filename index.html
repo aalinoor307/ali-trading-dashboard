@@ -1,573 +1,853 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>TredLog Dashboard</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta
-      name="description"
-      content="TredLog dashboard – log trades, see your equity curve and review your discipline."
-    />
+<head>
+  <meta charset="UTF-8" />
+  <title>TredLog – Trading Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="TredLog trading dashboard – log trades, track R and discipline, and review recent performance." />
 
-    <style>
-      :root {
-        --bg: #050816;
-        --bg-panel: #0b1120;
-        --bg-card: #111827;
-        --accent: #ffc640;
-        --accent-strong: #ffb20a;
-        --muted: #9ca3af;
-        --border: rgba(148, 163, 184, 0.35);
-        --radius-lg: 16px;
-        --radius-sm: 10px;
-        --danger: #ef4444;
+  <style>
+    :root {
+      --bg: #020617;
+      --bg-elevated: #020c1f;
+      --bg-card: #020a1a;
+      --accent: #facc15;
+      --accent-soft: rgba(250, 204, 21, 0.12);
+      --accent-strong: #fbbf24;
+      --text: #e5e7eb;
+      --muted: #6b7280;
+      --muted-soft: #1f2937;
+      --danger: #f97373;
+      --radius-lg: 18px;
+      --radius-md: 12px;
+      --radius-sm: 8px;
+      --shadow-soft: 0 22px 60px rgba(0,0,0,0.5);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+      background: radial-gradient(circle at top left, #020817, #000014 50%, #000000);
+      color: var(--text);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .shell {
+      width: 100%;
+      max-width: 1200px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .logo-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-icon {
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      background: conic-gradient(from 210deg, #facc15, #fb923c, #ef4444, #facc15);
+      box-shadow: 0 0 18px rgba(250, 204, 21, 0.65);
+    }
+
+    .logo-text-block {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .logo-title {
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      font-size: 15px;
+    }
+
+    .logo-subtitle {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .user-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .user-name {
+      color: var(--accent-strong);
+      font-weight: 500;
+    }
+
+    .top-buttons {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn {
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      background: rgba(15,23,42,0.9);
+      color: var(--text);
+      padding: 6px 12px;
+      font-size: 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+    }
+
+    .btn:hover {
+      background: rgba(15,23,42,1);
+      border-color: rgba(148, 163, 184, 0.9);
+      transform: translateY(-0.5px);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #facc15, #f97316);
+      border-color: rgba(248, 250, 252, 0.12);
+      color: #111827;
+      font-weight: 600;
+    }
+
+    .btn-primary:hover {
+      filter: brightness(1.05);
+      transform: translateY(-0.5px);
+    }
+
+    .btn-danger {
+      border-color: rgba(248,113,113,0.7);
+      color: #fecaca;
+      background: radial-gradient(circle at top, rgba(248,113,113,0.18), rgba(15,23,42,0.95));
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2.4fr);
+      gap: 18px;
+    }
+
+    .card {
+      background: radial-gradient(circle at top, rgba(15,23,42,0.9), #020617 55%);
+      border-radius: var(--radius-lg);
+      padding: 16px 18px;
+      border: 1px solid rgba(15,23,42,0.85);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      gap: 10px;
+    }
+
+    .card-title {
+      font-size: 13px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .card-subtitle {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .pill {
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      border: 1px solid rgba(148,163,184,0.5);
+      color: var(--muted);
+      background: radial-gradient(circle at top, rgba(15,23,42,0.9), rgba(15,23,42,0.6));
+    }
+
+    .pill.good {
+      border-color: rgba(74,222,128,0.7);
+      color: #bbf7d0;
+    }
+
+    .grid-two {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 14px;
+    }
+
+    .field-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .field {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    label {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select,
+    textarea {
+      background: #020617;
+      border-radius: var(--radius-md);
+      border: 1px solid #1f2937;
+      padding: 7px 9px;
+      font-size: 12px;
+      color: var(--text);
+      outline: none;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.01);
+    }
+
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(250, 204, 21, 0.45);
+    }
+
+    textarea {
+      min-height: 70px;
+      resize: vertical;
+    }
+
+    .checklist-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .rule-pill {
+      background: #020617;
+      border-radius: var(--radius-md);
+      border: 1px solid #111827;
+      padding: 8px 9px;
+      font-size: 11px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .rule-left {
+      display: flex;
+      gap: 6px;
+      align-items: flex-start;
+    }
+
+    .rule-title {
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .rule-meta {
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    .rule-tag {
+      border-radius: 999px;
+      padding: 2px 7px;
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #e5e7eb;
+      background: #0f172a;
+      border: 1px solid #111827;
+      white-space: nowrap;
+    }
+
+    .rule-checkbox {
+      margin-top: 2px;
+    }
+
+    .actions-row {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .stat-card {
+      background: #020617;
+      border-radius: var(--radius-md);
+      padding: 7px 9px;
+      border: 1px solid #111827;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .stat-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
+
+    .stat-main {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .stat-sub {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .stat-badge {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: rgba(34,197,94,0.15);
+      color: #bbf7d0;
+      align-self: flex-start;
+    }
+
+    .stat-badge.bad {
+      background: rgba(248,113,113,0.16);
+      color: #fecaca;
+    }
+
+    .trades-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+      margin-top: 4px;
+    }
+
+    .trades-table th,
+    .trades-table td {
+      padding: 4px 6px;
+      border-bottom: 1px solid #020617;
+      color: #9ca3af;
+    }
+
+    .trades-table th {
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      font-size: 9px;
+      color: var(--muted);
+    }
+
+    .pill-result {
+      border-radius: 999px;
+      padding: 2px 6px;
+      font-size: 10px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .pill-result.win {
+      background: rgba(34,197,94,0.16);
+      color: #bbf7d0;
+    }
+
+    .pill-result.loss {
+      background: rgba(248,113,113,0.18);
+      color: #fecaca;
+    }
+
+    .pill-result.be {
+      background: rgba(148,163,184,0.16);
+      color: #e5e7eb;
+    }
+
+    .discipline-tag {
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: rgba(59,130,246,0.18);
+      color: #bfdbfe;
+    }
+
+    footer {
+      width: 100%;
+      max-width: 1200px;
+      margin-top: 18px;
+      font-size: 11px;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    footer a {
+      color: var(--accent-strong);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 960px) {
+      .layout {
+        grid-template-columns: minmax(0, 1fr);
       }
+    }
 
-      * {
-        box-sizing: border-box;
-      }
-
+    @media (max-width: 640px) {
       body {
-        margin: 0;
-        min-height: 100vh;
-        font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
-        background: radial-gradient(circle at top left, #1e293b 0, #020617 52%, #000 100%);
-        color: #e5e7eb;
+        padding: 16px;
       }
-
-      .shell {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 20px 18px 40px;
-      }
-
       header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 16px;
-        margin-bottom: 18px;
-      }
-
-      .logo-row {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-
-      .logo-icon {
-        width: 30px;
-        height: 30px;
-        border-radius: 11px;
-        background: radial-gradient(circle at 20% 0, #ffdf8b 0, #f97316 45%, #ea580c 100%);
-        box-shadow: 0 16px 30px rgba(0, 0, 0, 0.7);
-      }
-
-      .logo-text {
-        font-weight: 600;
-        letter-spacing: 0.02em;
-      }
-
-      .top-right {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        align-items: center;
-        justify-content: flex-end;
-      }
-
-      .user-pill {
-        font-size: 12px;
-        padding: 6px 10px;
-        border-radius: 999px;
-        background: rgba(15, 23, 42, 0.9);
-        border: 1px solid var(--border);
-        color: var(--muted);
-      }
-
-      .button {
-        border-radius: 999px;
-        border: 1px solid rgba(148, 163, 184, 0.6);
-        background: rgba(15, 23, 42, 0.9);
-        color: #e5e7eb;
-        font-size: 12px;
-        padding: 7px 12px;
-        cursor: pointer;
-      }
-
-      .button-primary {
-        border: none;
-        background: linear-gradient(135deg, var(--accent), var(--accent-strong));
-        color: #111827;
-        font-weight: 600;
-      }
-
-      .button-danger {
-        border-color: rgba(248, 113, 113, 0.7);
-        color: #fecaca;
-      }
-
-      .button:hover {
-        filter: brightness(1.05);
-      }
-
-      main {
-        display: grid;
-        grid-template-columns: 1.4fr 1fr;
-        gap: 18px;
-      }
-
-      @media (max-width: 960px) {
-        main {
-          grid-template-columns: minmax(0, 1fr);
-        }
-      }
-
-      .panel {
-        background: rgba(15, 23, 42, 0.9);
-        border-radius: 20px;
-        border: 1px solid var(--border);
-        padding: 16px 16px 18px;
-        box-shadow: 0 20px 45px rgba(0, 0, 0, 0.7);
-      }
-
-      .panel-title-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+        flex-direction: column;
+        align-items: flex-start;
         gap: 8px;
-        margin-bottom: 12px;
       }
-
-      .panel-title {
-        font-size: 14px;
-        font-weight: 500;
+      .layout {
+        gap: 12px;
       }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <div class="logo-row">
+        <div class="logo-icon"></div>
+        <div class="logo-text-block">
+          <div class="logo-title">TredLog</div>
+          <div class="logo-subtitle">Probability-driven trading journal</div>
+        </div>
+      </div>
 
-      .panel-subtle {
-        font-size: 11px;
-        color: var(--muted);
-      }
+      <div style="display:flex; align-items:center; gap:12px;">
+        <div class="user-row">
+          <span>Signed in as:</span>
+          <span class="user-name" id="userName">Guest</span>
+        </div>
+        <div class="top-buttons">
+          <button class="btn" onclick="goBackToLanding()">⟵ Back to landing</button>
+          <button class="btn btn-danger" onclick="logout()">Log out</button>
+        </div>
+      </div>
+    </header>
 
-      .grid {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 10px;
-        margin-top: 10px;
-      }
-
-      .card {
-        background: #020617;
-        border-radius: var(--radius-lg);
-        border: 1px solid rgba(31, 41, 55, 0.9);
-        padding: 10px 12px;
-      }
-
-      .card-title {
-        font-size: 12px;
-        font-weight: 500;
-        margin-bottom: 4px;
-      }
-
-      .card-meta {
-        font-size: 11px;
-        color: var(--muted);
-        margin-bottom: 6px;
-      }
-
-      .pill-row {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
-        margin-top: 6px;
-      }
-
-      .pill {
-        font-size: 11px;
-        padding: 4px 8px;
-        border-radius: 999px;
-        border: 1px solid rgba(55, 65, 81, 0.9);
-        color: var(--muted);
-      }
-
-      input,
-      select,
-      textarea {
-        font-family: inherit;
-      }
-
-      .field-row {
-        display: flex;
-        gap: 8px;
-        margin-bottom: 8px;
-      }
-
-      .field {
-        flex: 1;
-      }
-
-      label {
-        display: block;
-        font-size: 11px;
-        margin-bottom: 3px;
-        color: var(--muted);
-      }
-
-      .input,
-      .select {
-        width: 100%;
-        padding: 6px 8px;
-        border-radius: 8px;
-        border: 1px solid rgba(55, 65, 81, 0.9);
-        background: #020617;
-        color: #e5e7eb;
-        font-size: 12px;
-      }
-
-      .input:focus,
-      .select:focus,
-      textarea:focus {
-        outline: none;
-        border-color: var(--accent-strong);
-      }
-
-      textarea {
-        width: 100%;
-        min-height: 80px;
-        border-radius: 10px;
-        padding: 7px 8px;
-        border: 1px solid rgba(55, 65, 81, 0.9);
-        background: #020617;
-        color: #e5e7eb;
-        font-size: 12px;
-        resize: vertical;
-      }
-
-      .small-label-row {
-        display: flex;
-        justify-content: space-between;
-        font-size: 11px;
-        color: var(--muted);
-      }
-
-      .divider {
-        margin: 10px 0;
-        border-top: 1px solid rgba(31, 41, 55, 0.9);
-      }
-
-      .metrics-grid {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 8px;
-        margin-top: 4px;
-      }
-
-      .stat-card {
-        background: #020617;
-        border-radius: var(--radius-sm);
-        padding: 7px 8px;
-        border: 1px solid rgba(31, 41, 55, 0.9);
-      }
-
-      .stat-label {
-        font-size: 10px;
-        color: var(--muted);
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        margin-bottom: 4px;
-      }
-
-      .stat-value {
-        font-size: 15px;
-        font-weight: 600;
-      }
-
-      .stat-sub {
-        font-size: 11px;
-        color: var(--muted);
-      }
-
-      .timeline {
-        margin-top: 8px;
-        padding: 6px 8px;
-        background: #020617;
-        border-radius: var(--radius-sm);
-        border: 1px dashed rgba(55, 65, 81, 0.9);
-        font-size: 11px;
-        color: var(--muted);
-      }
-
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 11px;
-      }
-
-      th,
-      td {
-        padding: 6px 6px;
-        border-bottom: 1px solid rgba(31, 41, 55, 0.9);
-        text-align: left;
-      }
-
-      th {
-        color: var(--muted);
-        font-weight: 500;
-        font-size: 10px;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-      }
-
-      .chip {
-        font-size: 10px;
-        padding: 2px 6px;
-        border-radius: 999px;
-        border: 1px solid rgba(55, 65, 81, 0.9);
-        color: var(--muted);
-      }
-
-      footer {
-        margin-top: 22px;
-        font-size: 11px;
-        color: var(--muted);
-        display: flex;
-        justify-content: space-between;
-        gap: 10px;
-        flex-wrap: wrap;
-      }
-
-      footer a {
-        color: var(--muted);
-        text-decoration: none;
-      }
-
-      footer a:hover {
-        text-decoration: underline;
-      }
-    </style>
-  </head>
-
-  <body>
-    <div class="shell">
-      <header>
-        <div class="logo-row">
-          <div class="logo-icon"></div>
+    <div class="layout">
+      <!-- LEFT COLUMN: new trade + checklist -->
+      <section class="card">
+        <div class="card-header">
           <div>
-            <div class="logo-text">TredLog</div>
-            <div style="font-size: 11px; color: var(--muted); margin-top: 2px">
-              Probability-driven trading journal – Dashboard
+            <div class="card-title">New trade</div>
+            <div class="card-subtitle">Log a setup, score it and add it to your journal.</div>
+          </div>
+          <span class="pill good">Daily logging habit</span>
+        </div>
+
+        <div class="grid-two">
+          <div>
+            <div class="field-row">
+              <div class="field">
+                <label for="pairInput">Pair / symbol</label>
+                <input id="pairInput" type="text" placeholder="e.g. GBPUSD" />
+              </div>
+              <div class="field">
+                <label for="directionSelect">Direction</label>
+                <select id="directionSelect">
+                  <option value="">Select</option>
+                  <option>Buy</option>
+                  <option>Sell</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="riskInput">Risk (R)</label>
+                <input id="riskInput" type="number" step="0.1" value="1.0" />
+              </div>
+            </div>
+
+            <div class="field-row">
+              <div class="field">
+                <label for="sessionInput">Session</label>
+                <input id="sessionInput" type="text" placeholder="London / New York / Asia…" />
+              </div>
+              <div class="field">
+                <label for="resultInput">Result (R)</label>
+                <input id="resultInput" type="number" step="0.1" placeholder="e.g. 1.5, -1, 0" />
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="notesInput">Journal notes</label>
+              <textarea id="notesInput" placeholder="What did you see? What rules were met? Where could you improve?"></textarea>
+            </div>
+          </div>
+
+          <div>
+            <div class="card-title" style="margin-bottom:4px;">Weighted checklist</div>
+            <div class="card-subtitle" style="margin-bottom:6px;">Tick only what actually happened on this trade.</div>
+            <div class="checklist-grid" id="checklistContainer">
+              <!-- Rules injected by JS -->
+            </div>
+            <div style="margin-top:8px; font-size:11px; color:var(--muted);" id="disciplinePreview">
+              0 / 6 rules followed (0%) – higher score → higher discipline.
             </div>
           </div>
         </div>
 
-        <div class="top-right">
-          <div class="user-pill" id="userPill">Signed in as: Guest</div>
-          <button class="button" onclick="goLanding()">← Back to landing</button>
-          <button class="button button-danger" onclick="logout()">Log out</button>
+        <div class="actions-row">
+          <button class="btn" onclick="resetForm()">Save draft</button>
+          <button class="btn btn-primary" onclick="addTrade()">Add trade to log</button>
         </div>
-      </header>
+      </section>
 
-      <main>
-        <!-- LEFT: NEW TRADE + CHECKLIST -->
-        <section class="panel">
-          <div class="panel-title-row">
-            <div class="panel-title">New trade</div>
-            <div class="panel-subtle">Log a setup, score it and add to your journal.</div>
+      <!-- RIGHT COLUMN: stats + recent trades -->
+      <section class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Equity &amp; discipline overview</div>
+            <div class="card-subtitle">High-level view of your recent performance.</div>
           </div>
-
-          <div class="field-row">
-            <div class="field">
-              <label>Pair / Symbol</label>
-              <input class="input" type="text" placeholder="e.g. GBPUSD" />
-            </div>
-            <div class="field">
-              <label>Direction</label>
-              <select class="select">
-                <option value="">Select</option>
-                <option>Long</option>
-                <option>Short</option>
-              </select>
-            </div>
-            <div class="field">
-              <label>Risk (R)</label>
-              <input class="input" type="number" step="0.01" placeholder="1.0" />
-            </div>
-          </div>
-
-          <div class="field-row">
-            <div class="field">
-              <label>Session</label>
-              <select class="select">
-                <option>London</option>
-                <option>New York</option>
-                <option>Asia</option>
-              </select>
-            </div>
-            <div class="field">
-              <label>Setup</label>
-              <select class="select">
-                <option>Momentum</option>
-                <option>Reversal</option>
-                <option>Breakout</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="small-label-row">
-            <span>Journal notes</span>
-            <span>Tip: record the reasoning, not the outcome.</span>
-          </div>
-          <textarea placeholder="What did you see? What rules were met? Where could you improve?"></textarea>
-
-          <div class="divider"></div>
-
-          <div class="panel-title-row" style="margin-bottom: 6px">
-            <div class="panel-title">Weighted checklist</div>
-            <div class="panel-subtle">Tick only what actually happened on this trade.</div>
-          </div>
-
-          <div class="grid">
-            <div class="card">
-              <div class="card-title">Momentum setup</div>
-              <div class="card-meta">Trend, pullback, clean level and strong close.</div>
-              <div class="pill-row">
-                <span class="pill">Clean close at level</span>
-                <span class="pill">No double wick at level</span>
-                <span class="pill">No long wick against direction</span>
-              </div>
-            </div>
-            <div class="card">
-              <div class="card-title">Risk & discipline</div>
-              <div class="card-meta">
-                Track whether you actually followed your plan – not just the result.
-              </div>
-              <div class="pill-row">
-                <span class="pill">Planned R respected</span>
-                <span class="pill">No revenge trades</span>
-                <span class="pill">Screenshots saved</span>
-              </div>
-            </div>
-          </div>
-
-          <div style="margin-top: 12px; display: flex; justify-content: flex-end; gap: 8px">
-            <button class="button" onclick="fakeSave()">Save draft</button>
-            <button class="button button-primary" onclick="fakeSave()">Add trade to log</button>
-          </div>
-        </section>
-
-        <!-- RIGHT: METRICS + HISTORY -->
-        <section class="panel">
-          <div class="panel-title-row">
-            <div class="panel-title">Equity & discipline overview</div>
-            <div class="panel-subtle">High-level view of your recent performance.</div>
-          </div>
-
-          <div class="metrics-grid">
-            <div class="stat-card">
-              <div class="stat-label">Win rate</div>
-              <div class="stat-value">0%</div>
-              <div class="stat-sub">0 trades logged</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-label">Avg R (realised)</div>
-              <div class="stat-value">0.00R</div>
-              <div class="stat-sub">Equity curve will show here</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-label">Discipline score</div>
-              <div class="stat-value">0 / 100</div>
-              <div class="stat-sub">Based on checklist hits</div>
-            </div>
-          </div>
-
-          <div class="timeline">
-            Once you start logging trades, we’ll draw your daily equity in R here, along with a
-            simple calendar so you can see streaks, over-trading days and gaps in journaling.
-          </div>
-
-          <div class="divider"></div>
-
-          <div class="panel-title-row" style="margin-bottom: 6px">
-            <div class="panel-title">Recent trades</div>
-            <div class="panel-subtle">Placeholder example – real data comes later.</div>
-          </div>
-
-          <div style="overflow-x: auto">
-            <table>
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Pair</th>
-                  <th>Dir</th>
-                  <th>R</th>
-                  <th>Result</th>
-                  <th>Discipline</th>
-                </tr>
-              </thead>
-              <tbody id="tradeTableBody">
-                <tr>
-                  <td>—</td>
-                  <td>—</td>
-                  <td>—</td>
-                  <td>—</td>
-                  <td><span class="chip">No trades yet</span></td>
-                  <td>Use the New trade form on the left to start building your log.</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
-      </main>
-
-      <footer>
-        <div>© 2025 TredLog. All rights reserved.</div>
-        <div>
-          <a href="https://tredlog.com" target="_blank" rel="noreferrer">tredlog.com</a> ·
-          Contact: <a href="mailto:support@tredlog.com">support@tredlog.com</a>
+          <span class="pill">Last 50 trades</span>
         </div>
-      </footer>
+
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-label">Win rate</div>
+            <div class="stat-main" id="winRate">0%</div>
+            <div class="stat-sub" id="tradesCount">0 trades logged</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-label">Avg R (realized)</div>
+            <div class="stat-main" id="avgR">0.00R</div>
+            <div class="stat-sub">Equity curve will show here.</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-label">Discipline score</div>
+            <div class="stat-main" id="disciplineScore">0 / 100</div>
+            <div class="stat-sub">Based on checklist hits.</div>
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+          <div class="card-title">Recent trades</div>
+          <div class="discipline-tag" id="disciplineTag">Build consistent data first</div>
+        </div>
+
+        <table class="trades-table" id="tradesTable">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Pair</th>
+              <th>Dir</th>
+              <th>R risked</th>
+              <th>Result (R)</th>
+              <th>Discipline</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Filled by JS -->
+          </tbody>
+        </table>
+      </section>
     </div>
 
-    <script>
-      // Read "login" info from localStorage (set on tredlog.com landing)
-      (function showUser() {
-        let label = "Signed in as: Guest";
-        try {
-          const raw = localStorage.getItem("tredlogUser");
-          if (raw) {
-            const user = JSON.parse(raw);
-            if (user.email) {
-              label = "Signed in as: " + user.email;
-            } else if (user.provider === "google") {
-              label = "Signed in with Google";
-            }
-          }
-        } catch (e) {
-          console.error("Error reading tredlogUser", e);
+    <footer>
+      <span>© 2025 TredLog. All rights reserved.</span>
+      <span>Contact: <a href="mailto:support@tredlog.com">support@tredlog.com</a></span>
+    </footer>
+  </div>
+
+  <script>
+    // -------- Auth display & navigation --------
+    function readAuthUser() {
+      let raw = localStorage.getItem("tredlogUser") || localStorage.getItem("tredlogAuth");
+      if (!raw) return { name: "Guest" };
+      try {
+        const data = JSON.parse(raw);
+        const name = data.name || data.email || data.provider || "Guest";
+        return { name };
+      } catch {
+        return { name: "Guest" };
+      }
+    }
+
+    function applyUser() {
+      const { name } = readAuthUser();
+      document.getElementById("userName").textContent = name || "Guest";
+    }
+
+    function goBackToLanding() {
+      // send back to landing page (tredlog.com)
+      window.location.href = "https://tredlog.com/";
+    }
+
+    function logout() {
+      localStorage.removeItem("tredlogUser");
+      localStorage.removeItem("tredlogAuth");
+      window.location.href = "https://tredlog.com/";
+    }
+
+    // -------- Checklist setup --------
+    const RULES = [
+      {
+        id: "momentum",
+        title: "Momentum setup",
+        desc: "Trend, pullback, clean level and strong close.",
+        tag: "Momentum",
+      },
+      {
+        id: "noDoubleWick",
+        title: "No double wick at level",
+        desc: "Avoid long wicks both top & bottom at key level.",
+        tag: "Clean close",
+      },
+      {
+        id: "noAgainstTrend",
+        title: "No long wick against direction",
+        desc: "Avoid huge rejection wick into your entry.",
+        tag: "Trend alignment",
+      },
+      {
+        id: "noRevenge",
+        title: "Not revenge trading",
+        desc: "No emotional chase or tilt entries.",
+        tag: "Psych",
+      },
+      {
+        id: "plannedRespected",
+        title: "Planned & respected",
+        desc: "Setup pre-planned, risk defined, no random add-ons.",
+        tag: "Plan first",
+      },
+      {
+        id: "screenshotsSaved",
+        title: "Screenshots saved",
+        desc: "Before / during / after chart saved for review.",
+        tag: "Review habit",
+      },
+    ];
+
+    function renderChecklist() {
+      const container = document.getElementById("checklistContainer");
+      container.innerHTML = "";
+      RULES.forEach((rule) => {
+        const div = document.createElement("div");
+        div.className = "rule-pill";
+        div.innerHTML = `
+          <div class="rule-left">
+            <input type="checkbox" class="rule-checkbox" data-rule-id="${rule.id}" />
+            <div>
+              <div class="rule-title">${rule.title}</div>
+              <div class="rule-meta">${rule.desc}</div>
+            </div>
+          </div>
+          <div class="rule-tag">${rule.tag}</div>
+        `;
+        container.appendChild(div);
+      });
+
+      container.querySelectorAll(".rule-checkbox").forEach(cb => {
+        cb.addEventListener("change", updateDisciplinePreview);
+      });
+    }
+
+    function updateDisciplinePreview() {
+      const checkboxes = document.querySelectorAll(".rule-checkbox");
+      let total = 0;
+      let hit = 0;
+      checkboxes.forEach(cb => {
+        total++;
+        if (cb.checked) hit++;
+      });
+      const pct = total ? Math.round((hit / total) * 100) : 0;
+      const el = document.getElementById("disciplinePreview");
+      el.textContent = `${hit} / ${total} rules followed (${pct}%) – higher score → higher discipline.`;
+      return pct;
+    }
+
+    // -------- Trades storage & stats --------
+    const STORAGE_KEY = "tredlogTradesV1";
+
+    function loadTrades() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return [];
+      try {
+        const data = JSON.parse(raw);
+        return Array.isArray(data) ? data : [];
+      } catch {
+        return [];
+      }
+    }
+
+    function saveTrades(trades) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(trades));
+    }
+
+    function resetForm() {
+      document.getElementById("pairInput").value = "";
+      document.getElementById("directionSelect").value = "";
+      document.getElementById("riskInput").value = "1.0";
+      document.getElementById("sessionInput").value = "";
+      document.getElementById("resultInput").value = "";
+      document.getElementById("notesInput").value = "";
+      document.querySelectorAll(".rule-checkbox").forEach(cb => cb.checked = false);
+      updateDisciplinePreview();
+    }
+
+    function addTrade() {
+      const pair = document.getElementById("pairInput").value.trim();
+      const direction = document.getElementById("directionSelect").value;
+      const riskR = parseFloat(document.getElementById("riskInput").value || "0");
+      const session = document.getElementById("sessionInput").value.trim();
+      const resultR = parseFloat(document.getElementById("resultInput").value || "0");
+      const notes = document.getElementById("notesInput").value.trim();
+      const disciplinePct = updateDisciplinePreview();
+
+      if (!pair || !direction || !riskR) {
+        alert("Please fill at least Pair, Direction and Risk.");
+        return;
+      }
+
+      const now = new Date();
+      const date = now.toISOString().slice(0, 10);
+
+      const rulesHit = [];
+      document.querySelectorAll(".rule-checkbox").forEach(cb => {
+        if (cb.checked) {
+          const id = cb.getAttribute("data-rule-id");
+          rulesHit.push(id);
         }
-        const pill = document.getElementById("userPill");
-        if (pill) pill.textContent = label;
-      })();
+      });
 
-      function goLanding() {
-        window.location.href = "https://tredlog.com/";
-      }
+      const trades = loadTrades();
+      trades.unshift({
+        id: Date.now(),
+        date,
+        pair,
+        direction,
+        riskR,
+        resultR,
+        session,
+        notes,
+        disciplinePct,
+        rulesHit,
+      });
+      // keep last 100
+      if (trades.length > 100) trades.length = 100;
 
-      function logout() {
-        try {
-          localStorage.removeItem("tredlogUser");
-        } catch (e) {
-          console.error(e);
-        }
-        alert("You have been logged out. Returning to landing page.");
-        goLanding();
-      }
+      saveTrades(trades);
+      renderTrades();
+      resetForm();
+    }
 
-      function fakeSave() {
-        alert(
-          "This is a static demo dashboard. Later we can hook this button to a real backend or local storage log."
-        );
+    function computeStats(trades) {
+      if (!trades.length) {
+        return {
+          winRate: 0,
+          avgR: 0,
+          disciplineAvg: 0,
+        };
       }
-    </script>
-  </body>
+      let wins = 0;
+      let sumR = 0;
+      let sumDiscipline = 0;
+      trades.forEach(t => {
+        if (t.resultR > 0) wins++;
+        sumR += t.resultR || 0;
+        sumDiscipline += t.disciplinePct || 0;
+      });
+      const n = trades.length;
+      return {
+        winRate: Math.round((wins / n) * 100),
+        avgR: sumR / n,
+        disciplineAvg: sumDiscipline / n,
+      };
+    }
+
+    function renderTrades() {
+      const trades = loadTrades();
+      const tbody = document.querySelector("#tradesTable tbody");
+      tbody.innerHTML = "";
+
+      trades.forEach((t, idx) => {
+        const tr = document.createElement("tr");
+        let resultClass = "be";
+        let resultLabel = "BE";
+        if (t.resultR > 0.01) { resultClass = "win"; resultLabel = "Win"; }
+        else if (t.resultR < -0.01) { resultClass = "loss"; resultLabel = "Loss"; }
+
+        const discLabel = t.disciplinePct != null ? `${Math.round(t.disciplinePct)}%` : "–";
+
+        tr.innerHTML = `
+          <td>${trades.length - idx}</td>
+          <td>${t.pair}</td>
+          <td>${t.direction}</td>
+          <td>${t.riskR.toFixed(1)}R</td>
+          <td><span class="pill-result ${resultClass}">${resultLabel} · ${t.resultR.toFixed(2)}R</span></td>
+          <td>${discLabel}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      const stats = computeStats(trades);
+      document.getElementById("winRate").textContent = `${stats.winRate.toFixed(0)}%`;
+      document.getElementById("avgR").textContent = `${stats.avgR.toFixed(2)}R`;
+      document.getElementById("disciplineScore").textContent = `${Math.round(stats.disciplineAvg)} / 100`;
+      document.getElementById("tradesCount").textContent = `${trades.length} trade${trades.length === 1 ? "" : "s"} logged`;
+
+      const tag = document.getElementById("disciplineTag");
+      if (!trades.length) {
+        tag.textContent = "Build consistent data first";
+      } else if (stats.disciplineAvg >= 70) {
+        tag.textContent = "Good discipline – keep journaling every setup.";
+      } else if (stats.disciplineAvg >= 40) {
+        tag.textContent = "Mixed discipline – review rules you skip most often.";
+      } else {
+        tag.textContent = "Discipline score is low – tighten rules before scaling.";
+      }
+    }
+
+    // -------- Init --------
+    renderChecklist();
+    updateDisciplinePreview();
+    applyUser();
+    renderTrades();
+  </script>
+</body>
 </html>
