@@ -1195,6 +1195,25 @@
   recomputeAll(); // also draws empty calendar
 })();
 </script>
+  <!-- Load Firebase helpers + protect dashboard -->
+<script type="module" src="https://aalinoor307.github.io/tredlog-landing/firebase.js"></script>
+<script>
+  (function () {
+    const raw = localStorage.getItem("tredlogUser");
+    if (!raw) {
+      window.location.href = "https://aalinoor307.github.io/tredlog-landing/index.html";
+      return;
+    }
+    try {
+      const user = JSON.parse(raw);
+      console.log("Signed in as:", user.email || user.name || user.uid);
+    } catch (e) {
+      console.error(e);
+    }
+  })();
+</script>
+
 </body>
 </html>
+
 
