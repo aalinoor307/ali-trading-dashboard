@@ -575,24 +575,7 @@
   function openDashboard(){
     // you renamed your old index.html to app.html
     window.location.href = "app.html";
-  }
-
-  function fakeSignIn(provider){
-    const emailInput = document.getElementById("signin-email");
-    const email = emailInput ? emailInput.value.trim() : "";
-
-    const payload = {
-      provider,
-      email: email || null,
-      signedAt: new Date().toISOString()
-    };
-    try{
-      localStorage.setItem("tredlogLastSignIn", JSON.stringify(payload));
-    }catch(e){
-      // ignore if storage not available
-    }
-    openDashboard();
-  }
+window.handleEmail
 
   // ========== AI CHAT BOT FRONT-END ==========
   // IMPORTANT:
@@ -674,6 +657,11 @@
     }
   });
 
+// Shared helper: open the real TredLog dashboard
+function openDashboard() {
+  const DASHBOARD_URL = "https://aalinoor307.github.io/ali-trading-dashboard/"; // <-- change if needed
+  window.location.href = DASHBOARD_URL;
+}
 
 </script>
 </body>
