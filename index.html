@@ -2,852 +2,683 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>TredLog – Trading Dashboard</title>
+  <title>TredLog – Trading Journal & Coach</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="TredLog trading dashboard – log trades, track R and discipline, and review recent performance." />
+  <meta name="description" content="TredLog is a web-based trading journal and coach. Track your trades, discipline and probabilities in one clean dashboard." />
+  <meta name="theme-color" content="#050611" />
+
+  <!-- Favicon (use same files you already added for the app; adjust names if different) -->
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
   <style>
-    :root {
-      --bg: #020617;
-      --bg-elevated: #020c1f;
-      --bg-card: #020a1a;
-      --accent: #facc15;
-      --accent-soft: rgba(250, 204, 21, 0.12);
-      --accent-strong: #fbbf24;
-      --text: #e5e7eb;
-      --muted: #6b7280;
-      --muted-soft: #1f2937;
-      --danger: #f97373;
-      --radius-lg: 18px;
-      --radius-md: 12px;
-      --radius-sm: 8px;
-      --shadow-soft: 0 22px 60px rgba(0,0,0,0.5);
+    :root{
+      --bg:#050611;
+      --bg-elevated:#111322;
+      --accent:#f5c24b;
+      --accent-soft:rgba(245,194,75,.15);
+      --muted:#9ca3af;
+      --border:#292d45;
+      --text:#f9fafb;
+      --text-soft:#cbd5f5;
+      --danger:#fb7185;
+      --radius-lg:20px;
+    }
+    *{box-sizing:border-box;}
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family:"Inter",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      color:var(--text);
+      background:radial-gradient(circle at top,#151936 45%,#050611 100%);
+    }
+    a{text-decoration:none;color:inherit;}
+
+    .shell{
+      max-width:1160px;
+      margin:18px auto 40px;
+      padding:0 16px;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+    /* NAV */
+    .nav{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      margin-bottom:32px;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .brand-logo{
+      width:28px;
+      height:28px;
+      border-radius:10px;
+      background:radial-gradient(circle at 30% 20%,#fff 0,#f5c24b 40%,#8a5cf6 100%);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:15px;
+      font-weight:700;
+      color:#050611;
+    }
+    .brand-text-main{font-size:20px;font-weight:700;}
+    .brand-text-sub{font-size:11px;color:var(--muted);}
+
+    .nav-right{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:4px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.06);
+      background:rgba(4,6,22,.85);
+      font-size:11px;
+      color:var(--muted);
+    }
+    .pill-dot{width:8px;height:8px;border-radius:999px;background:#22c55e;}
+
+    .btn{
+      border:none;
+      border-radius:999px;
+      padding:8px 14px;
+      font-size:12px;
+      font-weight:600;
+      letter-spacing:.03em;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:6px;
+      background:linear-gradient(135deg,#f5c24b,#f08c2b);
+      color:#111322;
+      box-shadow:0 14px 30px rgba(0,0,0,.7);
+      transition:transform .15s,box-shadow .15s,filter .15s;
+      white-space:nowrap;
+    }
+    .btn:hover{transform:translateY(-1px);box-shadow:0 18px 40px rgba(0,0,0,.9);filter:brightness(1.05);}
+    .btn-sm{padding:6px 11px;font-size:11px;box-shadow:none;}
+    .btn-ghost{
+      background:transparent;
+      color:var(--text-soft);
+      border:1px solid rgba(255,255,255,.06);
+      box-shadow:none;
+    }
+    .btn-ghost:hover{background:rgba(8,10,30,.9);}
+
+    /* HERO GRID */
+    .grid{
+      display:grid;
+      grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);
+      gap:20px;
+      align-items:stretch;
+    }
+    @media(max-width:960px){
+      .grid{grid-template-columns:minmax(0,1fr);margin-bottom:18px;}
     }
 
-    body {
-      min-height: 100vh;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
-      background: radial-gradient(circle at top left, #020817, #000014 50%, #000000);
-      color: var(--text);
-      padding: 24px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+    .hero-card{
+      background:radial-gradient(circle at top left,#20263d 0,#111322 52%);
+      border-radius:var(--radius-lg);
+      border:1px solid var(--border);
+      padding:22px 22px 20px;
+      box-shadow:0 24px 50px rgba(0,0,0,.75);
+      position:relative;
+      overflow:hidden;
+    }
+    .hero-badge{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:4px 10px;
+      border-radius:999px;
+      background:rgba(12,18,40,.9);
+      border:1px solid rgba(148,163,184,.4);
+      font-size:11px;
+      color:var(--text-soft);
+      margin-bottom:14px;
+    }
+    .hero-badge span{
+      padding:3px 7px;
+      border-radius:999px;
+      background:var(--accent-soft);
+      color:var(--accent);
+      font-size:10px;
+      font-weight:600;
+      text-transform:uppercase;
+      letter-spacing:.08em;
     }
 
-    .shell {
-      width: 100%;
-      max-width: 1200px;
+    .hero-title{
+      font-size:30px;
+      line-height:1.15;
+      font-weight:700;
+      margin-bottom:10px;
+    }
+    .hero-title span{color:var(--accent);}
+    .hero-sub{
+      font-size:13px;
+      color:var(--text-soft);
+      max-width:440px;
+      margin-bottom:18px;
+    }
+    .hero-meta{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:12px;
+      font-size:11px;
+      color:var(--muted);
+    }
+    .hero-meta-item{
+      display:flex;
+      align-items:center;
+      gap:6px;
+    }
+    .dot-soft{
+      width:8px;height:8px;border-radius:50%;background:var(--accent-soft);
     }
 
-    header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 20px;
+    .cta-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:center;
+      margin-bottom:8px;
+    }
+    .cta-help{font-size:11px;color:var(--muted);}
+
+    .divider{
+      margin:16px 0 12px;
+      height:1px;
+      background:linear-gradient(to right,transparent,rgba(148,163,184,.5),transparent);
     }
 
-    .logo-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
+    .feature-list{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:10px;
+      font-size:11px;
+    }
+    @media(max-width:700px){
+      .feature-list{grid-template-columns:repeat(2,minmax(0,1fr));}
+    }
+    @media(max-width:520px){
+      .feature-list{grid-template-columns:minmax(0,1fr);}
+    }
+    .feature-pill{
+      padding:7px 9px;
+      border-radius:12px;
+      background:rgba(5,7,24,.92);
+      border:1px solid rgba(148,163,184,.3);
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+    }
+    .feature-pill-title{
+      font-size:11px;
+      font-weight:600;
+    }
+    .feature-pill-sub{
+      font-size:10px;
+      color:var(--muted);
     }
 
-    .logo-icon {
-      width: 26px;
-      height: 26px;
-      border-radius: 999px;
-      background: conic-gradient(from 210deg, #facc15, #fb923c, #ef4444, #facc15);
-      box-shadow: 0 0 18px rgba(250, 204, 21, 0.65);
+    /* SIGN IN PANEL */
+    .signin-card{
+      background:radial-gradient(circle at top,#171c3e 0,#090b18 65%);
+      border-radius:var(--radius-lg);
+      border:1px solid var(--border);
+      padding:18px;
+      box-shadow:0 20px 45px rgba(0,0,0,.8);
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+    }
+    .signin-title{font-size:13px;font-weight:600;margin-bottom:4px;}
+    .signin-sub{
+      font-size:11px;
+      color:var(--muted);
+      margin-bottom:6px;
+    }
+    .signin-buttons{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+    .signin-or{
+      text-align:center;
+      font-size:10px;
+      color:var(--muted);
+      margin:4px 0;
+      position:relative;
+    }
+    .signin-or::before,
+    .signin-or::after{
+      content:"";
+      position:absolute;
+      top:50%;
+      width:33%;
+      height:1px;
+      background:linear-gradient(to right,transparent,rgba(148,163,184,.5));
+    }
+    .signin-or::before{left:0;}
+    .signin-or::after{right:0;}
+
+    .input-label{
+      font-size:11px;
+      color:var(--text-soft);
+      margin-bottom:3px;
+    }
+    .input-field{
+      width:100%;
+      border-radius:11px;
+      border:1px solid var(--border);
+      background:rgba(6,8,24,.9);
+      padding:8px 10px;
+      font-size:12px;
+      color:var(--text);
+      outline:none;
+    }
+    .input-field:focus{
+      border-color:var(--accent);
+      box-shadow:0 0 0 1px rgba(245,194,75,.25);
+      background:rgba(9,11,32,.96);
+    }
+    .signin-hint{
+      font-size:10px;
+      color:var(--muted);
     }
 
-    .logo-text-block {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
+    /* CHAT BOT */
+    .chat-card{
+      margin-top:18px;
+      border-radius:var(--radius-lg);
+      border:1px solid var(--border);
+      background:radial-gradient(circle at top,#191e3f 0,#060715 65%);
+      padding:14px 14px 12px;
+    }
+    .chat-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:8px;
+    }
+    .chat-title{
+      font-size:12px;
+      font-weight:600;
+    }
+    .chat-status{
+      font-size:11px;
+      color:var(--muted);
+      display:flex;
+      align-items:center;
+      gap:5px;
+    }
+    .chat-status-dot{
+      width:8px;height:8px;border-radius:999px;background:#22c55e;
+      box-shadow:0 0 0 4px rgba(34,197,94,.18);
+    }
+    .chat-window{
+      border-radius:14px;
+      border:1px solid rgba(148,163,184,.4);
+      background:rgba(5,7,22,.9);
+      height:230px;
+      padding:8px 8px 6px;
+      overflow-y:auto;
+      font-size:11px;
+    }
+    .chat-msg{
+      max-width:88%;
+      padding:7px 9px;
+      border-radius:12px;
+      margin-bottom:6px;
+      line-height:1.3;
+    }
+    .chat-msg.bot{
+      background:rgba(15,23,42,.95);
+      border-top-left-radius:3px;
+    }
+    .chat-msg.user{
+      background:var(--accent-soft);
+      border-top-right-radius:3px;
+      margin-left:auto;
+    }
+    .chat-input-row{
+      display:flex;
+      gap:6px;
+      margin-top:6px;
+    }
+    .chat-input{
+      flex:1;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:rgba(3,5,18,.95);
+      padding:7px 10px;
+      font-size:11px;
+      color:var(--text);
+      outline:none;
+    }
+    .chat-input:focus{
+      border-color:var(--accent);
+      box-shadow:0 0 0 1px rgba(245,194,75,.25);
+    }
+    .chat-send{
+      min-width:64px;
+      padding-inline:10px;
+      border-radius:999px;
+      border:none;
+      font-size:11px;
+      font-weight:600;
+      background:var(--accent);
+      color:#111322;
+      cursor:pointer;
+      box-shadow:0 8px 18px rgba(0,0,0,.7);
+    }
+    .chat-send:hover{filter:brightness(1.04);}
+    .chat-hint{
+      font-size:9px;
+      color:var(--muted);
+      margin-top:3px;
     }
 
-    .logo-title {
-      font-weight: 600;
-      letter-spacing: 0.03em;
-      font-size: 15px;
+    /* FOOTER */
+    footer{
+      margin-top:24px;
+      font-size:11px;
+      color:var(--muted);
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
     }
-
-    .logo-subtitle {
-      font-size: 11px;
-      color: var(--muted);
-    }
-
-    .user-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 13px;
-      color: var(--muted);
-    }
-
-    .user-name {
-      color: var(--accent-strong);
-      font-weight: 500;
-    }
-
-    .top-buttons {
-      display: flex;
-      gap: 8px;
-    }
-
-    .btn {
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.35);
-      background: rgba(15,23,42,0.9);
-      color: var(--text);
-      padding: 6px 12px;
-      font-size: 12px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
-    }
-
-    .btn:hover {
-      background: rgba(15,23,42,1);
-      border-color: rgba(148, 163, 184, 0.9);
-      transform: translateY(-0.5px);
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, #facc15, #f97316);
-      border-color: rgba(248, 250, 252, 0.12);
-      color: #111827;
-      font-weight: 600;
-    }
-
-    .btn-primary:hover {
-      filter: brightness(1.05);
-      transform: translateY(-0.5px);
-    }
-
-    .btn-danger {
-      border-color: rgba(248,113,113,0.7);
-      color: #fecaca;
-      background: radial-gradient(circle at top, rgba(248,113,113,0.18), rgba(15,23,42,0.95));
-    }
-
-    .layout {
-      display: grid;
-      grid-template-columns: minmax(0, 3fr) minmax(0, 2.4fr);
-      gap: 18px;
-    }
-
-    .card {
-      background: radial-gradient(circle at top, rgba(15,23,42,0.9), #020617 55%);
-      border-radius: var(--radius-lg);
-      padding: 16px 18px;
-      border: 1px solid rgba(15,23,42,0.85);
-      box-shadow: var(--shadow-soft);
-    }
-
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-      gap: 10px;
-    }
-
-    .card-title {
-      font-size: 13px;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
-
-    .card-subtitle {
-      font-size: 11px;
-      color: var(--muted);
-    }
-
-    .pill {
-      padding: 3px 8px;
-      border-radius: 999px;
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      border: 1px solid rgba(148,163,184,0.5);
-      color: var(--muted);
-      background: radial-gradient(circle at top, rgba(15,23,42,0.9), rgba(15,23,42,0.6));
-    }
-
-    .pill.good {
-      border-color: rgba(74,222,128,0.7);
-      color: #bbf7d0;
-    }
-
-    .grid-two {
-      display: grid;
-      grid-template-columns: 1.1fr 1fr;
-      gap: 14px;
-    }
-
-    .field-row {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 8px;
-    }
-
-    .field {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    label {
-      font-size: 11px;
-      color: var(--muted);
-    }
-
-    input[type="text"],
-    input[type="number"],
-    select,
-    textarea {
-      background: #020617;
-      border-radius: var(--radius-md);
-      border: 1px solid #1f2937;
-      padding: 7px 9px;
-      font-size: 12px;
-      color: var(--text);
-      outline: none;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.01);
-    }
-
-    input[type="text"]:focus,
-    input[type="number"]:focus,
-    select:focus,
-    textarea:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 1px rgba(250, 204, 21, 0.45);
-    }
-
-    textarea {
-      min-height: 70px;
-      resize: vertical;
-    }
-
-    .checklist-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 8px;
-      margin-top: 4px;
-    }
-
-    .rule-pill {
-      background: #020617;
-      border-radius: var(--radius-md);
-      border: 1px solid #111827;
-      padding: 8px 9px;
-      font-size: 11px;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 8px;
-    }
-
-    .rule-left {
-      display: flex;
-      gap: 6px;
-      align-items: flex-start;
-    }
-
-    .rule-title {
-      font-size: 11px;
-      font-weight: 500;
-    }
-
-    .rule-meta {
-      font-size: 10px;
-      color: var(--muted);
-    }
-
-    .rule-tag {
-      border-radius: 999px;
-      padding: 2px 7px;
-      font-size: 9px;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: #e5e7eb;
-      background: #0f172a;
-      border: 1px solid #111827;
-      white-space: nowrap;
-    }
-
-    .rule-checkbox {
-      margin-top: 2px;
-    }
-
-    .actions-row {
-      display: flex;
-      justify-content: flex-end;
-      gap: 8px;
-      margin-top: 8px;
-    }
-
-    .stats-row {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-
-    .stat-card {
-      background: #020617;
-      border-radius: var(--radius-md);
-      padding: 7px 9px;
-      border: 1px solid #111827;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .stat-label {
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--muted);
-    }
-
-    .stat-main {
-      font-size: 15px;
-      font-weight: 600;
-    }
-
-    .stat-sub {
-      font-size: 11px;
-      color: var(--muted);
-    }
-
-    .stat-badge {
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      padding: 2px 7px;
-      border-radius: 999px;
-      background: rgba(34,197,94,0.15);
-      color: #bbf7d0;
-      align-self: flex-start;
-    }
-
-    .stat-badge.bad {
-      background: rgba(248,113,113,0.16);
-      color: #fecaca;
-    }
-
-    .trades-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 11px;
-      margin-top: 4px;
-    }
-
-    .trades-table th,
-    .trades-table td {
-      padding: 4px 6px;
-      border-bottom: 1px solid #020617;
-      color: #9ca3af;
-    }
-
-    .trades-table th {
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
-      font-size: 9px;
-      color: var(--muted);
-    }
-
-    .pill-result {
-      border-radius: 999px;
-      padding: 2px 6px;
-      font-size: 10px;
-      font-weight: 500;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .pill-result.win {
-      background: rgba(34,197,94,0.16);
-      color: #bbf7d0;
-    }
-
-    .pill-result.loss {
-      background: rgba(248,113,113,0.18);
-      color: #fecaca;
-    }
-
-    .pill-result.be {
-      background: rgba(148,163,184,0.16);
-      color: #e5e7eb;
-    }
-
-    .discipline-tag {
-      font-size: 10px;
-      padding: 2px 7px;
-      border-radius: 999px;
-      background: rgba(59,130,246,0.18);
-      color: #bfdbfe;
-    }
-
-    footer {
-      width: 100%;
-      max-width: 1200px;
-      margin-top: 18px;
-      font-size: 11px;
-      color: var(--muted);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    footer a {
-      color: var(--accent-strong);
-      text-decoration: none;
-    }
-
-    footer a:hover {
-      text-decoration: underline;
-    }
-
-    @media (max-width: 960px) {
-      .layout {
-        grid-template-columns: minmax(0, 1fr);
-      }
-    }
-
-    @media (max-width: 640px) {
-      body {
-        padding: 16px;
-      }
-      header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
-      }
-      .layout {
-        gap: 12px;
-      }
-    }
+    footer a{color:var(--accent);}
   </style>
 </head>
 <body>
-  <div class="shell">
-    <header>
-      <div class="logo-row">
-        <div class="logo-icon"></div>
-        <div class="logo-text-block">
-          <div class="logo-title">TredLog</div>
-          <div class="logo-subtitle">Probability-driven trading journal</div>
-        </div>
+<div class="shell">
+  <!-- NAV -->
+  <header class="nav">
+    <div class="brand">
+      <div class="brand-logo">T</div>
+      <div>
+        <div class="brand-text-main">TredLog</div>
+        <div class="brand-text-sub">Web-based execution journal</div>
       </div>
-
-      <div style="display:flex; align-items:center; gap:12px;">
-        <div class="user-row">
-          <span>Signed in as:</span>
-          <span class="user-name" id="userName">Guest</span>
-        </div>
-        <div class="top-buttons">
-          <button class="btn" onclick="goBackToLanding()">⟵ Back to landing</button>
-          <button class="btn btn-danger" onclick="logout()">Log out</button>
-        </div>
-      </div>
-    </header>
-
-    <div class="layout">
-      <!-- LEFT COLUMN: new trade + checklist -->
-      <section class="card">
-        <div class="card-header">
-          <div>
-            <div class="card-title">New trade</div>
-            <div class="card-subtitle">Log a setup, score it and add it to your journal.</div>
-          </div>
-          <span class="pill good">Daily logging habit</span>
-        </div>
-
-        <div class="grid-two">
-          <div>
-            <div class="field-row">
-              <div class="field">
-                <label for="pairInput">Pair / symbol</label>
-                <input id="pairInput" type="text" placeholder="e.g. GBPUSD" />
-              </div>
-              <div class="field">
-                <label for="directionSelect">Direction</label>
-                <select id="directionSelect">
-                  <option value="">Select</option>
-                  <option>Buy</option>
-                  <option>Sell</option>
-                </select>
-              </div>
-              <div class="field">
-                <label for="riskInput">Risk (R)</label>
-                <input id="riskInput" type="number" step="0.1" value="1.0" />
-              </div>
-            </div>
-
-            <div class="field-row">
-              <div class="field">
-                <label for="sessionInput">Session</label>
-                <input id="sessionInput" type="text" placeholder="London / New York / Asia…" />
-              </div>
-              <div class="field">
-                <label for="resultInput">Result (R)</label>
-                <input id="resultInput" type="number" step="0.1" placeholder="e.g. 1.5, -1, 0" />
-              </div>
-            </div>
-
-            <div class="field">
-              <label for="notesInput">Journal notes</label>
-              <textarea id="notesInput" placeholder="What did you see? What rules were met? Where could you improve?"></textarea>
-            </div>
-          </div>
-
-          <div>
-            <div class="card-title" style="margin-bottom:4px;">Weighted checklist</div>
-            <div class="card-subtitle" style="margin-bottom:6px;">Tick only what actually happened on this trade.</div>
-            <div class="checklist-grid" id="checklistContainer">
-              <!-- Rules injected by JS -->
-            </div>
-            <div style="margin-top:8px; font-size:11px; color:var(--muted);" id="disciplinePreview">
-              0 / 6 rules followed (0%) – higher score → higher discipline.
-            </div>
-          </div>
-        </div>
-
-        <div class="actions-row">
-          <button class="btn" onclick="resetForm()">Save draft</button>
-          <button class="btn btn-primary" onclick="addTrade()">Add trade to log</button>
-        </div>
-      </section>
-
-      <!-- RIGHT COLUMN: stats + recent trades -->
-      <section class="card">
-        <div class="card-header">
-          <div>
-            <div class="card-title">Equity &amp; discipline overview</div>
-            <div class="card-subtitle">High-level view of your recent performance.</div>
-          </div>
-          <span class="pill">Last 50 trades</span>
-        </div>
-
-        <div class="stats-row">
-          <div class="stat-card">
-            <div class="stat-label">Win rate</div>
-            <div class="stat-main" id="winRate">0%</div>
-            <div class="stat-sub" id="tradesCount">0 trades logged</div>
-          </div>
-
-          <div class="stat-card">
-            <div class="stat-label">Avg R (realized)</div>
-            <div class="stat-main" id="avgR">0.00R</div>
-            <div class="stat-sub">Equity curve will show here.</div>
-          </div>
-
-          <div class="stat-card">
-            <div class="stat-label">Discipline score</div>
-            <div class="stat-main" id="disciplineScore">0 / 100</div>
-            <div class="stat-sub">Based on checklist hits.</div>
-          </div>
-        </div>
-
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-          <div class="card-title">Recent trades</div>
-          <div class="discipline-tag" id="disciplineTag">Build consistent data first</div>
-        </div>
-
-        <table class="trades-table" id="tradesTable">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Pair</th>
-              <th>Dir</th>
-              <th>R risked</th>
-              <th>Result (R)</th>
-              <th>Discipline</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- Filled by JS -->
-          </tbody>
-        </table>
-      </section>
     </div>
+    <div class="nav-right">
+      <button class="btn-ghost btn-sm" onclick="openDashboard()">
+        Launch dashboard
+      </button>
+      <div class="pill">
+        <span class="pill-dot"></span>
+        Local session • Data stored in your browser
+      </div>
+    </div>
+  </header>
 
-    <footer>
-      <span>© 2025 TredLog. All rights reserved.</span>
-      <span>Contact: <a href="mailto:support@tredlog.com">support@tredlog.com</a></span>
-    </footer>
-  </div>
+  <!-- MAIN GRID -->
+  <main class="grid">
+    <!-- LEFT: HERO -->
+    <section class="hero-card">
+      <div class="hero-badge">
+        <span>For serious traders</span>
+        No spreadsheets. No noise. Just clean data.
+      </div>
 
-  <script>
-    // -------- Auth display & navigation --------
-    function readAuthUser() {
-      let raw = localStorage.getItem("tredlogUser") || localStorage.getItem("tredlogAuth");
-      if (!raw) return { name: "Guest" };
-      try {
-        const data = JSON.parse(raw);
-        const name = data.name || data.email || data.provider || "Guest";
-        return { name };
-      } catch {
-        return { name: "Guest" };
-      }
-    }
+      <h1 class="hero-title">
+        Turn your trades into a <span>probability-driven</span> edge.
+      </h1>
 
-    function applyUser() {
-      const { name } = readAuthUser();
-      document.getElementById("userName").textContent = name || "Guest";
-    }
+      <p class="hero-sub">
+        TredLog tracks your trades, discipline and R &amp; PnL in one place. Log each setup, see
+        which rules you truly follow and let the dashboard coach your next decision.
+      </p>
 
-    function goBackToLanding() {
-      // send back to landing page (tredlog.com)
-      window.location.href = "https://tredlog.com/";
-    }
+      <div class="cta-row">
+        <button class="btn" onclick="openDashboard()">
+          Sign in &amp; open dashboard
+        </button>
+        <button class="btn-ghost btn-sm">
+          Watch 2-min walkthrough
+        </button>
+      </div>
+      <div class="cta-help">
+        No installation. Runs in your browser. Export all your data as CSV/JSON anytime.
+      </div>
 
-    function logout() {
-      localStorage.removeItem("tredlogUser");
-      localStorage.removeItem("tredlogAuth");
-      window.location.href = "https://tredlog.com/";
-    }
+      <div class="divider"></div>
 
-    // -------- Checklist setup --------
-    const RULES = [
-      {
-        id: "momentum",
-        title: "Momentum setup",
-        desc: "Trend, pullback, clean level and strong close.",
-        tag: "Momentum",
-      },
-      {
-        id: "noDoubleWick",
-        title: "No double wick at level",
-        desc: "Avoid long wicks both top & bottom at key level.",
-        tag: "Clean close",
-      },
-      {
-        id: "noAgainstTrend",
-        title: "No long wick against direction",
-        desc: "Avoid huge rejection wick into your entry.",
-        tag: "Trend alignment",
-      },
-      {
-        id: "noRevenge",
-        title: "Not revenge trading",
-        desc: "No emotional chase or tilt entries.",
-        tag: "Psych",
-      },
-      {
-        id: "plannedRespected",
-        title: "Planned & respected",
-        desc: "Setup pre-planned, risk defined, no random add-ons.",
-        tag: "Plan first",
-      },
-      {
-        id: "screenshotsSaved",
-        title: "Screenshots saved",
-        desc: "Before / during / after chart saved for review.",
-        tag: "Review habit",
-      },
-    ];
+      <div class="feature-list">
+        <div class="feature-pill">
+          <div class="feature-pill-title">Weighted checklist</div>
+          <div class="feature-pill-sub">Score each trade by rules met per setup.</div>
+        </div>
+        <div class="feature-pill">
+          <div class="feature-pill-title">Equity curve in R</div>
+          <div class="feature-pill-sub">See performance independent of lot size.</div>
+        </div>
+        <div class="feature-pill">
+          <div class="feature-pill-title">Behaviour tracking</div>
+          <div class="feature-pill-sub">Emotion tags &amp; coach feedback per trade.</div>
+        </div>
+        <div class="feature-pill">
+          <div class="feature-pill-title">Calendar view</div>
+          <div class="feature-pill-sub">Daily PnL &amp; trade count at a glance.</div>
+        </div>
+        <div class="feature-pill">
+          <div class="feature-pill-title">Export anytime</div>
+          <div class="feature-pill-sub">CSV &amp; JSON backups in one click.</div>
+        </div>
+        <div class="feature-pill">
+          <div class="feature-pill-title">Works with any broker</div>
+          <div class="feature-pill-sub">You log data – TredLog does the math.</div>
+        </div>
+      </div>
 
-    function renderChecklist() {
-      const container = document.getElementById("checklistContainer");
-      container.innerHTML = "";
-      RULES.forEach((rule) => {
-        const div = document.createElement("div");
-        div.className = "rule-pill";
-        div.innerHTML = `
-          <div class="rule-left">
-            <input type="checkbox" class="rule-checkbox" data-rule-id="${rule.id}" />
-            <div>
-              <div class="rule-title">${rule.title}</div>
-              <div class="rule-meta">${rule.desc}</div>
-            </div>
+      <div class="hero-meta">
+        <div class="hero-meta-item">
+          <span class="dot-soft"></span>
+          Built for funded &amp; aspiring funded traders
+        </div>
+        <div class="hero-meta-item">
+          <span class="dot-soft"></span>
+          Designed to be used <strong>daily</strong> – not once a month
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT: SIGN IN + CHAT BOT -->
+    <section>
+      <!-- Sign in card -->
+      <div class="signin-card">
+        <div>
+          <div class="signin-title">Sign in to TredLog</div>
+          <div class="signin-sub">
+            Simple sign in for now – it just opens your dashboard. Later you can connect real auth.
           </div>
-          <div class="rule-tag">${rule.tag}</div>
-        `;
-        container.appendChild(div);
-      });
+        </div>
 
-      container.querySelectorAll(".rule-checkbox").forEach(cb => {
-        cb.addEventListener("change", updateDisciplinePreview);
-      });
+        <div class="signin-buttons">
+          <button class="btn-ghost" onclick="fakeSignIn('google')">
+            🔑 Sign in with Google
+          </button>
+          <button class="btn-ghost" onclick="fakeSignIn('apple')">
+             Sign in with Apple
+          </button>
+
+          <div class="signin-or">or continue with email</div>
+
+          <div>
+            <div class="input-label">Email address</div>
+            <input id="signin-email" class="input-field" type="email" placeholder="you@example.com" />
+          </div>
+          <button class="btn btn-sm" style="width:100%;justify-content:center;" onclick="fakeSignIn('email')">
+            Continue with email
+          </button>
+
+          <div class="signin-hint">
+            This sign in is front-end only: we just remember the provider in <code>localStorage</code>
+            and send you to the dashboard (<code>app.html</code>). When you add real auth (Firebase,
+            Supabase, etc.), you can hook it into these buttons.
+          </div>
+        </div>
+      </div>
+
+      <!-- Chat bot card -->
+      <div class="chat-card">
+        <div class="chat-header">
+          <div class="chat-title">TredLog Assistant</div>
+          <div class="chat-status">
+            <span class="chat-status-dot"></span>
+            Powered by your AI backend
+          </div>
+        </div>
+
+        <div id="chat-window" class="chat-window"></div>
+
+        <div class="chat-input-row">
+          <input id="chat-input" class="chat-input" type="text"
+                 placeholder="Ask anything about TredLog or trading journal setup…" />
+          <button id="chat-send" class="chat-send">Send</button>
+        </div>
+        <div class="chat-hint">
+          To get real AI answers, point <code>CHAT_API_URL</code> in the script to your own backend
+          that calls OpenAI (or another provider) and returns <code>{ reply: '...' }</code>.
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div>© 2025 TredLog. All rights reserved.</div>
+    <div>
+      Contact: <a href="mailto:admin@tredlog.com">admin@tredlog.com</a>
+    </div>
+  </footer>
+</div>
+
+<script>
+  // ========== SIMPLE SIGN-IN FLOW (front-end only) ==========
+  function openDashboard(){
+    // you renamed your old index.html to app.html
+    window.location.href = "app.html";
+  }
+
+  function fakeSignIn(provider){
+    const emailInput = document.getElementById("signin-email");
+    const email = emailInput ? emailInput.value.trim() : "";
+
+    const payload = {
+      provider,
+      email: email || null,
+      signedAt: new Date().toISOString()
+    };
+    try{
+      localStorage.setItem("tredlogLastSignIn", JSON.stringify(payload));
+    }catch(e){
+      // ignore if storage not available
     }
+    openDashboard();
+  }
 
-    function updateDisciplinePreview() {
-      const checkboxes = document.querySelectorAll(".rule-checkbox");
-      let total = 0;
-      let hit = 0;
-      checkboxes.forEach(cb => {
-        total++;
-        if (cb.checked) hit++;
+  // ========== AI CHAT BOT FRONT-END ==========
+  // IMPORTANT:
+  // 1. GitHub Pages is static – you cannot safely hide API keys in this file.
+  // 2. Create a small backend (Vercel / Cloudflare Worker / Render) that:
+  //    - exposes POST /chat
+  //    - reads { messages: [ { role, content } ] }
+  //    - calls OpenAI (or another LLM)
+  //    - returns JSON: { reply: "..." }
+  // 3. Put that backend URL below:
+  const CHAT_API_URL = "https://your-backend.example.com/chat"; // <-- CHANGE THIS
+
+  const chatWindow = document.getElementById("chat-window");
+  const chatInput  = document.getElementById("chat-input");
+  const chatSend   = document.getElementById("chat-send");
+
+  // we'll keep a simple history to send to your backend
+  const chatHistory = [
+    { role: "system", content: "You are TredLog, a trading journal assistant. Be clear and practical and do not give financial advice – just help users use the tool and think in probabilities and discipline." }
+  ];
+
+  function appendMessage(text, from){
+    const msg = document.createElement("div");
+    msg.className = "chat-msg " + (from === "user" ? "user" : "bot");
+    msg.textContent = text;
+    chatWindow.appendChild(msg);
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+  }
+
+  async function sendToAI(question){
+    chatHistory.push({ role: "user", content: question });
+
+    try{
+      const res = await fetch(CHAT_API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: chatHistory })
       });
-      const pct = total ? Math.round((hit / total) * 100) : 0;
-      const el = document.getElementById("disciplinePreview");
-      el.textContent = `${hit} / ${total} rules followed (${pct}%) – higher score → higher discipline.`;
-      return pct;
-    }
 
-    // -------- Trades storage & stats --------
-    const STORAGE_KEY = "tredlogTradesV1";
-
-    function loadTrades() {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return [];
-      try {
-        const data = JSON.parse(raw);
-        return Array.isArray(data) ? data : [];
-      } catch {
-        return [];
+      if(!res.ok){
+        throw new Error("Bad status: " + res.status);
       }
+      const data = await res.json();
+      const reply = (data && data.reply) ? data.reply : "Your AI backend responded but did not include a 'reply' field.";
+      chatHistory.push({ role: "assistant", content: reply });
+      appendMessage(reply, "bot");
+    }catch(err){
+      console.error(err);
+      appendMessage("I couldn’t reach the AI backend. Check that CHAT_API_URL points to a live endpoint and that CORS is configured correctly.", "bot");
     }
+  }
 
-    function saveTrades(trades) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(trades));
+  function handleSend(){
+    const text = chatInput.value.trim();
+    if(!text) return;
+    appendMessage(text, "user");
+    chatInput.value = "";
+
+    // show temporary "thinking" message
+    const thinkingId = "bot-thinking";
+    const thinking = document.createElement("div");
+    thinking.className = "chat-msg bot";
+    thinking.id = thinkingId;
+    thinking.textContent = "Thinking…";
+    chatWindow.appendChild(thinking);
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+
+    sendToAI(text).finally(()=>{
+      const t = document.getElementById(thinkingId);
+      if(t && t.parentNode){ t.parentNode.removeChild(t); }
+    });
+  }
+
+  chatSend.addEventListener("click", handleSend);
+  chatInput.addEventListener("keydown", (e)=>{
+    if(e.key === "Enter"){
+      e.preventDefault();
+      handleSend();
     }
+  });
 
-    function resetForm() {
-      document.getElementById("pairInput").value = "";
-      document.getElementById("directionSelect").value = "";
-      document.getElementById("riskInput").value = "1.0";
-      document.getElementById("sessionInput").value = "";
-      document.getElementById("resultInput").value = "";
-      document.getElementById("notesInput").value = "";
-      document.querySelectorAll(".rule-checkbox").forEach(cb => cb.checked = false);
-      updateDisciplinePreview();
-    }
-
-    function addTrade() {
-      const pair = document.getElementById("pairInput").value.trim();
-      const direction = document.getElementById("directionSelect").value;
-      const riskR = parseFloat(document.getElementById("riskInput").value || "0");
-      const session = document.getElementById("sessionInput").value.trim();
-      const resultR = parseFloat(document.getElementById("resultInput").value || "0");
-      const notes = document.getElementById("notesInput").value.trim();
-      const disciplinePct = updateDisciplinePreview();
-
-      if (!pair || !direction || !riskR) {
-        alert("Please fill at least Pair, Direction and Risk.");
-        return;
-      }
-
-      const now = new Date();
-      const date = now.toISOString().slice(0, 10);
-
-      const rulesHit = [];
-      document.querySelectorAll(".rule-checkbox").forEach(cb => {
-        if (cb.checked) {
-          const id = cb.getAttribute("data-rule-id");
-          rulesHit.push(id);
-        }
-      });
-
-      const trades = loadTrades();
-      trades.unshift({
-        id: Date.now(),
-        date,
-        pair,
-        direction,
-        riskR,
-        resultR,
-        session,
-        notes,
-        disciplinePct,
-        rulesHit,
-      });
-      // keep last 100
-      if (trades.length > 100) trades.length = 100;
-
-      saveTrades(trades);
-      renderTrades();
-      resetForm();
-    }
-
-    function computeStats(trades) {
-      if (!trades.length) {
-        return {
-          winRate: 0,
-          avgR: 0,
-          disciplineAvg: 0,
-        };
-      }
-      let wins = 0;
-      let sumR = 0;
-      let sumDiscipline = 0;
-      trades.forEach(t => {
-        if (t.resultR > 0) wins++;
-        sumR += t.resultR || 0;
-        sumDiscipline += t.disciplinePct || 0;
-      });
-      const n = trades.length;
-      return {
-        winRate: Math.round((wins / n) * 100),
-        avgR: sumR / n,
-        disciplineAvg: sumDiscipline / n,
-      };
-    }
-
-    function renderTrades() {
-      const trades = loadTrades();
-      const tbody = document.querySelector("#tradesTable tbody");
-      tbody.innerHTML = "";
-
-      trades.forEach((t, idx) => {
-        const tr = document.createElement("tr");
-        let resultClass = "be";
-        let resultLabel = "BE";
-        if (t.resultR > 0.01) { resultClass = "win"; resultLabel = "Win"; }
-        else if (t.resultR < -0.01) { resultClass = "loss"; resultLabel = "Loss"; }
-
-        const discLabel = t.disciplinePct != null ? `${Math.round(t.disciplinePct)}%` : "–";
-
-        tr.innerHTML = `
-          <td>${trades.length - idx}</td>
-          <td>${t.pair}</td>
-          <td>${t.direction}</td>
-          <td>${t.riskR.toFixed(1)}R</td>
-          <td><span class="pill-result ${resultClass}">${resultLabel} · ${t.resultR.toFixed(2)}R</span></td>
-          <td>${discLabel}</td>
-        `;
-        tbody.appendChild(tr);
-      });
-
-      const stats = computeStats(trades);
-      document.getElementById("winRate").textContent = `${stats.winRate.toFixed(0)}%`;
-      document.getElementById("avgR").textContent = `${stats.avgR.toFixed(2)}R`;
-      document.getElementById("disciplineScore").textContent = `${Math.round(stats.disciplineAvg)} / 100`;
-      document.getElementById("tradesCount").textContent = `${trades.length} trade${trades.length === 1 ? "" : "s"} logged`;
-
-      const tag = document.getElementById("disciplineTag");
-      if (!trades.length) {
-        tag.textContent = "Build consistent data first";
-      } else if (stats.disciplineAvg >= 70) {
-        tag.textContent = "Good discipline – keep journaling every setup.";
-      } else if (stats.disciplineAvg >= 40) {
-        tag.textContent = "Mixed discipline – review rules you skip most often.";
-      } else {
-        tag.textContent = "Discipline score is low – tighten rules before scaling.";
-      }
-    }
-
-    // -------- Init --------
-    renderChecklist();
-    updateDisciplinePreview();
-    applyUser();
-    renderTrades();
-  </script>
+  // Warm welcome message
+  appendMessage(
+    "Hey, I’m the TredLog assistant. Once you connect me to your AI backend, I’ll answer questions about journaling, discipline scoring and how to use the dashboard.",
+    "bot"
+  );
+</script>
 </body>
 </html>
