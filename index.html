@@ -2,29 +2,64 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>TredLog – Probability-driven trading journal • Dashboard</title>
+    <title>TredLog – Probability-driven trading journal – Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <!-- Chart.js for equity & probability charts -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- =============== SIMPLE PASSWORD GATE (CLIENT-SIDE ONLY) =============== -->
+    <script>
+      // EDIT THIS to your real password. Keep the quotes.
+      const DASHBOARD_PASSWORD = "CHANGE_THIS_PASSWORD";
+
+      (function () {
+        if (!DASHBOARD_PASSWORD) return; // leave blank to disable protection
+
+        const KEY = "tredlog_authed_v1";
+        if (sessionStorage.getItem(KEY) === "yes") return;
+
+        let ok = false;
+        try {
+          for (let i = 0; i < 5; i++) {
+            const pw = prompt("Enter your TredLog dashboard password:");
+            if (pw === null) break; // user cancelled
+            if (pw === DASHBOARD_PASSWORD) {
+              ok = true;
+              break;
+            }
+            alert("Incorrect password, try again.");
+          }
+        } catch (e) {
+          console.warn("Password gate error", e);
+        }
+
+        if (!ok) {
+          document.documentElement.innerHTML =
+            "<body style='background:#020617;color:#e5e7eb;font-family:system-ui;padding:32px;text-align:center'>" +
+            "<h1>Access denied</h1>" +
+            "<p>Wrong password. Reload the page to try again.</p>" +
+            "</body>";
+        } else {
+          sessionStorage.setItem(KEY, "yes");
+        }
+      })();
+    </script>
+    <!-- ====================================================================== -->
 
     <style>
       :root {
         --bg: #050816;
         --bg-elevated: #101322;
-        --card: #0b1220;
-        --card-soft: #111827;
+        --card: #070c1a;
+        --border-subtle: rgba(148, 163, 184, 0.35);
         --accent: #ffc24b;
+        --accent-strong: #ff9a3c;
         --accent-soft: rgba(255, 194, 75, 0.12);
-        --accent-strong: #f97316;
-        --border-subtle: rgba(148, 163, 184, 0.28);
-        --border-strong: rgba(31, 41, 55, 0.9);
         --muted: #9ca3af;
         --text: #f9fafb;
-        --danger: #f97373;
-        --success: #4ade80;
-        --radius-card: 18px;
-        --radius-pill: 999px;
+        --danger: #f97316;
+        --success: #22c55e;
+        --radius-lg: 18px;
+        --radius-md: 12px;
+        --shadow-soft: 0 18px 45px rgba(15, 23, 42, 0.85);
       }
 
       * {
@@ -35,7 +70,7 @@
         margin: 0;
         min-height: 100vh;
         font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
-          -apple-system, sans-serif;
+          sans-serif;
         background: radial-gradient(circle at top, #172033 0, #050816 45%);
         color: var(--text);
         display: flex;
@@ -43,9 +78,9 @@
       }
 
       .shell {
-        max-width: 1280px;
         width: 100%;
-        padding: 24px 16px 40px;
+        max-width: 1200px;
+        padding: 28px 16px 40px;
       }
 
       header {
@@ -53,7 +88,6 @@
         justify-content: space-between;
         align-items: center;
         margin-bottom: 18px;
-        gap: 12px;
       }
 
       .logo-row {
@@ -66,8 +100,8 @@
         width: 28px;
         height: 28px;
         border-radius: 999px;
-        background: radial-gradient(circle at 30% 20%, #ffe29f, #ff9f4a 45%, #ff3c3c 100%);
-        box-shadow: 0 0 0 4px rgba(255, 194, 75, 0.15);
+        background: radial-gradient(circle at 30% 20%, #ffe29f, #ff9f4a 45%, #ff3c3c);
+        box-shadow: 0 0 0 4px rgba(255, 194, 75, 0.18);
       }
 
       .logo-text {
@@ -75,420 +109,338 @@
         letter-spacing: 0.02em;
       }
 
-      .logo-sub {
-        font-size: 11px;
-        color: var(--muted);
-      }
-
       .header-right {
         display: flex;
-        align-items: center;
         gap: 8px;
         flex-wrap: wrap;
+        align-items: center;
       }
 
       .pill {
-        border-radius: var(--radius-pill);
-        padding: 4px 10px;
+        padding: 5px 10px;
+        border-radius: 999px;
+        border: 1px solid var(--border-subtle);
         font-size: 11px;
-        border: 1px solid rgba(148, 163, 184, 0.35);
         color: var(--muted);
-        background: rgba(15, 23, 42, 0.7);
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-      }
-
-      .pill.positive {
-        border-color: rgba(22, 163, 74, 0.6);
-        color: #bbf7d0;
-        background: rgba(22, 163, 74, 0.12);
-      }
-
-      .btn-small {
-        border-radius: var(--radius-pill);
-        padding: 5px 11px;
-        font-size: 11px;
-        border: 1px solid rgba(148, 163, 184, 0.4);
         background: rgba(15, 23, 42, 0.9);
-        color: var(--muted);
+      }
+
+      .pill.good {
+        border-color: rgba(34, 197, 94, 0.6);
+        color: #bbf7d0;
+        background: rgba(22, 163, 74, 0.1);
+      }
+
+      .pill.danger-outline {
+        border-color: rgba(248, 113, 113, 0.7);
+        color: #fecaca;
         cursor: pointer;
       }
 
-      .btn-small.warning {
-        border-color: rgba(248, 113, 113, 0.8);
-        color: #fecaca;
+      .pill.button {
+        cursor: pointer;
+        background: radial-gradient(circle at top, #111827, #020617);
       }
 
-      .btn-small:hover {
-        filter: brightness(1.07);
+      .pill.button:hover {
+        filter: brightness(1.03);
       }
 
       main {
         display: grid;
-        grid-template-columns: minmax(0, 1.3fr) minmax(0, 1.2fr);
+        grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.1fr);
         gap: 18px;
       }
 
       .card {
-        border-radius: var(--radius-card);
         background: radial-gradient(circle at top left, #111827, #020617 60%);
-        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-lg);
+        border: 1px solid rgba(31, 41, 55, 0.95);
+        box-shadow: var(--shadow-soft);
       }
 
       .card-inner {
-        padding: 16px 18px 14px;
+        padding: 16px 18px 16px;
       }
 
-      .card-title-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 10px;
-        gap: 8px;
-      }
-
-      .card-title {
+      h2.card-title {
         font-size: 13px;
-        font-weight: 600;
+        margin: 0 0 10px;
       }
 
-      .card-sub {
+      .sub {
         font-size: 11px;
         color: var(--muted);
       }
 
-      /* Form / left column */
+      /* LEFT COLUMN: form + checklist */
 
-      .form-grid {
-        display: grid;
-        grid-template-columns: 1.1fr 1.1fr;
-        gap: 10px;
-        margin-bottom: 10px;
-      }
-
-      .field-group {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-      }
-
-      label {
-        font-size: 11px;
-        color: var(--muted);
-      }
-
-      input,
-      select,
-      textarea {
-        border-radius: 999px;
-        border: 1px solid rgba(55, 65, 81, 0.9);
-        background: rgba(15, 23, 42, 0.9);
-        color: var(--text);
-        padding: 7px 11px;
-        font-size: 12px;
-      }
-
-      textarea {
-        border-radius: 12px;
-        min-height: 80px;
-        resize: vertical;
-      }
-
-      input::placeholder,
-      textarea::placeholder {
-        color: rgba(148, 163, 184, 0.7);
-      }
-
-      .two-col-row {
+      .grid-2 {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 10px;
       }
 
-      .form-footer {
-        display: flex;
-        justify-content: flex-end;
+      .grid-3 {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 8px;
-        margin-top: 8px;
+      }
+
+      .field-label {
+        font-size: 11px;
+        color: var(--muted);
+        margin-bottom: 2px;
+      }
+
+      .field-row {
+        margin-bottom: 8px;
+      }
+
+      .input,
+      .select {
+        width: 100%;
+        border-radius: 999px;
+        border: 1px solid rgba(55, 65, 81, 0.9);
+        background: rgba(15, 23, 42, 0.95);
+        color: var(--text);
+        padding: 7px 10px;
+        font-size: 12px;
+      }
+
+      .input::placeholder {
+        color: rgba(148, 163, 184, 0.7);
+      }
+
+      textarea.input {
+        border-radius: 12px;
+        resize: vertical;
+        min-height: 80px;
       }
 
       .btn-primary {
-        border-radius: var(--radius-pill);
-        padding: 8px 16px;
-        font-size: 13px;
+        border-radius: 999px;
         border: none;
-        cursor: pointer;
-        font-weight: 500;
-        background: linear-gradient(90deg, #ffc24b, #ff9a3c);
+        background: linear-gradient(90deg, var(--accent), var(--accent-strong));
         color: #111827;
-        box-shadow: 0 10px 22px rgba(255, 194, 75, 0.24);
+        font-weight: 600;
+        padding: 7px 16px;
+        font-size: 12px;
+        cursor: pointer;
+        box-shadow: 0 10px 18px rgba(255, 194, 75, 0.35);
       }
 
-      .btn-secondary {
-        border-radius: var(--radius-pill);
-        padding: 8px 14px;
-        font-size: 12px;
-        border: 1px solid var(--border-subtle);
-        background: rgba(15, 23, 42, 0.9);
+      .btn-ghost {
+        border-radius: 999px;
+        border: 1px solid rgba(148, 163, 184, 0.6);
+        background: transparent;
         color: var(--muted);
+        font-size: 12px;
+        padding: 7px 14px;
         cursor: pointer;
       }
 
-      .section-label-row {
+      .form-actions {
         display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 10px;
-        margin-bottom: 6px;
+        justify-content: flex-end;
+        gap: 8px;
+        margin-top: 6px;
       }
 
-      .section-label {
-        font-size: 12px;
-        font-weight: 500;
-      }
-
-      .section-sub {
-        font-size: 10px;
-        color: var(--muted);
-      }
-
-      .checklist-grid {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 10px;
+      .checklist-section-title {
         font-size: 11px;
-      }
-
-      .checklist-card {
-        border-radius: 12px;
-        background: rgba(15, 23, 42, 0.95);
-        border: 1px solid var(--border-strong);
-        padding: 8px 9px;
-      }
-
-      .checklist-title {
         font-weight: 600;
         margin-bottom: 4px;
       }
 
-      .checklist-items {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
+      .checklist-column {
+        border-radius: var(--radius-md);
+        border: 1px solid rgba(31, 41, 55, 0.9);
+        background: rgba(15, 23, 42, 0.9);
+        padding: 8px 9px;
       }
 
-      .checklist-items label {
+      .check-row {
         display: flex;
-        align-items: center;
-        gap: 4px;
+        align-items: flex-start;
+        gap: 6px;
+        margin-bottom: 3px;
+        font-size: 10px;
+        color: var(--muted);
+      }
+
+      .check-row label {
         cursor: pointer;
       }
 
-      .checklist-items input[type="checkbox"] {
-        width: 12px;
-        height: 12px;
-        accent-color: var(--accent-strong);
-      }
-
       .checklist-footer {
-        margin-top: 6px;
+        margin-top: 4px;
         font-size: 10px;
         color: var(--muted);
-        display: flex;
-        justify-content: space-between;
+        text-align: right;
       }
 
-      /* Right column – stats & charts */
+      /* RIGHT COLUMN: stats + charts + calendar */
 
-      .stat-grid {
+      .stats-top {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 8px;
-        margin-top: 4px;
+        margin-bottom: 10px;
       }
 
-      .stat-card {
-        border-radius: 12px;
-        background: rgba(15, 23, 42, 0.95);
-        border: 1px solid var(--border-strong);
+      .stat-box {
+        border-radius: var(--radius-md);
+        border: 1px solid rgba(31, 41, 55, 0.9);
+        background: rgba(15, 23, 42, 0.9);
         padding: 7px 9px;
         font-size: 11px;
       }
 
       .stat-label {
-        font-size: 10px;
         color: var(--muted);
-        margin-bottom: 2px;
+        margin-bottom: 3px;
       }
 
       .stat-value {
-        font-size: 14px;
+        font-size: 13px;
         font-weight: 600;
       }
 
       .stat-sub {
         font-size: 10px;
         color: var(--muted);
-        margin-top: 2px;
       }
 
-      canvas {
-        width: 100% !important;
-        height: 200px !important;
-      }
-
-      .charts-grid {
+      .charts-row {
         display: grid;
-        grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
-        gap: 10px;
-        margin-top: 10px;
+        grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.9fr);
+        gap: 8px;
       }
 
       .chart-card {
-        border-radius: 12px;
-        background: rgba(15, 23, 42, 0.95);
-        border: 1px solid var(--border-strong);
-        padding: 8px 9px 10px;
-        font-size: 11px;
+        border-radius: var(--radius-md);
+        border: 1px solid rgba(31, 41, 55, 0.9);
+        background: rgba(15, 23, 42, 0.9);
+        padding: 7px 9px 9px;
       }
 
       .chart-title {
+        font-size: 11px;
+        color: var(--muted);
         margin-bottom: 4px;
       }
 
-      .summary-row {
-        margin-top: 8px;
-        font-size: 11px;
-        color: var(--muted);
+      canvas {
+        width: 100%;
+        height: 140px;
+        display: block;
       }
 
-      .summary-row strong {
-        color: var(--text);
-      }
-
-      /* Weekly / monthly and calendar */
-
-      .bottom-right-grid {
+      .bottom-row {
         display: grid;
-        grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.2fr);
-        gap: 10px;
+        grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+        gap: 8px;
         margin-top: 10px;
       }
 
-      .small-card {
-        border-radius: 12px;
-        background: rgba(15, 23, 42, 0.95);
-        border: 1px solid var(--border-strong);
-        padding: 8px 9px;
-        font-size: 11px;
-      }
-
-      .small-card h4 {
-        margin: 0 0 4px;
-        font-size: 11px;
-      }
-
-      .small-stat {
-        margin-top: 4px;
-      }
-
-      .calendar-grid {
-        display: grid;
-        grid-template-columns: repeat(7, minmax(0, 1fr));
-        gap: 4px;
-        margin-top: 6px;
-        font-size: 10px;
-      }
-
-      .calendar-head {
-        font-size: 10px;
-        color: var(--muted);
-        text-align: center;
-      }
-
-      .calendar-cell {
-        min-height: 40px;
-        border-radius: 8px;
-        border: 1px solid rgba(31, 41, 55, 0.9);
-        background: rgba(15, 23, 42, 0.95);
-        padding: 2px 3px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-      }
-
-      .calendar-day {
-        font-size: 10px;
-        color: var(--muted);
-      }
-
-      .calendar-pnl {
-        font-size: 10px;
-      }
-
-      .calendar-pnl.positive {
-        color: var(--success);
-      }
-
-      .calendar-pnl.negative {
-        color: var(--danger);
-      }
-
-      /* Trades table */
-
-      .table-card {
-        margin-top: 12px;
-      }
-
-      table {
+      .recent-table {
         width: 100%;
         border-collapse: collapse;
         font-size: 11px;
       }
 
-      th,
-      td {
-        padding: 6px 6px;
-        border-bottom: 1px solid rgba(30, 41, 59, 0.9);
-        text-align: left;
+      .recent-table th,
+      .recent-table td {
+        padding: 4px 5px;
+        border-bottom: 1px solid rgba(31, 41, 55, 0.9);
         white-space: nowrap;
       }
 
-      th {
+      .recent-table th {
+        color: var(--muted);
+        font-weight: 500;
+        text-align: left;
+      }
+
+      .recent-table td.small {
+        font-size: 10px;
+      }
+
+      .recent-table a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+
+      .recent-table a:hover {
+        text-decoration: underline;
+      }
+
+      /* Weekly / monthly + calendar */
+
+      .mini-card {
+        border-radius: var(--radius-md);
+        border: 1px solid rgba(31, 41, 55, 0.9);
+        background: rgba(15, 23, 42, 0.9);
+        padding: 7px 9px;
+        font-size: 11px;
+      }
+
+      .mini-title {
+        font-size: 11px;
+        color: var(--muted);
+        margin-bottom: 4px;
+      }
+
+      .mini-line {
+        font-size: 10px;
+        margin-bottom: 2px;
+      }
+
+      .calendar-header {
+        display: flex;
+        justify-content: space-between;
         font-size: 10px;
         color: var(--muted);
+        margin-bottom: 4px;
       }
 
-      tbody tr:hover {
-        background: rgba(15, 23, 42, 0.85);
+      .calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        grid-auto-rows: minmax(18px, auto);
+        gap: 2px;
+        font-size: 9px;
       }
 
-      .pnl-positive {
-        color: var(--success);
+      .calendar-cell {
+        padding: 2px 4px;
+        border-radius: 4px;
       }
 
-      .pnl-negative {
-        color: var(--danger);
+      .calendar-cell-empty {
+        opacity: 0.25;
       }
 
-      .link-icon {
-        cursor: pointer;
-        font-size: 12px;
+      .calendar-day-labels {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 2px;
+        font-size: 9px;
+        color: var(--muted);
+        margin-bottom: 2px;
       }
 
-      /* Responsive */
+      .calendar-day-labels div {
+        text-align: center;
+      }
 
-      @media (max-width: 1024px) {
+      .calendar-pnl {
+        font-size: 9px;
+      }
+
+      @media (max-width: 980px) {
         main {
-          grid-template-columns: minmax(0, 1fr);
-        }
-
-        .charts-grid {
-          grid-template-columns: minmax(0, 1fr);
-        }
-
-        .bottom-right-grid {
           grid-template-columns: minmax(0, 1fr);
         }
       }
@@ -497,22 +449,7 @@
         header {
           flex-direction: column;
           align-items: flex-start;
-        }
-
-        .form-grid {
-          grid-template-columns: minmax(0, 1fr);
-        }
-
-        .two-col-row {
-          grid-template-columns: minmax(0, 1fr);
-        }
-
-        .checklist-grid {
-          grid-template-columns: minmax(0, 1fr);
-        }
-
-        .stat-grid {
-          grid-template-columns: minmax(0, 1fr);
+          gap: 8px;
         }
       }
     </style>
@@ -524,808 +461,741 @@
           <div class="logo-icon"></div>
           <div>
             <div class="logo-text">TredLog</div>
-            <div class="logo-sub">Probability-driven trading journal – Dashboard</div>
+            <div style="font-size:10px;color:var(--muted);margin-top:1px;">
+              Probability-driven trading journal – Dashboard
+            </div>
           </div>
         </div>
         <div class="header-right">
           <div class="pill">Local session • Browser storage only</div>
-          <div class="pill positive">Built for serious traders</div>
-          <button class="btn-small" onclick="exportBackup()">Export backup</button>
-          <button class="btn-small" onclick="triggerImport()">Import backup</button>
-          <button class="btn-small warning" onclick="clearAllData()">
-            Clear local data
-          </button>
+          <div class="pill good">Built for serious traders</div>
+          <div id="exportBtn" class="pill button">Export backup</div>
+          <div id="importBtn" class="pill button">Import backup</div>
+          <div id="clearBtn" class="pill danger-outline">Clear local data</div>
+          <input id="importFile" type="file" accept="application/json" style="display:none;" />
         </div>
       </header>
 
       <main>
-        <!-- LEFT: account + new trade + checklist -->
+        <!-- LEFT: Account + new trade + checklist -->
         <section class="card">
           <div class="card-inner">
-            <div class="card-title-row">
+            <h2 class="card-title">Account &amp; new trade</h2>
+            <div class="sub" id="tradeCountLabel">0 trades logged</div>
+
+            <div class="grid-2" style="margin-top:10px;">
               <div>
-                <div class="card-title">Account & new trade</div>
-                <div class="card-sub">
-                  Set your starting balance once, then log trades and track PnL in R and USD.
+                <div class="field-row">
+                  <div class="field-label">Starting balance (USD)</div>
+                  <input
+                    id="startingBalance"
+                    class="input"
+                    type="number"
+                    step="0.01"
+                    placeholder="e.g. 10,000"
+                  />
+                </div>
+                <div class="field-row">
+                  <div class="field-label">Risk per trade (USD)</div>
+                  <input
+                    id="riskPerTrade"
+                    class="input"
+                    type="number"
+                    step="0.01"
+                    placeholder="e.g. 1,000"
+                  />
+                </div>
+                <div class="field-row">
+                  <div class="field-label">Date</div>
+                  <input id="tradeDate" class="input" type="date" />
+                </div>
+                <div class="field-row">
+                  <div class="field-label">Direction</div>
+                  <select id="direction" class="select">
+                    <option value="">Select</option>
+                    <option value="Buy">Buy</option>
+                    <option value="Sell">Sell</option>
+                  </select>
+                </div>
+                <div class="field-row">
+                  <div class="field-label">Risk (R)</div>
+                  <input
+                    id="riskR"
+                    class="input"
+                    type="number"
+                    step="0.1"
+                    value="1"
+                  />
                 </div>
               </div>
-              <div class="card-sub" id="tradeCountLabel">0 trades logged</div>
-            </div>
-
-            <!-- Account row -->
-            <div class="form-grid">
-              <div class="field-group">
-                <label for="startingBalance">Starting balance (USD)</label>
-                <input
-                  id="startingBalance"
-                  type="number"
-                  min="0"
-                  step="100"
-                  placeholder="e.g. 10,000"
-                />
-              </div>
-              <div class="field-group">
-                <label for="riskPerTrade">Risk per trade (USD)</label>
-                <input
-                  id="riskPerTrade"
-                  type="number"
-                  min="0"
-                  step="10"
-                  placeholder="e.g. 1,000"
-                />
-              </div>
-            </div>
-
-            <!-- Trade form -->
-            <div class="two-col-row" style="margin-top: 8px;">
-              <div class="field-group">
-                <label for="tradeDate">Date</label>
-                <input id="tradeDate" type="date" />
-              </div>
-              <div class="field-group">
-                <label for="pair">Pair / symbol</label>
-                <input id="pair" type="text" placeholder="e.g. GBPUSD" />
-              </div>
-            </div>
-
-            <div class="two-col-row">
-              <div class="field-group">
-                <label for="direction">Direction</label>
-                <select id="direction">
-                  <option value="">Select</option>
-                  <option>Buy</option>
-                  <option>Sell</option>
-                </select>
-              </div>
-              <div class="field-group">
-                <label for="session">Session</label>
-                <input id="session" type="text" placeholder="London, NY, Asia..." />
+              <div>
+                <div class="field-row">
+                  <div class="field-label">Pair / symbol</div>
+                  <input
+                    id="pair"
+                    class="input"
+                    type="text"
+                    placeholder="e.g. GBPUSD"
+                  />
+                </div>
+                <div class="field-row">
+                  <div class="field-label">Session</div>
+                  <input
+                    id="session"
+                    class="input"
+                    type="text"
+                    placeholder="London, NY, Asia..."
+                  />
+                </div>
+                <div class="field-row">
+                  <div class="field-label">Result (R)</div>
+                  <input
+                    id="resultR"
+                    class="input"
+                    type="number"
+                    step="0.1"
+                    placeholder="e.g. -1, 0.5, 2"
+                  />
+                </div>
+                <div class="field-row">
+                  <div class="field-label">Setup</div>
+                  <input
+                    id="setup"
+                    class="input"
+                    type="text"
+                    placeholder="Momentum, pullback, range break..."
+                  />
+                </div>
+                <div class="field-row">
+                  <div class="field-label">Screenshot / chart link</div>
+                  <input
+                    id="screenshot"
+                    class="input"
+                    type="url"
+                    placeholder="Paste TradingView or chart URL"
+                  />
+                </div>
               </div>
             </div>
 
-            <div class="two-col-row">
-              <div class="field-group">
-                <label for="riskR">Risk (R)</label>
-                <input id="riskR" type="number" step="0.1" value="1" />
-              </div>
-              <div class="field-group">
-                <label for="resultR">Result (R)</label>
-                <input
-                  id="resultR"
-                  type="number"
-                  step="0.1"
-                  placeholder="e.g. -1, 0.5, 2"
-                />
-              </div>
-            </div>
-
-            <div class="two-col-row">
-              <div class="field-group">
-                <label for="setup">Setup</label>
-                <input
-                  id="setup"
-                  type="text"
-                  placeholder="Momentum, pullback, range break..."
-                />
-              </div>
-              <div class="field-group">
-                <label for="screenshot">Screenshot / chart link</label>
-                <input
-                  id="screenshot"
-                  type="url"
-                  placeholder="Paste TradingView or chart URL"
-                />
-              </div>
-            </div>
-
-            <div class="field-group" style="margin-top: 6px;">
-              <label for="notes">Journal notes</label>
+            <div class="field-row">
+              <div class="field-label">Journal notes</div>
               <textarea
                 id="notes"
+                class="input"
                 placeholder="What did you see? What rules were met? Where could you improve?"
               ></textarea>
             </div>
 
-            <div class="form-footer">
-              <button class="btn-secondary" onclick="saveDraft()">Save draft</button>
-              <button class="btn-primary" onclick="addTrade()">Add trade to log</button>
+            <div class="form-actions">
+              <button id="saveDraftBtn" class="btn-ghost">Save draft</button>
+              <button id="addTradeBtn" class="btn-primary">Add trade to log</button>
             </div>
 
-            <!-- Checklist -->
-            <div class="section-label-row">
-              <div class="section-label">Weighted checklist</div>
-              <div class="section-sub">Tick only what actually happened on this trade.</div>
-            </div>
+            <!-- Weighted checklist -->
+            <div style="margin-top:14px;">
+              <div class="field-label">Weighted checklist</div>
+              <div style="font-size:10px;color:var(--muted);margin-bottom:5px;">
+                Tick only what actually happened on this trade.
+              </div>
+              <div class="grid-3">
+                <div class="checklist-column">
+                  <div class="checklist-section-title">Momentum setup</div>
 
-            <div class="checklist-grid" id="checklistArea">
-              <div class="checklist-card">
-                <div class="checklist-title">Momentum setup</div>
-                <div class="checklist-items">
-                  <label
-                    ><input type="checkbox" data-weight="1" /> Trend, pullback clean and
-                    strong close.</label
-                  >
-                  <label
-                    ><input type="checkbox" data-weight="1" /> Clean close at level – no
-                    double wick at level.</label
-                  >
-                  <label
-                    ><input type="checkbox" data-weight="1" /> No long wick against
-                    direction.</label
-                  >
+                  <div class="check-row">
+                    <input
+                      id="chk-mom-1"
+                      type="checkbox"
+                      class="rule-checkbox"
+                    />
+                    <label for="chk-mom-1">
+                      Trend, pullback clean and strong close.
+                    </label>
+                  </div>
+                  <div class="check-row">
+                    <input
+                      id="chk-mom-2"
+                      type="checkbox"
+                      class="rule-checkbox"
+                    />
+                    <label for="chk-mom-2">
+                      Clean close at level – no double wick at level.
+                    </label>
+                  </div>
+                  <div class="check-row">
+                    <input
+                      id="chk-mom-3"
+                      type="checkbox"
+                      class="rule-checkbox"
+                    />
+                    <label for="chk-mom-3">
+                      No long wick against direction.
+                    </label>
+                  </div>
+                </div>
+
+                <div class="checklist-column">
+                  <div class="checklist-section-title">Risk &amp; discipline</div>
+
+                  <div class="check-row">
+                    <input
+                      id="chk-risk-1"
+                      type="checkbox"
+                      class="rule-checkbox"
+                    />
+                    <label for="chk-risk-1">Planned R respected.</label>
+                  </div>
+                  <div class="check-row">
+                    <input
+                      id="chk-risk-2"
+                      type="checkbox"
+                      class="rule-checkbox"
+                    />
+                    <label for="chk-risk-2">No revenge trades.</label>
+                  </div>
+                  <div class="check-row">
+                    <input
+                      id="chk-risk-3"
+                      type="checkbox"
+                      class="rule-checkbox"
+                    />
+                    <label for="chk-risk-3">
+                      No adding risk mid-trade.
+                    </label>
+                  </div>
+                </div>
+
+                <div class="checklist-column">
+                  <div class="checklist-section-title">
+                    Screenshots / behaviour
+                  </div>
+
+                  <div class="check-row">
+                    <input
+                      id="chk-beh-1"
+                      type="checkbox"
+                      class="rule-checkbox"
+                    />
+                    <label for="chk-beh-1">
+                      Screenshots saved for review.
+                    </label>
+                  </div>
+                  <div class="check-row">
+                    <input
+                      id="chk-beh-2"
+                      type="checkbox"
+                      class="rule-checkbox"
+                    />
+                    <label for="chk-beh-2">
+                      Annotated before &amp; after.
+                    </label>
+                  </div>
+                  <div class="check-row">
+                    <input
+                      id="chk-beh-3"
+                      type="checkbox"
+                      class="rule-checkbox"
+                    />
+                    <label for="chk-beh-3">
+                      Clear headspace / no FOMO late session.
+                    </label>
+                  </div>
                 </div>
               </div>
-
-              <div class="checklist-card">
-                <div class="checklist-title">Risk & discipline</div>
-                <div class="checklist-items">
-                  <label
-                    ><input type="checkbox" data-weight="1" /> Planned R respected.</label
-                  >
-                  <label
-                    ><input type="checkbox" data-weight="1" /> No revenge trades.</label
-                  >
-                  <label
-                    ><input type="checkbox" data-weight="1" /> No adding risk mid-trade.</label
-                  >
-                </div>
+              <div class="checklist-footer">
+                <span id="checklistScoreLabel">0 / 9 rules followed (0% discipline).</span>
+                <span style="margin-left:4px;">Higher score → higher discipline.</span>
               </div>
-
-              <div class="checklist-card">
-                <div class="checklist-title">Screenshots / behaviour</div>
-                <div class="checklist-items">
-                  <label
-                    ><input type="checkbox" data-weight="1" /> Screenshots saved for
-                    review.</label
-                  >
-                  <label
-                    ><input type="checkbox" data-weight="1" /> Annotated before & after.</label
-                  >
-                  <label
-                    ><input type="checkbox" data-weight="1" /> Clear headspace / no FOMO
-                    late session.</label
-                  >
-                </div>
-              </div>
-            </div>
-
-            <div class="checklist-footer">
-              <div id="checklistSummary">0 / 9 rules followed (0% discipline).</div>
-              <div>Higher score → higher discipline.</div>
             </div>
           </div>
         </section>
 
-        <!-- RIGHT: overview / charts / calendar -->
+        <!-- RIGHT: stats, charts, calendar, recent trades -->
         <section class="card">
           <div class="card-inner">
-            <div class="card-title-row">
+            <div
+              style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;"
+            >
               <div>
-                <div class="card-title">Equity & discipline overview</div>
-                <div class="card-sub">
+                <h2 class="card-title" style="margin-bottom:2px;">
+                  Equity &amp; discipline overview
+                </h2>
+                <div class="sub">
                   High-level view of your performance in R and USD.
                 </div>
               </div>
-              <div class="card-sub" id="moneySummary">Total PnL: $0.00 • Balance: $0.00</div>
+              <div
+                class="sub"
+                id="topPnlLabel"
+                style="font-size:11px;text-align:right;"
+              >
+                Total PnL: $0.00 • Balance: $0.00
+              </div>
             </div>
 
-            <!-- Top stats -->
-            <div class="stat-grid">
-              <div class="stat-card">
+            <div class="stats-top">
+              <div class="stat-box">
                 <div class="stat-label">WIN RATE</div>
-                <div class="stat-value" id="winRate">0%</div>
-                <div class="stat-sub" id="winRateSub">Based on R > 0.</div>
+                <div class="stat-value" id="winRateLabel">0%</div>
+                <div class="stat-sub">Based on R &gt; 0 only.</div>
               </div>
-              <div class="stat-card">
+              <div class="stat-box">
                 <div class="stat-label">AVG R (REALIZED)</div>
-                <div class="stat-value" id="avgR">0.0R</div>
-                <div class="stat-sub" id="avgRSub">From all logged trades.</div>
+                <div class="stat-value" id="avgRLabel">0.0R</div>
+                <div class="stat-sub">From all logged trades.</div>
               </div>
-              <div class="stat-card">
+              <div class="stat-box">
                 <div class="stat-label">DISCIPLINE SCORE</div>
-                <div class="stat-value" id="disciplineScore">0 / 100</div>
-                <div class="stat-sub" id="disciplineSub">Average of checklist hits.</div>
+                <div class="stat-value" id="disciplineLabel">0 / 100</div>
+                <div class="stat-sub">Average of checklist discipline.</div>
               </div>
             </div>
 
-            <!-- Charts -->
-            <div class="charts-grid">
+            <div class="charts-row">
               <div class="chart-card">
                 <div class="chart-title">Equity curve (cumulative R)</div>
-                <canvas id="equityChart"></canvas>
+                <canvas id="equityCanvas" width="400" height="140"></canvas>
+                <div
+                  id="equitySummary"
+                  style="font-size:10px;color:var(--muted);margin-top:2px;"
+                >
+                  No trades yet. Log your first setup to start drawing your curve.
+                </div>
               </div>
               <div class="chart-card">
                 <div class="chart-title">Probability view (wins vs losses)</div>
-                <canvas id="probChart"></canvas>
+                <canvas id="probCanvas" width="300" height="140"></canvas>
               </div>
             </div>
 
-            <div class="summary-row" id="tradeSummaryText">
-              No trades yet. Log your first setup to start drawing your curve.
+            <div class="bottom-row">
+              <div class="mini-card">
+                <div class="mini-title">Weekly &amp; monthly stats</div>
+                <div class="mini-line" id="stats7Label">
+                  Last 7 days: 0 trades. PnL: 0.0R • $0.00
+                </div>
+                <div class="mini-line" id="stats30Label">
+                  Last 30 days: 0 trades. PnL: 0.0R • $0.00
+                </div>
+              </div>
+
+              <div class="mini-card">
+                <div class="calendar-header">
+                  <span>Calendar – this month</span>
+                  <span id="calendarMonthLabel"></span>
+                </div>
+                <div class="calendar-day-labels">
+                  <div>Sun</div>
+                  <div>Mon</div>
+                  <div>Tue</div>
+                  <div>Wed</div>
+                  <div>Thu</div>
+                  <div>Fri</div>
+                  <div>Sat</div>
+                </div>
+                <div id="calendarGrid" class="calendar-grid"></div>
+              </div>
             </div>
 
-            <!-- Weekly / monthly & calendar -->
-            <div class="bottom-right-grid">
-              <div class="small-card">
-                <h4>Weekly & monthly stats</h4>
-                <div class="small-stat" id="weeklyStats">Last 7 days: 0 trades.</div>
-                <div class="small-stat" id="weeklyPnl">PnL: 0.00R • $0.00</div>
-                <div class="small-stat" id="monthlyStats">Last 30 days: 0 trades.</div>
-                <div class="small-stat" id="monthlyPnl">PnL: 0.00R • $0.00</div>
-              </div>
-              <div class="small-card">
-                <h4 id="calendarTitle">Calendar – this month</h4>
-                <div class="calendar-grid" id="calendarHead"></div>
-                <div class="calendar-grid" id="calendarBody"></div>
-              </div>
-            </div>
-
-            <!-- Trades table -->
-            <div class="small-card table-card">
-              <h4>Recent trades</h4>
-              <div style="overflow-x:auto;">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>#</th>
-                      <th>Date</th>
-                      <th>Pair</th>
-                      <th>Dir</th>
-                      <th>R</th>
-                      <th>PnL ($)</th>
-                      <th>Disc%</th>
-                      <th>Screenshot</th>
-                      <th>Notes</th>
-                    </tr>
-                  </thead>
-                  <tbody id="tradesTableBody"></tbody>
-                </table>
-              </div>
+            <div style="margin-top:10px;">
+              <div class="mini-title" style="margin-bottom:4px;">Recent trades</div>
+              <table class="recent-table" id="recentTable">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Date</th>
+                    <th>Pair</th>
+                    <th>Dir</th>
+                    <th>R</th>
+                    <th>PnL ($)</th>
+                    <th>Disc%</th>
+                    <th>Screenshot</th>
+                    <th>Notes</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
             </div>
           </div>
         </section>
       </main>
     </div>
 
-    <!-- hidden file input for import -->
-    <input
-      type="file"
-      id="importFile"
-      accept="application/json"
-      style="display: none;"
-    />
-
     <script>
-      /*************** REAL PASSWORD (simple, client-side) ***************/
-      // 👉 EDIT THIS to your own secret.
-      // Example: "AliNoor!2025"
-      const DASHBOARD_PASSWORD = Alihandroz@2099;
+      /*********************** DATA MODEL & STORAGE ************************/
+      const STORAGE_KEY = "tredlog_v2_data";
 
-      (function passwordGate() {
-        if (!DASHBOARD_PASSWORD) return; // leave blank to disable protection
-        try {
-          let ok = false;
-          for (let i = 0; i < 5; i++) {
-            const pw = prompt("Enter your TredLog dashboard password:");
-            if (pw === null) continue;
-            if (pw === DASHBOARD_PASSWORD) {
-              ok = true;
-              break;
-            }
-            alert("Incorrect password. Try again.");
-          }
-          if (!ok) {
-            alert("Access denied.");
-            window.location.href = "about:blank";
-          }
-        } catch (e) {
-          console.warn("Password gate error:", e);
-        }
-      })();
-
-      /******************* STORAGE & HELPERS *******************/
-
-      const TRADES_KEY = "tredlogTradesV2";
-      const SETTINGS_KEY = "tredlogSettingsV2";
-      const DRAFT_KEY = "tredlogDraftV2";
-
-      let trades = [];
-      let settings = {
-        startingBalance: 10000,
-        riskPerTrade: 1000,
+      let state = {
+        startingBalance: 0,
+        riskPerTradeUsd: 0,
+        trades: [], // newest last
       };
 
-      let equityChartInstance = null;
-      let probChartInstance = null;
+      function loadState() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return;
+          const parsed = JSON.parse(raw);
+          if (!parsed || typeof parsed !== "object") return;
+          state = {
+            startingBalance: parsed.startingBalance || 0,
+            riskPerTradeUsd: parsed.riskPerTradeUsd || 0,
+            trades: Array.isArray(parsed.trades) ? parsed.trades : [],
+          };
+        } catch (e) {
+          console.warn("Failed to parse stored state", e);
+        }
+      }
 
-      function formatMoney(num) {
-        const n = Number(num || 0);
+      function saveState() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      }
+
+      /************************ HELPER FORMATTING *************************/
+      function formatMoney(v) {
+        const n = Number(v) || 0;
         return n.toLocaleString("en-US", {
           minimumFractionDigits: 2,
           maximumFractionDigits: 2,
         });
       }
 
-      function formatR(num) {
-        const n = Number(num || 0);
-        return n.toFixed(2);
+      function formatR(v) {
+        const n = Number(v) || 0;
+        return n.toFixed(2) + "R";
       }
 
-      function loadState() {
-        try {
-          const t = JSON.parse(localStorage.getItem(TRADES_KEY) || "[]");
-          const s = JSON.parse(localStorage.getItem(SETTINGS_KEY) || "{}");
-          trades = Array.isArray(t) ? t : [];
-          settings = Object.assign(settings, s);
-        } catch (e) {
-          console.error("loadState error", e);
-        }
+      function parseDate(str) {
+        if (!str) return null;
+        const d = new Date(str);
+        if (Number.isNaN(d.getTime())) return null;
+        return d;
       }
 
-      function saveState() {
-        localStorage.setItem(TRADES_KEY, JSON.stringify(trades));
-        localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-      }
-
-      /******************* FORM / DRAFT *******************/
-
-      function restoreForm() {
-        document.getElementById("startingBalance").value =
-          settings.startingBalance || "";
-        document.getElementById("riskPerTrade").value = settings.riskPerTrade || "";
-
-        // default date = today
-        const today = new Date();
-        const iso = today.toISOString().slice(0, 10);
-        document.getElementById("tradeDate").value = iso;
-
-        try {
-          const draft = JSON.parse(localStorage.getItem(DRAFT_KEY) || "null");
-          if (draft) {
-            for (const [id, val] of Object.entries(draft)) {
-              const el = document.getElementById(id);
-              if (el) el.value = val;
-            }
-          }
-        } catch (e) {
-          console.warn("Draft restore error", e);
-        }
-      }
-
-      function saveDraft() {
-        const draft = {
-          tradeDate: document.getElementById("tradeDate").value,
-          pair: document.getElementById("pair").value,
-          direction: document.getElementById("direction").value,
-          session: document.getElementById("session").value,
-          riskR: document.getElementById("riskR").value,
-          resultR: document.getElementById("resultR").value,
-          setup: document.getElementById("setup").value,
-          screenshot: document.getElementById("screenshot").value,
-          notes: document.getElementById("notes").value,
-        };
-        localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
-        alert("Draft saved locally.");
-      }
-
-      /******************* CHECKLIST *******************/
-
-      function getChecklistScore() {
-        const boxes = document.querySelectorAll(
-          "#checklistArea input[type='checkbox']"
-        );
-        let total = 0;
-        let hits = 0;
+      /************************ CHECKLIST LOGIC ****************************/
+      function computeDisciplineScoreFromForm() {
+        const boxes = Array.from(document.querySelectorAll(".rule-checkbox"));
+        if (!boxes.length) return 0;
+        let checked = 0;
         boxes.forEach((b) => {
-          const w = Number(b.dataset.weight || 1);
-          total += w;
-          if (b.checked) hits += w;
+          if (b.checked) checked++;
         });
-        const pct = total > 0 ? (hits / total) * 100 : 0;
-        return { hits, total, pct };
-      }
-
-      function updateChecklistSummary() {
-        const { hits, total, pct } = getChecklistScore();
+        const pct = Math.round((checked / boxes.length) * 100);
         document.getElementById(
-          "checklistSummary"
-        ).textContent = `${hits} / ${total} rules followed (${pct.toFixed(
-          0
-        )}% discipline).`;
+          "checklistScoreLabel"
+        ).textContent = `${checked} / ${
+          boxes.length
+        } rules followed (${pct}% discipline).`;
+        return pct;
       }
 
-      /******************* ADD TRADE *******************/
-
-      function addTrade() {
-        const startingBalance = Number(
-          document.getElementById("startingBalance").value || settings.startingBalance
-        );
-        const riskPerTrade = Number(
-          document.getElementById("riskPerTrade").value || settings.riskPerTrade
-        );
-        if (!startingBalance || startingBalance <= 0) {
-          alert("Set a positive starting balance.");
-          return;
-        }
-        if (!riskPerTrade || riskPerTrade <= 0) {
-          alert("Set a positive risk per trade (USD).");
-          return;
-        }
-
-        settings.startingBalance = startingBalance;
-        settings.riskPerTrade = riskPerTrade;
-
-        const date = document.getElementById("tradeDate").value;
-        const pair = document.getElementById("pair").value.trim();
-        const direction = document.getElementById("direction").value;
-        const session = document.getElementById("session").value.trim();
-        const riskR = Number(document.getElementById("riskR").value || 1);
-        const resultR = Number(document.getElementById("resultR").value);
-        const setup = document.getElementById("setup").value.trim();
-        const screenshot = document.getElementById("screenshot").value.trim();
-        const notes = document.getElementById("notes").value.trim();
-
-        if (!date || !pair || !direction || isNaN(resultR)) {
-          alert("Date, pair, direction and Result (R) are required.");
-          return;
-        }
-
-        const { hits, total, pct } = getChecklistScore();
-
-        const trade = {
-          id: Date.now(),
-          date,
-          pair,
-          direction,
-          session,
-          riskR,
-          resultR,
-          setup,
-          screenshot,
-          notes,
-          checklistHits: hits,
-          checklistTotal: total,
-          checklistPct: pct,
-        };
-        trades.push(trade);
-        saveState();
-        localStorage.removeItem(DRAFT_KEY);
-        // reset notes / checklist, keep other fields
-        document.getElementById("notes").value = "";
+      function clearChecklist() {
         document
-          .querySelectorAll("#checklistArea input[type='checkbox']")
+          .querySelectorAll(".rule-checkbox")
           .forEach((b) => (b.checked = false));
-        updateChecklistSummary();
-        renderAll();
+        computeDisciplineScoreFromForm();
       }
 
-      /******************* CLEAR DATA *******************/
+      /***************************** RENDERING *****************************/
+      function renderAll() {
+        document.getElementById("startingBalance").value =
+          state.startingBalance || "";
+        document.getElementById("riskPerTrade").value =
+          state.riskPerTradeUsd || "";
 
-      function clearAllData() {
-        if (!confirm("This will clear all saved trades & settings on this device. Continue?"))
-          return;
-        trades = [];
-        settings = { startingBalance: 10000, riskPerTrade: 1000 };
-        localStorage.removeItem(TRADES_KEY);
-        localStorage.removeItem(SETTINGS_KEY);
-        localStorage.removeItem(DRAFT_KEY);
-        restoreForm();
-        renderAll();
-      }
-
-      /******************* BACKUP EXPORT / IMPORT *******************/
-
-      function exportBackup() {
-        const payload = {
-          settings,
-          trades,
-          exportedAt: new Date().toISOString(),
-        };
-        const blob = new Blob([JSON.stringify(payload, null, 2)], {
-          type: "application/json",
-        });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download =
-          "tredlog-backup-" + new Date().toISOString().slice(0, 10) + ".json";
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-      }
-
-      function triggerImport() {
-        document.getElementById("importFile").click();
-      }
-
-      /******************* STATS & CHARTS *******************/
-
-      function computeStats() {
-        let totalTrades = trades.length;
-        let wins = 0;
-        let totalR = 0;
-        let totalDiscipline = 0;
-        let disciplineCount = 0;
-
-        trades.forEach((t) => {
-          totalR += Number(t.resultR || 0);
-          if (t.resultR > 0) wins++;
-
-          // include every trade in discipline average;
-          // trades with no checklist simply contribute 0%
-          if (t.checklistTotal > 0) {
-            totalDiscipline += (t.checklistHits / t.checklistTotal) * 100;
-          } else {
-            totalDiscipline += 0;
-          }
-          disciplineCount++;
-        });
-
-        const winRate = totalTrades ? (wins / totalTrades) * 100 : 0;
-        const avgR = totalTrades ? totalR / totalTrades : 0;
-        const avgDisc = disciplineCount ? totalDiscipline / disciplineCount : 0;
-
-        const starting = Number(settings.startingBalance || 0);
-        const totalPnLMoney = totalR * Number(settings.riskPerTrade || 0);
-        const balance = starting + totalPnLMoney;
-
-        return {
-          totalTrades,
-          wins,
-          totalR,
-          winRate,
-          avgR,
-          avgDisc,
-          starting,
-          totalPnLMoney,
-          balance,
-        };
-      }
-
-      function renderStats() {
-        const s = computeStats();
-
-        document.getElementById("tradeCountLabel").textContent =
-          s.totalTrades === 1 ? "1 trade logged" : `${s.totalTrades} trades logged`;
-
-        document.getElementById("winRate").textContent =
-          s.winRate.toFixed(1).replace(/\.0$/, "") + "%";
         document.getElementById(
-          "winRateSub"
-        ).textContent = `Based on ${s.totalTrades} trade${
-          s.totalTrades === 1 ? "" : "s"
-        } with R ≠ 0.`;
+          "tradeCountLabel"
+        ).textContent = `${state.trades.length} trade${
+          state.trades.length === 1 ? "" : "s"
+        } logged`;
 
-        document.getElementById("avgR").textContent = formatR(s.avgR) + "R";
-        document.getElementById("avgRSub").textContent =
-          s.totalTrades > 0 ? "From all logged trades." : "Log trades to see average R.";
+        renderStatsAndCharts();
+        renderCalendar(state.trades);
+        renderRecentTrades();
+      }
 
-        document.getElementById("disciplineScore").textContent =
-          s.avgDisc.toFixed(0) + " / 100";
-        document.getElementById("disciplineSub").textContent =
-          "Average of checklist discipline per trade.";
-
-        document.getElementById("moneySummary").textContent =
-          "Total PnL: $" +
-          formatMoney(s.totalPnLMoney) +
-          " • Balance: $" +
-          formatMoney(s.balance);
-
-        if (s.totalTrades === 0) {
-          document.getElementById("tradeSummaryText").textContent =
+      function renderStatsAndCharts() {
+        const trades = state.trades.slice();
+        if (!trades.length) {
+          document.getElementById("winRateLabel").textContent = "0%";
+          document.getElementById("avgRLabel").textContent = "0.0R";
+          document.getElementById("disciplineLabel").textContent = "0 / 100";
+          document.getElementById("topPnlLabel").textContent =
+            "Total PnL: $0.00 • Balance: $0.00";
+          document.getElementById("equitySummary").textContent =
             "No trades yet. Log your first setup to start drawing your curve.";
-        } else {
-          document.getElementById(
-            "tradeSummaryText"
-          ).textContent = `Total R: ${formatR(s.totalR)}R • PnL: $${formatMoney(
-            s.totalPnLMoney
-          )} • Starting balance: $${formatMoney(
-            s.starting
-          )} • Current balance: $${formatMoney(s.balance)}.`;
+          drawEquityCurve([]);
+          drawProbabilityChart(0, 0);
+          document.getElementById("stats7Label").textContent =
+            "Last 7 days: 0 trades. PnL: 0.0R • $0.00";
+          document.getElementById("stats30Label").textContent =
+            "Last 30 days: 0 trades. PnL: 0.0R • $0.00";
+          return;
         }
-      }
 
-      function renderEquityChart() {
-        const ctx = document.getElementById("equityChart").getContext("2d");
-        const labels = [];
-        const data = [];
-        let cumR = 0;
-        trades.forEach((t, idx) => {
-          cumR += Number(t.resultR || 0);
-          labels.push(idx + 1);
-          data.push(cumR);
-        });
+        let wins = 0,
+          losses = 0,
+          sumR = 0,
+          sumDisc = 0,
+          sumUsd = 0;
 
-        if (equityChartInstance) equityChartInstance.destroy();
-        equityChartInstance = new Chart(ctx, {
-          type: "line",
-          data: {
-            labels,
-            datasets: [
-              {
-                label: "Equity (R)",
-                data,
-                borderColor: "#facc15",
-                backgroundColor: "rgba(250, 204, 21, 0.15)",
-                borderWidth: 2,
-                pointRadius: 2,
-                tension: 0.25,
-              },
-            ],
-          },
-          options: {
-            plugins: {
-              legend: { display: false },
-            },
-            scales: {
-              x: {
-                grid: { color: "rgba(31,41,55,0.5)" },
-                ticks: { color: "#9ca3af", font: { size: 10 } },
-              },
-              y: {
-                grid: { color: "rgba(31,41,55,0.5)" },
-                ticks: { color: "#9ca3af", font: { size: 10 } },
-              },
-            },
-          },
-        });
-      }
-
-      function renderProbChart() {
-        const ctx = document.getElementById("probChart").getContext("2d");
-        let wins = 0;
-        let losses = 0;
         trades.forEach((t) => {
-          if (t.resultR > 0) wins++;
-          else if (t.resultR < 0) losses++;
+          const r = Number(t.resultR) || 0;
+          if (r > 0) wins++;
+          else if (r < 0) losses++;
+          sumR += r;
+          sumUsd += Number(t.pnlUsd) || 0;
+          sumDisc += Number(t.disciplineScore) || 0;
         });
 
-        if (probChartInstance) probChartInstance.destroy();
-        probChartInstance = new Chart(ctx, {
-          type: "bar",
-          data: {
-            labels: ["Wins", "Losses"],
-            datasets: [
-              {
-                data: [wins, losses],
-                backgroundColor: ["rgba(34,197,94,0.7)", "rgba(248,113,113,0.7)"],
-              },
-            ],
-          },
-          options: {
-            plugins: { legend: { display: false } },
-            scales: {
-              x: {
-                grid: { display: false },
-                ticks: { color: "#9ca3af", font: { size: 10 } },
-              },
-              y: {
-                grid: { color: "rgba(31,41,55,0.5)" },
-                ticks: { color: "#9ca3af", font: { size: 10 } },
-                beginAtZero: true,
-                precision: 0,
-              },
-            },
-          },
+        const winRate = wins + losses > 0 ? (wins / (wins + losses)) * 100 : 0;
+        const avgR = trades.length ? sumR / trades.length : 0;
+        const avgDisc = trades.length ? sumDisc / trades.length : 0;
+
+        document.getElementById("winRateLabel").textContent =
+          winRate.toFixed(0) + "%";
+        document.getElementById("avgRLabel").textContent = formatR(avgR);
+        document.getElementById("disciplineLabel").textContent =
+          Math.round(avgDisc) + " / 100";
+
+        const totalPnlUsd = sumUsd;
+        const balance = (state.startingBalance || 0) + totalPnlUsd;
+
+        document.getElementById("topPnlLabel").textContent =
+          "Total PnL: $" +
+          formatMoney(totalPnlUsd) +
+          " • Balance: $" +
+          formatMoney(balance);
+
+        document.getElementById("equitySummary").textContent =
+          "Total R: " +
+          formatR(sumR) +
+          " • PnL: $" +
+          formatMoney(totalPnlUsd) +
+          " • Starting balance: $" +
+          formatMoney(state.startingBalance || 0) +
+          " • Current balance: $" +
+          formatMoney(balance);
+
+        const equityPoints = [];
+        let runningR = 0;
+        trades.forEach((t, idx) => {
+          runningR += Number(t.resultR) || 0;
+          equityPoints.push({ x: idx + 1, y: runningR });
         });
+        drawEquityCurve(equityPoints);
+        drawProbabilityChart(wins, losses);
+
+        renderRollingStats(trades);
       }
 
-      /******************* WEEKLY / MONTHLY *******************/
-
-      function renderWeeklyMonthly() {
+      function renderRollingStats(trades) {
         const now = new Date();
         const dayMs = 24 * 60 * 60 * 1000;
-        const last7 = now.getTime() - 7 * dayMs;
-        const last30 = now.getTime() - 30 * dayMs;
+        let count7 = 0,
+          sumR7 = 0,
+          sumUsd7 = 0;
+        let count30 = 0,
+          sumR30 = 0,
+          sumUsd30 = 0;
 
-        let wCount = 0,
-          wR = 0;
-        let mCount = 0,
-          mR = 0;
         trades.forEach((t) => {
-          const d = new Date(t.date);
-          const ms = d.getTime();
-          if (!isNaN(ms)) {
-            if (ms >= last7) {
-              wCount++;
-              wR += Number(t.resultR || 0);
-            }
-            if (ms >= last30) {
-              mCount++;
-              mR += Number(t.resultR || 0);
-            }
+          const d = parseDate(t.date);
+          if (!d) return;
+          const diffDays = (now - d) / dayMs;
+          const r = Number(t.resultR) || 0;
+          const usd = Number(t.pnlUsd) || 0;
+          if (diffDays <= 7) {
+            count7++;
+            sumR7 += r;
+            sumUsd7 += usd;
+          }
+          if (diffDays <= 30) {
+            count30++;
+            sumR30 += r;
+            sumUsd30 += usd;
           }
         });
 
-        const risk = Number(settings.riskPerTrade || 0);
-        const wMoney = wR * risk;
-        const mMoney = mR * risk;
+        document.getElementById(
+          "stats7Label"
+        ).textContent = `Last 7 days: ${count7} trade${
+          count7 === 1 ? "" : "s"
+        }. PnL: ${formatR(sumR7)} • $${formatMoney(sumUsd7)}.`;
 
         document.getElementById(
-          "weeklyStats"
-        ).textContent = `Last 7 days: ${wCount} trade${wCount === 1 ? "" : "s"}.`;
-        document.getElementById(
-          "weeklyPnl"
-        ).textContent = `PnL: ${formatR(wR)}R • $${formatMoney(wMoney)}`;
-
-        document.getElementById(
-          "monthlyStats"
-        ).textContent = `Last 30 days: ${mCount} trade${mCount === 1 ? "" : "s"}.`;
-        document.getElementById(
-          "monthlyPnl"
-        ).textContent = `PnL: ${formatR(mR)}R • $${formatMoney(mMoney)}`;
+          "stats30Label"
+        ).textContent = `Last 30 days: ${count30} trade${
+          count30 === 1 ? "" : "s"
+        }. PnL: ${formatR(sumR30)} • $${formatMoney(sumUsd30)}.`;
       }
 
-      /******************* CALENDAR *******************/
+      function renderRecentTrades() {
+        const tbody = document.querySelector("#recentTable tbody");
+        tbody.innerHTML = "";
+        if (!state.trades.length) return;
 
-      function renderCalendar() {
-        const head = document.getElementById("calendarHead");
-        const body = document.getElementById("calendarBody");
-        head.innerHTML = "";
-        body.innerHTML = "";
+        const trades = state.trades
+          .map((t, i) => ({ ...t, index: i + 1 }))
+          .slice(-20)
+          .reverse(); // latest first
 
+        trades.forEach((t) => {
+          const tr = document.createElement("tr");
+
+          const cells = [
+            t.index,
+            t.date || "",
+            t.pair || "",
+            t.direction || "",
+            (Number(t.resultR) || 0).toFixed(2),
+            formatMoney(t.pnlUsd || 0),
+            (Number(t.disciplineScore) || 0).toFixed(0),
+          ];
+
+          cells.forEach((val) => {
+            const td = document.createElement("td");
+            td.textContent = val;
+            tr.appendChild(td);
+          });
+
+          // screenshot
+          const tdShot = document.createElement("td");
+          tdShot.className = "small";
+          if (t.screenshot) {
+            const a = document.createElement("a");
+            a.href = t.screenshot;
+            a.target = "_blank";
+            a.textContent = "View";
+            tdShot.appendChild(a);
+          } else {
+            tdShot.textContent = "—";
+          }
+          tr.appendChild(tdShot);
+
+          // notes
+          const tdNotes = document.createElement("td");
+          tdNotes.className = "small";
+          tdNotes.textContent = t.notes ? t.notes.slice(0, 40) : "";
+          tr.appendChild(tdNotes);
+
+          tbody.appendChild(tr);
+        });
+      }
+
+      /**************************** CHARTS *******************************/
+      function drawEquityCurve(points) {
+        const canvas = document.getElementById("equityCanvas");
+        const ctx = canvas.getContext("2d");
+        const w = canvas.width;
+        const h = canvas.height;
+        ctx.clearRect(0, 0, w, h);
+
+        ctx.fillStyle = "#020617";
+        ctx.fillRect(0, 0, w, h);
+
+        ctx.strokeStyle = "rgba(55,65,81,0.9)";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(30, 10);
+        ctx.lineTo(30, h - 20);
+        ctx.lineTo(w - 10, h - 20);
+        ctx.stroke();
+
+        if (!points.length) return;
+
+        const ys = points.map((p) => p.y);
+        const minY = Math.min(0, ...ys);
+        const maxY = Math.max(0, ...ys);
+        const spanY = maxY - minY || 1;
+
+        const spanX = points.length - 1 || 1;
+
+        ctx.strokeStyle = "#facc15";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+
+        points.forEach((p, idx) => {
+          const x = 30 + ((w - 40) * idx) / spanX;
+          const y = h - 20 - ((h - 40) * (p.y - minY)) / spanY;
+          if (idx === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+      }
+
+      function drawProbabilityChart(wins, losses) {
+        const canvas = document.getElementById("probCanvas");
+        const ctx = canvas.getContext("2d");
+        const w = canvas.width;
+        const h = canvas.height;
+        ctx.clearRect(0, 0, w, h);
+        ctx.fillStyle = "#020617";
+        ctx.fillRect(0, 0, w, h);
+
+        const total = wins + losses;
+        if (!total) {
+          ctx.fillStyle = "rgba(148,163,184,0.7)";
+          ctx.font = "10px system-ui";
+          ctx.fillText("No trades yet", 14, 20);
+          return;
+        }
+
+        const winPct = wins / total;
+        const lossPct = losses / total;
+
+        const barWidth = 40;
+        const maxBarHeight = h - 40;
+        const baseY = h - 20;
+
+        function drawBar(x, value, label) {
+          const height = maxBarHeight * value;
+          ctx.fillStyle = "#22c55e";
+          if (label === "Losses") ctx.fillStyle = "#f97316";
+          ctx.fillRect(x, baseY - height, barWidth, height);
+
+          ctx.fillStyle = "rgba(148,163,184,0.9)";
+          ctx.font = "10px system-ui";
+          ctx.fillText(label, x, baseY + 12);
+          ctx.fillText((value * 100).toFixed(0) + "%", x, baseY - height - 4);
+        }
+
+        drawBar(40, winPct, "Wins");
+        drawBar(120, lossPct, "Losses");
+      }
+
+      /***************************** CALENDAR *****************************/
+      function renderCalendar(trades) {
         const now = new Date();
         const year = now.getFullYear();
         const month = now.getMonth();
-        const monthStart = new Date(year, month, 1);
-        const monthEnd = new Date(year, month + 1, 0);
-        const firstDayIdx = monthStart.getDay(); // 0=Sun
-        const daysInMonth = monthEnd.getDate();
 
-        const monthName = monthStart.toLocaleString("en-US", { month: "long" });
-        document.getElementById(
-          "calendarTitle"
-        ).textContent = `Calendar – ${monthName} ${year}`;
-
-        const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-        weekdays.forEach((w) => {
-          const div = document.createElement("div");
-          div.className = "calendar-head";
-          div.textContent = w;
-          head.appendChild(div);
+        const monthLabel = document.getElementById("calendarMonthLabel");
+        monthLabel.textContent = now.toLocaleString(undefined, {
+          month: "long",
+          year: "numeric",
         });
 
-        // Map date -> total PnL
-        const dailyR = {};
+        const grid = document.getElementById("calendarGrid");
+        grid.innerHTML = "";
+
+        const firstOfMonth = new Date(year, month, 1);
+        const startDay = firstOfMonth.getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+        const pnlByDay = {};
         trades.forEach((t) => {
-          const d = new Date(t.date);
-          if (
-            d.getFullYear() === year &&
-            d.getMonth() === month &&
-            !isNaN(d.getTime())
-          ) {
-            const day = d.getDate();
-            dailyR[day] = (dailyR[day] || 0) + Number(t.resultR || 0);
-          }
+          const d = parseDate(t.date);
+          if (!d) return;
+          if (d.getFullYear() !== year || d.getMonth() !== month) return;
+          const day = d.getDate();
+          pnlByDay[day] = (pnlByDay[day] || 0) + (Number(t.pnlUsd) || 0);
         });
 
-        const risk = Number(settings.riskPerTrade || 0);
-
-        // leading blanks
-        for (let i = 0; i < firstDayIdx; i++) {
+        for (let i = 0; i < startDay; i++) {
           const cell = document.createElement("div");
-          body.appendChild(cell);
+          cell.className = "calendar-cell calendar-cell-empty";
+          grid.appendChild(cell);
         }
 
         for (let day = 1; day <= daysInMonth; day++) {
@@ -1333,158 +1203,217 @@
           cell.className = "calendar-cell";
 
           const top = document.createElement("div");
-          top.className = "calendar-day";
           top.textContent = day;
-          cell.appendChild(top);
 
-          const pnlDiv = document.createElement("div");
-          pnlDiv.className = "calendar-pnl";
-          const r = dailyR[day] || 0;
-          if (r !== 0) {
-            const money = r * risk;
-            pnlDiv.textContent = (r > 0 ? "+" : "") + formatR(r) + "R / $" + formatMoney(money);
-            pnlDiv.classList.add(r > 0 ? "positive" : "negative");
-          } else {
-            pnlDiv.textContent = "-";
+          const bottom = document.createElement("div");
+          bottom.className = "calendar-pnl";
+
+          const pnl = pnlByDay[day] || 0;
+          if (pnl !== 0) {
+            const sign = pnl > 0 ? "+" : "";
+            bottom.textContent = sign + "$" + formatMoney(pnl);
+            bottom.style.color = pnl >= 0 ? "#22c55e" : "#f97316";
           }
-          cell.appendChild(pnlDiv);
 
-          body.appendChild(cell);
+          cell.appendChild(top);
+          cell.appendChild(bottom);
+          grid.appendChild(cell);
+        }
+
+        while (grid.children.length < 42) {
+          const cell = document.createElement("div");
+          cell.className = "calendar-cell calendar-cell-empty";
+          grid.appendChild(cell);
         }
       }
 
-      /******************* TRADES TABLE *******************/
+      /*************************** EVENT HANDLERS **************************/
+      function handleAddTrade() {
+        const startingBal = Number(
+          document.getElementById("startingBalance").value || 0
+        );
+        const riskUsd = Number(
+          document.getElementById("riskPerTrade").value || 0
+        );
+        const dateStr = document.getElementById("tradeDate").value;
+        const direction = document.getElementById("direction").value;
+        const riskR = Number(document.getElementById("riskR").value || 0);
+        const pair = document.getElementById("pair").value.trim();
+        const session = document.getElementById("session").value.trim();
+        const resultR = Number(document.getElementById("resultR").value || 0);
+        const setup = document.getElementById("setup").value.trim();
+        const screenshot = document.getElementById("screenshot").value.trim();
+        const notes = document.getElementById("notes").value.trim();
 
-      function openScreenshot(url) {
-        if (!url) return;
-        window.open(url, "_blank", "noopener");
+        if (!dateStr || !pair || !direction) {
+          alert("Please fill in at least date, pair and direction.");
+          return;
+        }
+
+        state.startingBalance = startingBal || 0;
+        state.riskPerTradeUsd = riskUsd || 0;
+
+        const pnlUsd = resultR * (state.riskPerTradeUsd || 0);
+        const disciplineScore = computeDisciplineScoreFromForm();
+
+        const trade = {
+          id: Date.now(),
+          date: dateStr,
+          pair,
+          direction,
+          session,
+          setup,
+          riskR,
+          resultR,
+          pnlUsd,
+          notes,
+          screenshot,
+          disciplineScore,
+        };
+
+        state.trades.push(trade);
+        saveState();
+
+        document.getElementById("notes").value = "";
+        clearChecklist();
+        document.getElementById("resultR").value = "";
+        document.getElementById("screenshot").value = "";
+
+        renderAll();
       }
 
-      function renderTable() {
-        const tbody = document.getElementById("tradesTableBody");
-        tbody.innerHTML = "";
-        const risk = Number(settings.riskPerTrade || 0);
-
-        trades
-          .slice()
-          .sort((a, b) => new Date(a.date) - new Date(b.date))
-          .forEach((t, idx) => {
-            const tr = document.createElement("tr");
-
-            function addCell(text, cls) {
-              const td = document.createElement("td");
-              if (cls) td.className = cls;
-              td.textContent = text;
-              tr.appendChild(td);
-            }
-
-            addCell(idx + 1, "");
-            addCell(t.date, "");
-            addCell(t.pair, "");
-            addCell(t.direction, "");
-            addCell(formatR(t.resultR), "");
-            const money = (t.resultR || 0) * risk;
-            addCell(
-              (money > 0 ? "+" : money < 0 ? "-" : "") +
-                "$" +
-                formatMoney(Math.abs(money)),
-              money > 0 ? "pnl-positive" : money < 0 ? "pnl-negative" : ""
-            );
-
-            const discPct =
-              t.checklistTotal > 0
-                ? ((t.checklistHits / t.checklistTotal) * 100).toFixed(0)
-                : "0";
-            addCell(discPct + "%", "");
-
-            // screenshot cell
-            const tdLink = document.createElement("td");
-            if (t.screenshot) {
-              const span = document.createElement("span");
-              span.textContent = "🔗";
-              span.className = "link-icon";
-              span.title = t.screenshot;
-              span.onclick = () => openScreenshot(t.screenshot);
-              tdLink.appendChild(span);
-            } else {
-              tdLink.textContent = "—";
-            }
-            tr.appendChild(tdLink);
-
-            const tdNotes = document.createElement("td");
-            tdNotes.textContent = t.notes || "";
-            tr.appendChild(tdNotes);
-
-            tbody.appendChild(tr);
-          });
+      function handleSaveDraft() {
+        const draft = {
+          startingBalance:
+            document.getElementById("startingBalance").value || "",
+          riskPerTrade: document.getElementById("riskPerTrade").value || "",
+          date: document.getElementById("tradeDate").value || "",
+          direction: document.getElementById("direction").value || "",
+          riskR: document.getElementById("riskR").value || "",
+          pair: document.getElementById("pair").value || "",
+          session: document.getElementById("session").value || "",
+          resultR: document.getElementById("resultR").value || "",
+          setup: document.getElementById("setup").value || "",
+          screenshot: document.getElementById("screenshot").value || "",
+          notes: document.getElementById("notes").value || "",
+        };
+        localStorage.setItem("tredlog_draft_v1", JSON.stringify(draft));
+        alert("Draft saved in this browser.");
       }
 
-      /******************* RENDER ALL *******************/
-
-      function renderAll() {
-        renderStats();
-        renderEquityChart();
-        renderProbChart();
-        renderWeeklyMonthly();
-        renderCalendar();
-        renderTable();
+      function restoreDraft() {
+        try {
+          const raw = localStorage.getItem("tredlog_draft_v1");
+          if (!raw) return;
+          const d = JSON.parse(raw);
+          document.getElementById("startingBalance").value =
+            d.startingBalance || "";
+          document.getElementById("riskPerTrade").value = d.riskPerTrade || "";
+          document.getElementById("tradeDate").value = d.date || "";
+          document.getElementById("direction").value = d.direction || "";
+          document.getElementById("riskR").value = d.riskR || "";
+          document.getElementById("pair").value = d.pair || "";
+          document.getElementById("session").value = d.session || "";
+          document.getElementById("resultR").value = d.resultR || "";
+          document.getElementById("setup").value = d.setup || "";
+          document.getElementById("screenshot").value = d.screenshot || "";
+          document.getElementById("notes").value = d.notes || "";
+        } catch (e) {
+          console.warn("No draft", e);
+        }
       }
 
-      /******************* INIT *******************/
+      function handleExport() {
+        const blob = new Blob([JSON.stringify(state, null, 2)], {
+          type: "application/json",
+        });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        const now = new Date()
+          .toISOString()
+          .slice(0, 19)
+          .replace(/[:T]/g, "-");
+        a.download = `tredlog-backup-${now}.json`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      }
 
+      function handleImport(file) {
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          try {
+            const obj = JSON.parse(e.target.result);
+            if (!obj || typeof obj !== "object") throw new Error("Bad file");
+            state = {
+              startingBalance: obj.startingBalance || 0,
+              riskPerTradeUsd: obj.riskPerTradeUsd || 0,
+              trades: Array.isArray(obj.trades) ? obj.trades : [],
+            };
+            saveState();
+            renderAll();
+            alert("Backup imported.");
+          } catch (err) {
+            alert("Could not import backup: " + err.message);
+          }
+        };
+        reader.readAsText(file);
+      }
+
+      function handleClear() {
+        if (
+          !confirm(
+            "This will clear all TredLog data in this browser (trades, settings, draft). Continue?"
+          )
+        )
+          return;
+        localStorage.removeItem(STORAGE_KEY);
+        localStorage.removeItem("tredlog_draft_v1");
+        state = { startingBalance: 0, riskPerTradeUsd: 0, trades: [] };
+        clearChecklist();
+        renderAll();
+      }
+
+      /******************************* INIT ********************************/
+      loadState();
       document.addEventListener("DOMContentLoaded", () => {
-        loadState();
-        restoreForm();
-        updateChecklistSummary();
+        restoreDraft();
+        computeDisciplineScoreFromForm();
         renderAll();
 
-        // update starting balance / risk on change
-        document.getElementById("startingBalance").addEventListener("change", () => {
-          settings.startingBalance = Number(
-            document.getElementById("startingBalance").value || 0
-          );
-          saveState();
-          renderAll();
-        });
-        document.getElementById("riskPerTrade").addEventListener("change", () => {
-          settings.riskPerTrade = Number(
-            document.getElementById("riskPerTrade").value || 0
-          );
-          saveState();
-          renderAll();
-        });
+        document
+          .getElementById("addTradeBtn")
+          .addEventListener("click", handleAddTrade);
+        document
+          .getElementById("saveDraftBtn")
+          .addEventListener("click", handleSaveDraft);
 
         document
-          .querySelectorAll("#checklistArea input[type='checkbox']")
-          .forEach((b) => b.addEventListener("change", updateChecklistSummary));
+          .querySelectorAll(".rule-checkbox")
+          .forEach((b) =>
+            b.addEventListener("change", computeDisciplineScoreFromForm)
+          );
 
-        // handle import
-        const importInput = document.getElementById("importFile");
-        importInput.addEventListener("change", (e) => {
-          const file = e.target.files[0];
-          if (!file) return;
-          const reader = new FileReader();
-          reader.onload = () => {
-            try {
-              const data = JSON.parse(reader.result);
-              if (!data || !Array.isArray(data.trades)) {
-                throw new Error("Invalid backup format");
-              }
-              trades = data.trades;
-              settings = Object.assign(settings, data.settings || {});
-              saveState();
-              restoreForm();
-              renderAll();
-              alert("Backup imported successfully.");
-            } catch (err) {
-              console.error(err);
-              alert("Could not import this file. Make sure it is a TredLog backup JSON.");
-            } finally {
-              importInput.value = "";
-            }
-          };
-          reader.readAsText(file);
+        document
+          .getElementById("exportBtn")
+          .addEventListener("click", handleExport);
+        document.getElementById("importBtn").addEventListener("click", () => {
+          document.getElementById("importFile").click();
         });
+        document
+          .getElementById("importFile")
+          .addEventListener("change", (e) => {
+            if (e.target.files && e.target.files[0]) {
+              handleImport(e.target.files[0]);
+              e.target.value = "";
+            }
+          });
+        document
+          .getElementById("clearBtn")
+          .addEventListener("click", handleClear);
       });
     </script>
   </body>
