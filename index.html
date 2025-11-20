@@ -44,8 +44,8 @@
 
     .shell {
       width: 100%;
-      max-width: 1200px;
-      padding: 24px 16px 40px;
+      max-width: 1350px; /* WIDER PAGE */
+      padding: 24px 18px 40px;
     }
 
     header {
@@ -111,6 +111,7 @@
       padding: 6px 12px;
       font-size: 11px;
       color: var(--muted);
+      white-space: nowrap;
     }
 
     .pill-button:hover {
@@ -120,8 +121,8 @@
 
     main {
       display: grid;
-      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1.2fr);
-      gap: 18px;
+      grid-template-columns: minmax(0, 1.45fr) minmax(0, 1.3fr); /* a bit wider */
+      gap: 20px;
     }
 
     .card {
@@ -132,7 +133,7 @@
     }
 
     .card-inner {
-      padding: 18px 18px 16px;
+      padding: 18px 20px 16px;
     }
 
     .card-title-row {
@@ -264,6 +265,7 @@
       background: rgba(15, 23, 42, 0.9);
       padding: 8px 9px;
       font-size: 11px;
+      min-height: 120px;
     }
 
     .checklist-title {
@@ -360,14 +362,6 @@
       margin-top: 2px;
     }
 
-    .overview-main.positive {
-      color: var(--accent-green);
-    }
-
-    .overview-main.negative {
-      color: var(--accent-red);
-    }
-
     .chart-row {
       display: grid;
       grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
@@ -381,7 +375,7 @@
       background: rgba(15, 23, 42, 0.98);
       padding: 8px 10px;
       font-size: 11px;
-      height: 190px;
+      height: 200px;
       display: flex;
       flex-direction: column;
     }
@@ -410,6 +404,7 @@
       display: flex;
       align-items: flex-end;
       gap: 10px;
+      padding-bottom: 6px;
     }
 
     .prob-bar {
@@ -425,7 +420,7 @@
 
     .prob-label {
       position: absolute;
-      bottom: -16px;
+      bottom: -18px;
       left: 50%;
       transform: translateX(-50%);
       font-size: 10px;
@@ -455,12 +450,13 @@
       background: rgba(15, 23, 42, 0.98);
       padding: 8px 10px;
       font-size: 11px;
+      min-height: 120px;
     }
 
     .calendar-grid {
       display: grid;
-      grid-template-columns: repeat(7, minmax(0, 1fr));
-      gap: 2px;
+      grid-template-columns: repeat(7, 1fr); /* full-width calendar */
+      gap: 3px;
       margin-top: 6px;
       font-size: 10px;
     }
@@ -477,7 +473,7 @@
       padding: 4px 2px;
       text-align: center;
       border: 1px solid rgba(31, 41, 55, 0.9);
-      min-height: 26px;
+      min-height: 28px;
     }
 
     .cal-day {
@@ -519,7 +515,7 @@
     }
 
     .recent-table td.notes {
-      max-width: 200px;
+      max-width: 260px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -883,6 +879,7 @@
      ***************************/
     const STORAGE_KEY_TRADES = "tredlog_trades_v2";
     const STORAGE_KEY_CONFIG = "tredlog_config_v2";
+    const STORAGE_KEY_DRAFT = "tredlog_draft_v2";
 
     function parseNumber(str) {
       if (!str) return NaN;
@@ -950,7 +947,7 @@
     const customAddBtn = document.getElementById("customAddBtn");
     const customChecklist = document.getElementById("customChecklist");
 
-    // core discipline boxes only (6 total)
+    // discipline boxes only (6 total)
     const checklistIdsCore = [
       "check_risk_respected",
       "check_no_revenge",
@@ -1008,6 +1005,57 @@
     function saveState() {
       localStorage.setItem(STORAGE_KEY_TRADES, JSON.stringify(trades));
       localStorage.setItem(STORAGE_KEY_CONFIG, JSON.stringify(config));
+    }
+
+    function loadDraft() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY_DRAFT);
+        if (!raw) return;
+        const d = JSON.parse(raw);
+        dateInput.value = d.date || todayIso();
+        pairInput.value = d.pair || "";
+        directionInput.value = d.direction || "";
+        sessionInput.value = d.session || "";
+        riskRInput.value = d.riskR != null ? d.riskR : "1";
+        resultRInput.value = d.resultR != null ? d.resultR : "";
+        setupInput.value = d.setup || "";
+        screenshotInput.value = d.screenshot || "";
+        notesInput.value = d.notes || "";
+
+        // core checks
+        (d.checksCore || []).forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) el.checked = true;
+        });
+
+        // custom checklist
+        customChecklist.innerHTML = "";
+        (d.customChecklist || []).forEach((item) => addCustomItem(item.label, item.checked));
+      } catch (e) {
+        console.warn("failed to load draft", e);
+      }
+    }
+
+    function saveDraft() {
+      const checksCore = checklistIdsCore.filter((id) => {
+        const el = document.getElementById(id);
+        return el && el.checked;
+      });
+      const draft = {
+        date: dateInput.value,
+        pair: pairInput.value,
+        direction: directionInput.value,
+        session: sessionInput.value,
+        riskR: riskRInput.value,
+        resultR: resultRInput.value,
+        setup: setupInput.value,
+        screenshot: screenshotInput.value,
+        notes: notesInput.value,
+        checksCore,
+        customChecklist: getCustomItemsState(),
+      };
+      localStorage.setItem(STORAGE_KEY_DRAFT, JSON.stringify(draft));
+      alert("Draft saved locally.");
     }
 
     /***************************
@@ -1184,7 +1232,7 @@
       const h = equityCanvas.clientHeight || 10;
       equityCanvas.width = w * devicePixelRatio;
       equityCanvas.height = h * devicePixelRatio;
-      ctx.scale(devicePixelRatio, devicePixelRatio);
+      ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
 
       ctx.clearRect(0, 0, w, h);
 
@@ -1414,6 +1462,7 @@
       });
       clearCustomChecklist();
       renderDisciplinePreview();
+      localStorage.removeItem(STORAGE_KEY_DRAFT);
     }
 
     function handleAddTrade() {
@@ -1453,9 +1502,115 @@
       renderAll();
     }
 
-    function handleSaveDraft() {
-      const partial = {
-        date: dateInput.value,
-        pair: pairInput.value,
-        direction: directionInput.value,
-        session:
+    function handleSaveDraftClick() {
+      saveDraft();
+    }
+
+    function handleCustomAdd() {
+      const text = customItemInput.value.trim();
+      if (!text) return;
+      addCustomItem(text, false);
+      customItemInput.value = "";
+      customItemInput.focus();
+    }
+
+    function handleExport() {
+      const payload = {
+        config,
+        trades,
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "tredlog-backup.json";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      alert("Backup exported. Save it into your OneDrive folder so it syncs automatically.");
+    }
+
+    function handleImportFile(e) {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        try {
+          const data = JSON.parse(ev.target.result);
+          if (data.config) config = data.config;
+          if (Array.isArray(data.trades)) trades = data.trades;
+          saveState();
+          updateConfigInputs();
+          clearForm();
+          renderAll();
+          alert("Backup imported successfully.");
+        } catch (err) {
+          console.error(err);
+          alert("Import failed. Make sure it’s a valid TredLog JSON backup.");
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function handleImportClick() {
+      importFile.value = "";
+      importFile.click();
+    }
+
+    function handleClear() {
+      if (!confirm("This will clear all local trades & config. Are you sure?")) return;
+      trades = [];
+      config = { startingBalance: 0, riskPerTrade: 0 };
+      saveState();
+      updateConfigInputs();
+      clearForm();
+      renderAll();
+    }
+
+    /***************************
+     * Init
+     ***************************/
+    function init() {
+      loadState();
+      updateConfigInputs();
+
+      dateInput.value = todayIso();
+
+      loadDraft();
+
+      startingBalanceInput.addEventListener("blur", handleConfigBlur);
+      riskPerTradeInput.addEventListener("blur", handleConfigBlur);
+
+      checklistIdsCore.forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener("change", renderDisciplinePreview);
+      });
+
+      addTradeBtn.addEventListener("click", handleAddTrade);
+      saveDraftBtn.addEventListener("click", handleSaveDraftClick);
+
+      customAddBtn.addEventListener("click", handleCustomAdd);
+      customItemInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          handleCustomAdd();
+        }
+      });
+
+      exportBtn.addEventListener("click", handleExport);
+      importBtn.addEventListener("click", handleImportClick);
+      importFile.addEventListener("change", handleImportFile);
+      clearBtn.addEventListener("click", handleClear);
+
+      window.addEventListener("resize", () => {
+        renderEquityCurve();
+      });
+
+      renderAll();
+    }
+
+    document.addEventListener("DOMContentLoaded", init);
+  </script>
+</body>
+</html>
