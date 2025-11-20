@@ -2,683 +2,283 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>TredLog – Trading Journal & Coach</title>
+  <title>TredLog – Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="TredLog is a web-based trading journal and coach. Track your trades, discipline and probabilities in one clean dashboard." />
-  <meta name="theme-color" content="#050611" />
-
-  <!-- Favicon (use same files you already added for the app; adjust names if different) -->
-  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
-  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png" />
-  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
-
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
   <style>
-    :root{
-      --bg:#050611;
-      --bg-elevated:#111322;
-      --accent:#f5c24b;
-      --accent-soft:rgba(245,194,75,.15);
-      --muted:#9ca3af;
-      --border:#292d45;
-      --text:#f9fafb;
-      --text-soft:#cbd5f5;
-      --danger:#fb7185;
-      --radius-lg:20px;
-    }
-    *{box-sizing:border-box;}
-    body{
-      margin:0;
-      min-height:100vh;
-      font-family:"Inter",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-      color:var(--text);
-      background:radial-gradient(circle at top,#151936 45%,#050611 100%);
-    }
-    a{text-decoration:none;color:inherit;}
-
-    .shell{
-      max-width:1160px;
-      margin:18px auto 40px;
-      padding:0 16px;
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+      background: radial-gradient(circle at top, #172033 0, #050816 50%);
+      color: #e5e7eb;
     }
 
-    /* NAV */
-    .nav{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:16px;
-      margin-bottom:32px;
-    }
-    .brand{
-      display:flex;
-      align-items:center;
-      gap:10px;
-    }
-    .brand-logo{
-      width:28px;
-      height:28px;
-      border-radius:10px;
-      background:radial-gradient(circle at 30% 20%,#fff 0,#f5c24b 40%,#8a5cf6 100%);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:15px;
-      font-weight:700;
-      color:#050611;
-    }
-    .brand-text-main{font-size:20px;font-weight:700;}
-    .brand-text-sub{font-size:11px;color:var(--muted);}
-
-    .nav-right{
-      display:flex;
-      gap:10px;
-      align-items:center;
-      flex-wrap:wrap;
-    }
-    .pill{
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      padding:4px 10px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.06);
-      background:rgba(4,6,22,.85);
-      font-size:11px;
-      color:var(--muted);
-    }
-    .pill-dot{width:8px;height:8px;border-radius:999px;background:#22c55e;}
-
-    .btn{
-      border:none;
-      border-radius:999px;
-      padding:8px 14px;
-      font-size:12px;
-      font-weight:600;
-      letter-spacing:.03em;
-      cursor:pointer;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:6px;
-      background:linear-gradient(135deg,#f5c24b,#f08c2b);
-      color:#111322;
-      box-shadow:0 14px 30px rgba(0,0,0,.7);
-      transition:transform .15s,box-shadow .15s,filter .15s;
-      white-space:nowrap;
-    }
-    .btn:hover{transform:translateY(-1px);box-shadow:0 18px 40px rgba(0,0,0,.9);filter:brightness(1.05);}
-    .btn-sm{padding:6px 11px;font-size:11px;box-shadow:none;}
-    .btn-ghost{
-      background:transparent;
-      color:var(--text-soft);
-      border:1px solid rgba(255,255,255,.06);
-      box-shadow:none;
-    }
-    .btn-ghost:hover{background:rgba(8,10,30,.9);}
-
-    /* HERO GRID */
-    .grid{
-      display:grid;
-      grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);
-      gap:20px;
-      align-items:stretch;
-    }
-    @media(max-width:960px){
-      .grid{grid-template-columns:minmax(0,1fr);margin-bottom:18px;}
+    .shell {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px;
     }
 
-    .hero-card{
-      background:radial-gradient(circle at top left,#20263d 0,#111322 52%);
-      border-radius:var(--radius-lg);
-      border:1px solid var(--border);
-      padding:22px 22px 20px;
-      box-shadow:0 24px 50px rgba(0,0,0,.75);
-      position:relative;
-      overflow:hidden;
-    }
-    .hero-badge{
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      padding:4px 10px;
-      border-radius:999px;
-      background:rgba(12,18,40,.9);
-      border:1px solid rgba(148,163,184,.4);
-      font-size:11px;
-      color:var(--text-soft);
-      margin-bottom:14px;
-    }
-    .hero-badge span{
-      padding:3px 7px;
-      border-radius:999px;
-      background:var(--accent-soft);
-      color:var(--accent);
-      font-size:10px;
-      font-weight:600;
-      text-transform:uppercase;
-      letter-spacing:.08em;
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 22px;
     }
 
-    .hero-title{
-      font-size:30px;
-      line-height:1.15;
-      font-weight:700;
-      margin-bottom:10px;
-    }
-    .hero-title span{color:var(--accent);}
-    .hero-sub{
-      font-size:13px;
-      color:var(--text-soft);
-      max-width:440px;
-      margin-bottom:18px;
-    }
-    .hero-meta{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-      margin-top:12px;
-      font-size:11px;
-      color:var(--muted);
-    }
-    .hero-meta-item{
-      display:flex;
-      align-items:center;
-      gap:6px;
-    }
-    .dot-soft{
-      width:8px;height:8px;border-radius:50%;background:var(--accent-soft);
+    .logo-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 18px;
     }
 
-    .cta-row{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-      align-items:center;
-      margin-bottom:8px;
-    }
-    .cta-help{font-size:11px;color:var(--muted);}
-
-    .divider{
-      margin:16px 0 12px;
-      height:1px;
-      background:linear-gradient(to right,transparent,rgba(148,163,184,.5),transparent);
+    .logo-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 20%, #ffe29f, #ff9f4a 45%, #ff3c3c 100%);
+      box-shadow: 0 0 0 4px rgba(255, 194, 75, 0.18);
     }
 
-    .feature-list{
-      display:grid;
-      grid-template-columns:repeat(3,minmax(0,1fr));
-      gap:10px;
-      font-size:11px;
-    }
-    @media(max-width:700px){
-      .feature-list{grid-template-columns:repeat(2,minmax(0,1fr));}
-    }
-    @media(max-width:520px){
-      .feature-list{grid-template-columns:minmax(0,1fr);}
-    }
-    .feature-pill{
-      padding:7px 9px;
-      border-radius:12px;
-      background:rgba(5,7,24,.92);
-      border:1px solid rgba(148,163,184,.3);
-      display:flex;
-      flex-direction:column;
-      gap:2px;
-    }
-    .feature-pill-title{
-      font-size:11px;
-      font-weight:600;
-    }
-    .feature-pill-sub{
-      font-size:10px;
-      color:var(--muted);
+    .btn-top {
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      background: rgba(148, 163, 184, 0.12);
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      color: #e5e7eb;
+      text-decoration: none;
     }
 
-    /* SIGN IN PANEL */
-    .signin-card{
-      background:radial-gradient(circle at top,#171c3e 0,#090b18 65%);
-      border-radius:var(--radius-lg);
-      border:1px solid var(--border);
-      padding:18px;
-      box-shadow:0 20px 45px rgba(0,0,0,.8);
-      display:flex;
-      flex-direction:column;
-      gap:14px;
-    }
-    .signin-title{font-size:13px;font-weight:600;margin-bottom:4px;}
-    .signin-sub{
-      font-size:11px;
-      color:var(--muted);
-      margin-bottom:6px;
-    }
-    .signin-buttons{
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-    }
-    .signin-or{
-      text-align:center;
-      font-size:10px;
-      color:var(--muted);
-      margin:4px 0;
-      position:relative;
-    }
-    .signin-or::before,
-    .signin-or::after{
-      content:"";
-      position:absolute;
-      top:50%;
-      width:33%;
-      height:1px;
-      background:linear-gradient(to right,transparent,rgba(148,163,184,.5));
-    }
-    .signin-or::before{left:0;}
-    .signin-or::after{right:0;}
-
-    .input-label{
-      font-size:11px;
-      color:var(--text-soft);
-      margin-bottom:3px;
-    }
-    .input-field{
-      width:100%;
-      border-radius:11px;
-      border:1px solid var(--border);
-      background:rgba(6,8,24,.9);
-      padding:8px 10px;
-      font-size:12px;
-      color:var(--text);
-      outline:none;
-    }
-    .input-field:focus{
-      border-color:var(--accent);
-      box-shadow:0 0 0 1px rgba(245,194,75,.25);
-      background:rgba(9,11,32,.96);
-    }
-    .signin-hint{
-      font-size:10px;
-      color:var(--muted);
+    .dashboard {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+      gap: 20px;
     }
 
-    /* CHAT BOT */
-    .chat-card{
-      margin-top:18px;
-      border-radius:var(--radius-lg);
-      border:1px solid var(--border);
-      background:radial-gradient(circle at top,#191e3f 0,#060715 65%);
-      padding:14px 14px 12px;
-    }
-    .chat-header{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      margin-bottom:8px;
-    }
-    .chat-title{
-      font-size:12px;
-      font-weight:600;
-    }
-    .chat-status{
-      font-size:11px;
-      color:var(--muted);
-      display:flex;
-      align-items:center;
-      gap:5px;
-    }
-    .chat-status-dot{
-      width:8px;height:8px;border-radius:999px;background:#22c55e;
-      box-shadow:0 0 0 4px rgba(34,197,94,.18);
-    }
-    .chat-window{
-      border-radius:14px;
-      border:1px solid rgba(148,163,184,.4);
-      background:rgba(5,7,22,.9);
-      height:230px;
-      padding:8px 8px 6px;
-      overflow-y:auto;
-      font-size:11px;
-    }
-    .chat-msg{
-      max-width:88%;
-      padding:7px 9px;
-      border-radius:12px;
-      margin-bottom:6px;
-      line-height:1.3;
-    }
-    .chat-msg.bot{
-      background:rgba(15,23,42,.95);
-      border-top-left-radius:3px;
-    }
-    .chat-msg.user{
-      background:var(--accent-soft);
-      border-top-right-radius:3px;
-      margin-left:auto;
-    }
-    .chat-input-row{
-      display:flex;
-      gap:6px;
-      margin-top:6px;
-    }
-    .chat-input{
-      flex:1;
-      border-radius:999px;
-      border:1px solid var(--border);
-      background:rgba(3,5,18,.95);
-      padding:7px 10px;
-      font-size:11px;
-      color:var(--text);
-      outline:none;
-    }
-    .chat-input:focus{
-      border-color:var(--accent);
-      box-shadow:0 0 0 1px rgba(245,194,75,.25);
-    }
-    .chat-send{
-      min-width:64px;
-      padding-inline:10px;
-      border-radius:999px;
-      border:none;
-      font-size:11px;
-      font-weight:600;
-      background:var(--accent);
-      color:#111322;
-      cursor:pointer;
-      box-shadow:0 8px 18px rgba(0,0,0,.7);
-    }
-    .chat-send:hover{filter:brightness(1.04);}
-    .chat-hint{
-      font-size:9px;
-      color:var(--muted);
-      margin-top:3px;
+    .card {
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      border-radius: 14px;
+      padding: 18px;
     }
 
-    /* FOOTER */
-    footer{
-      margin-top:24px;
-      font-size:11px;
-      color:var(--muted);
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      flex-wrap:wrap;
+    .card-title {
+      font-size: 14px;
+      margin-bottom: 10px;
+      color: #f9fafb;
+      font-weight: 600;
     }
-    footer a{color:var(--accent);}
+
+    input, select, textarea {
+      width: 100%;
+      padding: 8px 10px;
+      background: rgba(30, 41, 59, 0.9);
+      border: 1px solid rgba(55, 65, 81, 0.8);
+      color: #e5e7eb;
+      border-radius: 10px;
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+
+    textarea {
+      height: 90px;
+      resize: vertical;
+    }
+
+    .checklist-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .check-item {
+      padding: 8px;
+      background: rgba(30, 41, 59, 0.9);
+      border-radius: 10px;
+      border: 1px solid rgba(55, 65, 81, 0.8);
+      font-size: 12px;
+    }
+
+    .btn-save {
+      padding: 10px 16px;
+      background: linear-gradient(90deg, #ffc24b, #ff9a3c);
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      color: #111827;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .btn-add {
+      padding: 10px 16px;
+      background: #2563eb;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      color: white;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .recent-table {
+      width: 100%;
+      font-size: 12px;
+      margin-top: 10px;
+      border-collapse: collapse;
+    }
+
+    .recent-table td {
+      padding: 6px 4px;
+      border-bottom: 1px solid rgba(55, 65, 81, 0.6);
+    }
+
+    footer {
+      margin-top: 40px;
+      font-size: 11px;
+      text-align: center;
+      color: #9ca3af;
+    }
   </style>
 </head>
+
 <body>
-<div class="shell">
-  <!-- NAV -->
-  <header class="nav">
-    <div class="brand">
-      <div class="brand-logo">T</div>
-      <div>
-        <div class="brand-text-main">TredLog</div>
-        <div class="brand-text-sub">Web-based execution journal</div>
+  <div class="shell">
+    <!-- HEADER -->
+    <header>
+      <div class="logo-row">
+        <div class="logo-icon"></div>
+        <div>TredLog – Dashboard</div>
+      </div>
+      <a class="btn-top" href="#">Signed in locally</a>
+    </header>
+
+    <!-- DASHBOARD -->
+    <div class="dashboard">
+      <!-- LEFT: NEW TRADE -->
+      <div class="card">
+        <div class="card-title">New trade</div>
+
+        <label>Pair / Symbol</label>
+        <input id="pair" placeholder="e.g. GBP/USD"/>
+
+        <label>Direction</label>
+        <select id="direction">
+          <option value="">Select</option>
+          <option>Buy</option>
+          <option>Sell</option>
+        </select>
+
+        <label>Risk (R)</label>
+        <input id="risk" placeholder="1.0" />
+
+        <label>Session</label>
+        <input id="session" placeholder="London / NY / Asia..." />
+
+        <label>Setup</label>
+        <input id="setup" placeholder="Momentum, Reversal..." />
+
+        <label>Journal notes</label>
+        <textarea id="notes"></textarea>
+
+        <div class="card-title" style="margin-top:12px;">Weighted checklist</div>
+
+        <div class="checklist-grid">
+          <label class="check-item"><input type="checkbox" /> Momentum setup</label>
+          <label class="check-item"><input type="checkbox" /> No double add at level</label>
+          <label class="check-item"><input type="checkbox" /> Clean level</label>
+          <label class="check-item"><input type="checkbox" /> No long wick against direction</label>
+          <label class="check-item"><input type="checkbox" /> Planned R respected</label>
+          <label class="check-item"><input type="checkbox" /> Screenshots saved</label>
+        </div>
+
+        <button class="btn-save" onclick="saveDraft()">Save draft</button>
+        <button class="btn-add" onclick="addTrade()">Add trade to log</button>
+      </div>
+
+      <!-- RIGHT: EQUITY + RECENT -->
+      <div class="card">
+        <div class="card-title">Equity & discipline overview</div>
+
+        <div id="summary">
+          <p>WIN RATE: <b id="winrate">0%</b></p>
+          <p>AVG R REALIZED: <b id="avgR">0.00R</b></p>
+          <p>DISCIPLINE SCORE: <b id="disc">0 / 100</b></p>
+        </div>
+
+        <div class="card-title" style="margin-top:18px;">Recent trades</div>
+
+        <table class="recent-table" id="recentTrades">
+          <tbody></tbody>
+        </table>
       </div>
     </div>
-    <div class="nav-right">
-      <button class="btn-ghost btn-sm" onclick="openDashboard()">
-        Launch dashboard
-      </button>
-      <div class="pill">
-        <span class="pill-dot"></span>
-        Local session • Data stored in your browser
-      </div>
-    </div>
-  </header>
 
-  <!-- MAIN GRID -->
-  <main class="grid">
-    <!-- LEFT: HERO -->
-    <section class="hero-card">
-      <div class="hero-badge">
-        <span>For serious traders</span>
-        No spreadsheets. No noise. Just clean data.
-      </div>
+    <footer>
+      © 2025 TredLog. Dashboard stored locally in your browser.
+    </footer>
+  </div>
 
-      <h1 class="hero-title">
-        Turn your trades into a <span>probability-driven</span> edge.
-      </h1>
-
-      <p class="hero-sub">
-        TredLog tracks your trades, discipline and R &amp; PnL in one place. Log each setup, see
-        which rules you truly follow and let the dashboard coach your next decision.
-      </p>
-
-      <div class="cta-row">
-        <button class="btn" onclick="openDashboard()">
-          Sign in &amp; open dashboard
-        </button>
-        <button class="btn-ghost btn-sm">
-          Watch 2-min walkthrough
-        </button>
-      </div>
-      <div class="cta-help">
-        No installation. Runs in your browser. Export all your data as CSV/JSON anytime.
-      </div>
-
-      <div class="divider"></div>
-
-      <div class="feature-list">
-        <div class="feature-pill">
-          <div class="feature-pill-title">Weighted checklist</div>
-          <div class="feature-pill-sub">Score each trade by rules met per setup.</div>
-        </div>
-        <div class="feature-pill">
-          <div class="feature-pill-title">Equity curve in R</div>
-          <div class="feature-pill-sub">See performance independent of lot size.</div>
-        </div>
-        <div class="feature-pill">
-          <div class="feature-pill-title">Behaviour tracking</div>
-          <div class="feature-pill-sub">Emotion tags &amp; coach feedback per trade.</div>
-        </div>
-        <div class="feature-pill">
-          <div class="feature-pill-title">Calendar view</div>
-          <div class="feature-pill-sub">Daily PnL &amp; trade count at a glance.</div>
-        </div>
-        <div class="feature-pill">
-          <div class="feature-pill-title">Export anytime</div>
-          <div class="feature-pill-sub">CSV &amp; JSON backups in one click.</div>
-        </div>
-        <div class="feature-pill">
-          <div class="feature-pill-title">Works with any broker</div>
-          <div class="feature-pill-sub">You log data – TredLog does the math.</div>
-        </div>
-      </div>
-
-      <div class="hero-meta">
-        <div class="hero-meta-item">
-          <span class="dot-soft"></span>
-          Built for funded &amp; aspiring funded traders
-        </div>
-        <div class="hero-meta-item">
-          <span class="dot-soft"></span>
-          Designed to be used <strong>daily</strong> – not once a month
-        </div>
-      </div>
-    </section>
-
-    <!-- RIGHT: SIGN IN + CHAT BOT -->
-    <section>
-      <!-- Sign in card -->
-      <div class="signin-card">
-        <div>
-          <div class="signin-title">Sign in to TredLog</div>
-          <div class="signin-sub">
-            Simple sign in for now – it just opens your dashboard. Later you can connect real auth.
-          </div>
-        </div>
-
-        <div class="signin-buttons">
-          <button class="btn-ghost" onclick="fakeSignIn('google')">
-            🔑 Sign in with Google
-          </button>
-          <button class="btn-ghost" onclick="fakeSignIn('apple')">
-             Sign in with Apple
-          </button>
-
-          <div class="signin-or">or continue with email</div>
-
-          <div>
-            <div class="input-label">Email address</div>
-            <input id="signin-email" class="input-field" type="email" placeholder="you@example.com" />
-          </div>
-          <button class="btn btn-sm" style="width:100%;justify-content:center;" onclick="fakeSignIn('email')">
-            Continue with email
-          </button>
-
-          <div class="signin-hint">
-            This sign in is front-end only: we just remember the provider in <code>localStorage</code>
-            and send you to the dashboard (<code>app.html</code>). When you add real auth (Firebase,
-            Supabase, etc.), you can hook it into these buttons.
-          </div>
-        </div>
-      </div>
-
-      <!-- Chat bot card -->
-      <div class="chat-card">
-        <div class="chat-header">
-          <div class="chat-title">TredLog Assistant</div>
-          <div class="chat-status">
-            <span class="chat-status-dot"></span>
-            Powered by your AI backend
-          </div>
-        </div>
-
-        <div id="chat-window" class="chat-window"></div>
-
-        <div class="chat-input-row">
-          <input id="chat-input" class="chat-input" type="text"
-                 placeholder="Ask anything about TredLog or trading journal setup…" />
-          <button id="chat-send" class="chat-send">Send</button>
-        </div>
-        <div class="chat-hint">
-          To get real AI answers, point <code>CHAT_API_URL</code> in the script to your own backend
-          that calls OpenAI (or another provider) and returns <code>{ reply: '...' }</code>.
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <footer>
-    <div>© 2025 TredLog. All rights reserved.</div>
-    <div>
-      Contact: <a href="mailto:admin@tredlog.com">admin@tredlog.com</a>
-    </div>
-  </footer>
-</div>
-
-<script>
-  // ========== SIMPLE SIGN-IN FLOW (front-end only) ==========
-  function openDashboard(){
-    // you renamed your old index.html to app.html
-    window.location.href = "app.html";
-  }
-
-  function fakeSignIn(provider){
-    const emailInput = document.getElementById("signin-email");
-    const email = emailInput ? emailInput.value.trim() : "";
-
-    const payload = {
-      provider,
-      email: email || null,
-      signedAt: new Date().toISOString()
-    };
-    try{
-      localStorage.setItem("tredlogLastSignIn", JSON.stringify(payload));
-    }catch(e){
-      // ignore if storage not available
+  <!-- LOGIC -->
+  <script>
+    function loadTrades() {
+      return JSON.parse(localStorage.getItem("tredlogTrades") || "[]");
     }
-    openDashboard();
-  }
 
-  // ========== AI CHAT BOT FRONT-END ==========
-  // IMPORTANT:
-  // 1. GitHub Pages is static – you cannot safely hide API keys in this file.
-  // 2. Create a small backend (Vercel / Cloudflare Worker / Render) that:
-  //    - exposes POST /chat
-  //    - reads { messages: [ { role, content } ] }
-  //    - calls OpenAI (or another LLM)
-  //    - returns JSON: { reply: "..." }
-  // 3. Put that backend URL below:
-  const CHAT_API_URL = "https://your-backend.example.com/chat"; // <-- CHANGE THIS
+    function saveTrades(list) {
+      localStorage.setItem("tredlogTrades", JSON.stringify(list));
+    }
 
-  const chatWindow = document.getElementById("chat-window");
-  const chatInput  = document.getElementById("chat-input");
-  const chatSend   = document.getElementById("chat-send");
+    function addTrade() {
+      const trade = {
+        pair: pair.value,
+        dir: direction.value,
+        risk: risk.value,
+        session: session.value,
+        setup: setup.value,
+        notes: notes.value,
+        date: new Date().toLocaleDateString(),
+      };
 
-  // we'll keep a simple history to send to your backend
-  const chatHistory = [
-    { role: "system", content: "You are TredLog, a trading journal assistant. Be clear and practical and do not give financial advice – just help users use the tool and think in probabilities and discipline." }
-  ];
+      const list = loadTrades();
+      list.unshift(trade);
+      saveTrades(list);
 
-  function appendMessage(text, from){
-    const msg = document.createElement("div");
-    msg.className = "chat-msg " + (from === "user" ? "user" : "bot");
-    msg.textContent = text;
-    chatWindow.appendChild(msg);
-    chatWindow.scrollTop = chatWindow.scrollHeight;
-  }
+      render();
+      alert("Trade saved!");
+    }
 
-  async function sendToAI(question){
-    chatHistory.push({ role: "user", content: question });
+    function saveDraft() {
+      alert("Draft saved locally.");
+    }
 
-    try{
-      const res = await fetch(CHAT_API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: chatHistory })
+    function render() {
+      const list = loadTrades();
+      const body = document.querySelector("#recentTrades tbody");
+      body.innerHTML = "";
+
+      list.forEach(t => {
+        body.innerHTML += `
+          <tr>
+            <td>${t.date}</td>
+            <td>${t.pair}</td>
+            <td>${t.dir}</td>
+            <td>${t.risk}R</td>
+          </tr>`;
       });
 
-      if(!res.ok){
-        throw new Error("Bad status: " + res.status);
-      }
-      const data = await res.json();
-      const reply = (data && data.reply) ? data.reply : "Your AI backend responded but did not include a 'reply' field.";
-      chatHistory.push({ role: "assistant", content: reply });
-      appendMessage(reply, "bot");
-    }catch(err){
-      console.error(err);
-      appendMessage("I couldn’t reach the AI backend. Check that CHAT_API_URL points to a live endpoint and that CORS is configured correctly.", "bot");
+      // Simple winrate placeholder
+      document.getElementById("winrate").innerText = list.length ? "100%" : "0%";
+      document.getElementById("avgR").innerText = list.length ? "1.50R" : "0.00R";
+      document.getElementById("disc").innerText = list.length ? "83 / 100" : "0 / 100";
     }
-  }
 
-  function handleSend(){
-    const text = chatInput.value.trim();
-    if(!text) return;
-    appendMessage(text, "user");
-    chatInput.value = "";
+    render();
+  </script>
 
-    // show temporary "thinking" message
-    const thinkingId = "bot-thinking";
-    const thinking = document.createElement("div");
-    thinking.className = "chat-msg bot";
-    thinking.id = thinkingId;
-    thinking.textContent = "Thinking…";
-    chatWindow.appendChild(thinking);
-    chatWindow.scrollTop = chatWindow.scrollHeight;
-
-    sendToAI(text).finally(()=>{
-      const t = document.getElementById(thinkingId);
-      if(t && t.parentNode){ t.parentNode.removeChild(t); }
-    });
-  }
-
-  chatSend.addEventListener("click", handleSend);
-  chatInput.addEventListener("keydown", (e)=>{
-    if(e.key === "Enter"){
-      e.preventDefault();
-      handleSend();
-    }
-  });
-
-  // Warm welcome message
-  appendMessage(
-    "Hey, I’m the TredLog assistant. Once you connect me to your AI backend, I’ll answer questions about journaling, discipline scoring and how to use the dashboard.",
-    "bot"
-  );
-</script>
 </body>
 </html>
