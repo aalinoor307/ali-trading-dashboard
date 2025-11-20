@@ -2,36 +2,55 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>TredLog – Dashboard</title>
+  <title>TredLog – Trading Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <style>
+    :root {
+      --bg: #050816;
+      --bg-elevated: #101322;
+      --bg-card: rgba(15, 23, 42, 0.96);
+      --border-subtle: rgba(148, 163, 184, 0.28);
+      --accent: #ffc24b;
+      --accent-2: #ff9a3c;
+      --accent-blue: #2563eb;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --radius: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
-      padding: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
-      background: radial-gradient(circle at top, #172033 0, #050816 50%);
-      color: #e5e7eb;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        sans-serif;
+      background: radial-gradient(circle at top, #1b2338 0, #050816 55%);
+      color: var(--text);
     }
 
-    .shell {
-      max-width: 1200px;
+    .app-shell {
+      max-width: 1220px;
       margin: 0 auto;
-      padding: 24px;
+      padding: 20px 18px 40px;
     }
 
-    header {
+    /* Top bar */
+
+    .topbar {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      margin-bottom: 22px;
+      justify-content: space-between;
+      margin-bottom: 18px;
     }
 
     .logo-row {
       display: flex;
       align-items: center;
       gap: 10px;
-      font-size: 18px;
     }
 
     .logo-icon {
@@ -42,243 +61,642 @@
       box-shadow: 0 0 0 4px rgba(255, 194, 75, 0.18);
     }
 
-    .btn-top {
-      padding: 6px 12px;
-      border-radius: 999px;
-      font-size: 12px;
-      background: rgba(148, 163, 184, 0.12);
-      border: 1px solid rgba(148, 163, 184, 0.3);
-      color: #e5e7eb;
-      text-decoration: none;
+    .logo-text-main {
+      font-weight: 600;
+      letter-spacing: 0.02em;
     }
 
-    .dashboard {
+    .logo-text-sub {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .top-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+    }
+
+    .pill {
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      background: rgba(15, 23, 42, 0.85);
+      color: var(--muted);
+    }
+
+    .user-pill {
+      border-color: rgba(56, 189, 248, 0.7);
+      background: rgba(8, 47, 73, 0.85);
+      color: #e0f2fe;
+    }
+
+    /* Layout */
+
+    .dashboard-grid {
       display: grid;
-      grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
-      gap: 20px;
+      grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+      gap: 18px;
     }
 
     .card {
-      background: rgba(15, 23, 42, 0.9);
-      border: 1px solid rgba(148, 163, 184, 0.25);
-      border-radius: 14px;
-      padding: 18px;
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      border: 1px solid var(--border-subtle);
+      padding: 14px 16px 16px;
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.45);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 10px;
     }
 
     .card-title {
       font-size: 14px;
-      margin-bottom: 10px;
-      color: #f9fafb;
       font-weight: 600;
+    }
+
+    .card-sub {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    /* Left column: New trade + checklist */
+
+    .left-column {
+      display: grid;
+      grid-template-rows: auto auto;
+      gap: 14px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    label.form-label {
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 3px;
+      display: block;
     }
 
     input, select, textarea {
       width: 100%;
-      padding: 8px 10px;
-      background: rgba(30, 41, 59, 0.9);
-      border: 1px solid rgba(55, 65, 81, 0.8);
-      color: #e5e7eb;
+      padding: 7px 9px;
+      font-size: 12px;
       border-radius: 10px;
-      font-size: 13px;
-      margin-bottom: 10px;
+      border: 1px solid rgba(55, 65, 81, 0.85);
+      background: rgba(15, 23, 42, 0.95);
+      color: var(--text);
+      outline: none;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: rgba(148, 163, 184, 0.75);
     }
 
     textarea {
-      height: 90px;
       resize: vertical;
+      min-height: 80px;
+      max-height: 180px;
     }
 
-    .checklist-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+    .btn-row {
+      display: flex;
       gap: 10px;
       margin-top: 10px;
     }
 
-    .check-item {
-      padding: 8px;
-      background: rgba(30, 41, 59, 0.9);
+    .btn-primary,
+    .btn-secondary {
       border-radius: 10px;
-      border: 1px solid rgba(55, 65, 81, 0.8);
+      border: none;
+      cursor: pointer;
       font-size: 12px;
+      font-weight: 500;
+      padding: 8px 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      white-space: nowrap;
     }
 
-    .btn-save {
-      padding: 10px 16px;
-      background: linear-gradient(90deg, #ffc24b, #ff9a3c);
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
+    .btn-primary {
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
       color: #111827;
-      font-size: 13px;
+      box-shadow: 0 9px 20px rgba(255, 194, 75, 0.32);
+    }
+
+    .btn-secondary {
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--muted);
+      border: 1px solid rgba(148, 163, 184, 0.5);
+    }
+
+    .btn-primary:hover { filter: brightness(1.05); }
+    .btn-secondary:hover { border-color: rgba(248, 250, 252, 0.7); }
+
+    /* Checklist card */
+
+    .checklist-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .check-item {
+      font-size: 11px;
+      padding: 6px 7px;
+      border-radius: 10px;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      background: rgba(15, 23, 42, 0.95);
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      color: var(--muted);
+    }
+
+    .check-item input {
+      margin-top: 1px;
+      width: auto;
+    }
+
+    .check-footer {
+      margin-top: 8px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    /* Right column: overview */
+
+    .overview-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .metric {
+      padding: 8px 9px;
+      border-radius: 12px;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      background: radial-gradient(circle at top left, #111827, #020617 70%);
+      font-size: 11px;
+    }
+
+    .metric-label {
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .metric-value {
+      font-size: 15px;
       font-weight: 600;
     }
 
-    .btn-add {
-      padding: 10px 16px;
-      background: #2563eb;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      color: white;
-      font-size: 13px;
-      font-weight: 600;
+    .metric-note {
+      margin-top: 4px;
+      font-size: 10px;
+      color: var(--muted);
     }
 
     .recent-table {
       width: 100%;
-      font-size: 12px;
-      margin-top: 10px;
       border-collapse: collapse;
+      font-size: 11px;
+      margin-top: 8px;
     }
 
+    .recent-table th,
     .recent-table td {
       padding: 6px 4px;
-      border-bottom: 1px solid rgba(55, 65, 81, 0.6);
+      border-bottom: 1px solid rgba(31, 41, 55, 0.9);
+      text-align: left;
+    }
+
+    .recent-table th {
+      color: var(--muted);
+      font-weight: 500;
+      font-size: 10px;
+      text-transform: uppercase;
+    }
+
+    .badge-win {
+      padding: 3px 6px;
+      border-radius: 999px;
+      background: rgba(22, 163, 74, 0.15);
+      color: #bbf7d0;
+      border: 1px solid rgba(22, 163, 74, 0.7);
+      font-size: 10px;
+    }
+
+    .badge-loss {
+      padding: 3px 6px;
+      border-radius: 999px;
+      background: rgba(220, 38, 38, 0.18);
+      color: #fecaca;
+      border: 1px solid rgba(239, 68, 68, 0.7);
+      font-size: 10px;
     }
 
     footer {
-      margin-top: 40px;
+      margin-top: 24px;
       font-size: 11px;
+      color: var(--muted);
       text-align: center;
-      color: #9ca3af;
+    }
+
+    @media (max-width: 980px) {
+      .dashboard-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .overview-metrics {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .checklist-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+
+      .overview-metrics {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .checklist-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
     }
   </style>
 </head>
-
 <body>
-  <div class="shell">
-    <!-- HEADER -->
-    <header>
+  <div class="app-shell">
+    <!-- TOP BAR -->
+    <header class="topbar">
       <div class="logo-row">
         <div class="logo-icon"></div>
-        <div>TredLog – Dashboard</div>
+        <div>
+          <div class="logo-text-main">TredLog</div>
+          <div class="logo-text-sub">Probability-driven trading dashboard</div>
+        </div>
       </div>
-      <a class="btn-top" href="#">Signed in locally</a>
+      <div class="top-right">
+        <div class="pill">Local session · Data stored in your browser</div>
+        <div class="pill user-pill">Signed in locally</div>
+      </div>
     </header>
 
-    <!-- DASHBOARD -->
-    <div class="dashboard">
-      <!-- LEFT: NEW TRADE -->
-      <div class="card">
-        <div class="card-title">New trade</div>
+    <!-- MAIN GRID -->
+    <main class="dashboard-grid">
+      <!-- LEFT: new trade + checklist -->
+      <div class="left-column">
+        <!-- NEW TRADE CARD -->
+        <section class="card">
+          <div class="card-header">
+            <div class="card-title">New trade</div>
+            <div class="card-sub">Log a setup, score it and add it to your journal.</div>
+          </div>
 
-        <label>Pair / Symbol</label>
-        <input id="pair" placeholder="e.g. GBP/USD"/>
+          <div class="form-grid">
+            <div>
+              <label class="form-label" for="pairInput">Pair / Symbol</label>
+              <input id="pairInput" placeholder="e.g. GBPUSD" />
+            </div>
+            <div>
+              <label class="form-label" for="directionSelect">Direction</label>
+              <select id="directionSelect">
+                <option value="">Select</option>
+                <option value="Buy">Buy</option>
+                <option value="Sell">Sell</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label" for="riskInput">Risk (R)</label>
+              <input id="riskInput" type="number" step="0.01" placeholder="1.0" />
+            </div>
+          </div>
 
-        <label>Direction</label>
-        <select id="direction">
-          <option value="">Select</option>
-          <option>Buy</option>
-          <option>Sell</option>
-        </select>
+          <div class="form-grid">
+            <div>
+              <label class="form-label" for="sessionInput">Session</label>
+              <input id="sessionInput" placeholder="London / NY / Asia..." />
+            </div>
+            <div>
+              <label class="form-label" for="setupInput">Setup</label>
+              <input id="setupInput" placeholder="Momentum, Reversal..." />
+            </div>
+            <div>
+              <label class="form-label" for="resultTypeSelect">Result</label>
+              <select id="resultTypeSelect">
+                <option value="Win">Win</option>
+                <option value="Loss">Loss</option>
+                <option value="BE">Break-even</option>
+              </select>
+            </div>
+          </div>
 
-        <label>Risk (R)</label>
-        <input id="risk" placeholder="1.0" />
+          <div class="form-grid">
+            <div>
+              <label class="form-label" for="resultRInput">Result (R)</label>
+              <input id="resultRInput" type="number" step="0.01" placeholder="e.g. 1.5" />
+            </div>
+            <div style="grid-column: span 2;">
+              <label class="form-label" for="notesInput">Journal notes</label>
+              <textarea id="notesInput" placeholder="What did you see? What rules were met? Where could you improve?"></textarea>
+            </div>
+          </div>
 
-        <label>Session</label>
-        <input id="session" placeholder="London / NY / Asia..." />
+          <div class="btn-row">
+            <button class="btn-secondary" type="button" onclick="saveDraft()">Save draft</button>
+            <button class="btn-primary" type="button" onclick="addTrade()">Add trade to log</button>
+          </div>
+        </section>
 
-        <label>Setup</label>
-        <input id="setup" placeholder="Momentum, Reversal..." />
+        <!-- CHECKLIST CARD -->
+        <section class="card">
+          <div class="card-header">
+            <div class="card-title">Weighted checklist</div>
+            <div class="card-sub">Tick only what actually happened on this trade.</div>
+          </div>
 
-        <label>Journal notes</label>
-        <textarea id="notes"></textarea>
+          <div class="checklist-grid">
+            <label class="check-item">
+              <input type="checkbox" class="check-input" />
+              Momentum setup, clean level and strong close.
+            </label>
+            <label class="check-item">
+              <input type="checkbox" class="check-input" />
+              Clean close at level – no double add at level.
+            </label>
+            <label class="check-item">
+              <input type="checkbox" class="check-input" />
+              No long wick against direction into level.
+            </label>
+            <label class="check-item">
+              <input type="checkbox" class="check-input" />
+              Planned R respected – no revenge trades.
+            </label>
+            <label class="check-item">
+              <input type="checkbox" class="check-input" />
+              Screenshots saved.
+            </label>
+            <label class="check-item">
+              <input type="checkbox" class="check-input" />
+              No random adds or trades outside plan.
+            </label>
+          </div>
 
-        <div class="card-title" style="margin-top:12px;">Weighted checklist</div>
-
-        <div class="checklist-grid">
-          <label class="check-item"><input type="checkbox" /> Momentum setup</label>
-          <label class="check-item"><input type="checkbox" /> No double add at level</label>
-          <label class="check-item"><input type="checkbox" /> Clean level</label>
-          <label class="check-item"><input type="checkbox" /> No long wick against direction</label>
-          <label class="check-item"><input type="checkbox" /> Planned R respected</label>
-          <label class="check-item"><input type="checkbox" /> Screenshots saved</label>
-        </div>
-
-        <button class="btn-save" onclick="saveDraft()">Save draft</button>
-        <button class="btn-add" onclick="addTrade()">Add trade to log</button>
+          <div class="check-footer" id="checklistSummary">
+            0 / 6 rules followed (0%). Higher score → higher discipline.
+          </div>
+        </section>
       </div>
 
-      <!-- RIGHT: EQUITY + RECENT -->
-      <div class="card">
-        <div class="card-title">Equity & discipline overview</div>
-
-        <div id="summary">
-          <p>WIN RATE: <b id="winrate">0%</b></p>
-          <p>AVG R REALIZED: <b id="avgR">0.00R</b></p>
-          <p>DISCIPLINE SCORE: <b id="disc">0 / 100</b></p>
+      <!-- RIGHT: overview -->
+      <section class="card">
+        <div class="card-header">
+          <div class="card-title">Equity & discipline overview</div>
+          <div class="card-sub">High-level view of your recent performance.</div>
         </div>
 
-        <div class="card-title" style="margin-top:18px;">Recent trades</div>
+        <div class="overview-metrics">
+          <div class="metric">
+            <div class="metric-label">Win rate</div>
+            <div class="metric-value" id="winrateValue">0%</div>
+            <div class="metric-note" id="tradesCountNote">0 trades logged</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Average R realized</div>
+            <div class="metric-value" id="avgRValue">0.00R</div>
+            <div class="metric-note">Equity curve will show here.</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Discipline score</div>
+            <div class="metric-value" id="discValue">0 / 100</div>
+            <div class="metric-note">Based on checklist hits.</div>
+          </div>
+        </div>
 
-        <table class="recent-table" id="recentTrades">
-          <tbody></tbody>
+        <div class="card-header" style="margin-top: 8px;">
+          <div class="card-title" style="font-size: 13px;">Recent trades</div>
+          <div class="card-sub">Last 10 trades – stored locally in this browser.</div>
+        </div>
+
+        <table class="recent-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Pair</th>
+              <th>Dir</th>
+              <th>Risk</th>
+              <th>Result (R)</th>
+              <th>Discipline</th>
+            </tr>
+          </thead>
+          <tbody id="recentBody"></tbody>
         </table>
-      </div>
-    </div>
+      </section>
+    </main>
 
     <footer>
-      © 2025 TredLog. Dashboard stored locally in your browser.
+      © 2025 TredLog. All data is stored locally in your browser.
     </footer>
   </div>
 
-  <!-- LOGIC -->
   <script>
+    const STORAGE_KEY = "tredlog_v2_trades";
+    const DRAFT_KEY = "tredlog_v2_draft";
+
     function loadTrades() {
-      return JSON.parse(localStorage.getItem("tredlogTrades") || "[]");
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+      } catch (e) {
+        return [];
+      }
     }
 
     function saveTrades(list) {
-      localStorage.setItem("tredlogTrades", JSON.stringify(list));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+    }
+
+    function readChecklist() {
+      const boxes = Array.from(document.querySelectorAll(".check-input"));
+      const total = boxes.length;
+      const hits = boxes.filter(b => b.checked).length;
+      return { hits, total };
+    }
+
+    function updateChecklistSummary() {
+      const { hits, total } = readChecklist();
+      const pct = total ? Math.round((hits / total) * 100) : 0;
+      document.getElementById("checklistSummary").textContent =
+        `${hits} / ${total} rules followed (${pct}%). Higher score → higher discipline.`;
+    }
+
+    document.querySelectorAll(".check-input").forEach(cb => {
+      cb.addEventListener("change", updateChecklistSummary);
+    });
+
+    function getFormValues() {
+      return {
+        pair: document.getElementById("pairInput").value.trim(),
+        direction: document.getElementById("directionSelect").value,
+        risk: parseFloat(document.getElementById("riskInput").value),
+        session: document.getElementById("sessionInput").value.trim(),
+        setup: document.getElementById("setupInput").value.trim(),
+        resultType: document.getElementById("resultTypeSelect").value,
+        resultR: parseFloat(document.getElementById("resultRInput").value),
+        notes: document.getElementById("notesInput").value.trim(),
+      };
+    }
+
+    function clearForm() {
+      document.getElementById("pairInput").value = "";
+      document.getElementById("directionSelect").value = "";
+      document.getElementById("riskInput").value = "";
+      document.getElementById("resultRInput").value = "";
+      document.getElementById("resultTypeSelect").value = "Win";
+      document.getElementById("notesInput").value = "";
+
+      document.querySelectorAll(".check-input").forEach(cb => cb.checked = false);
+      updateChecklistSummary();
+      localStorage.removeItem(DRAFT_KEY);
+    }
+
+    function saveDraft() {
+      const values = getFormValues();
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(values));
+      alert("Draft saved locally in this browser.");
+    }
+
+    function loadDraftIfAny() {
+      try {
+        const raw = localStorage.getItem(DRAFT_KEY);
+        if (!raw) return;
+        const d = JSON.parse(raw);
+        if (d.pair !== undefined) document.getElementById("pairInput").value = d.pair;
+        if (d.direction !== undefined) document.getElementById("directionSelect").value = d.direction;
+        if (!isNaN(d.risk)) document.getElementById("riskInput").value = d.risk;
+        if (d.session !== undefined) document.getElementById("sessionInput").value = d.session;
+        if (d.setup !== undefined) document.getElementById("setupInput").value = d.setup;
+        if (d.resultType !== undefined) document.getElementById("resultTypeSelect").value = d.resultType;
+        if (!isNaN(d.resultR)) document.getElementById("resultRInput").value = d.resultR;
+        if (d.notes !== undefined) document.getElementById("notesInput").value = d.notes;
+      } catch (e) {
+        // ignore broken draft
+      }
     }
 
     function addTrade() {
+      const values = getFormValues();
+      if (!values.pair || !values.direction || isNaN(values.risk) || isNaN(values.resultR)) {
+        alert("Please fill Pair, Direction, Risk and Result (R).");
+        return;
+      }
+
+      const { hits, total } = readChecklist();
       const trade = {
-        pair: pair.value,
-        dir: direction.value,
-        risk: risk.value,
-        session: session.value,
-        setup: setup.value,
-        notes: notes.value,
+        id: Date.now(),
         date: new Date().toLocaleDateString(),
+        ...values,
+        checklistHits: hits,
+        checklistTotal: total
       };
 
       const list = loadTrades();
       list.unshift(trade);
       saveTrades(list);
-
+      clearForm();
       render();
-      alert("Trade saved!");
-    }
-
-    function saveDraft() {
-      alert("Draft saved locally.");
+      alert("Trade added to log.");
     }
 
     function render() {
       const list = loadTrades();
-      const body = document.querySelector("#recentTrades tbody");
-      body.innerHTML = "";
+      const total = list.length;
+
+      const winrateEl = document.getElementById("winrateValue");
+      const avgREl = document.getElementById("avgRValue");
+      const discEl = document.getElementById("discValue");
+      const tradesNoteEl = document.getElementById("tradesCountNote");
+      const body = document.getElementById("recentBody");
+
+      if (!total) {
+        winrateEl.textContent = "0%";
+        avgREl.textContent = "0.00R";
+        discEl.textContent = "0 / 100";
+        tradesNoteEl.textContent = "0 trades logged";
+        body.innerHTML = "";
+        return;
+      }
+
+      let wins = 0;
+      let sumR = 0;
+      let discSum = 0;
+      let discCount = 0;
 
       list.forEach(t => {
-        body.innerHTML += `
+        if (t.resultR > 0) wins++;
+        sumR += t.resultR;
+        if (t.checklistTotal > 0) {
+          discSum += (t.checklistHits / t.checklistTotal) * 100;
+          discCount++;
+        }
+      });
+
+      const winrate = Math.round((wins / total) * 100);
+      const avgR = sumR / total;
+      const discScore = discCount ? Math.round(discSum / discCount) : 0;
+
+      winrateEl.textContent = `${winrate}%`;
+      avgREl.textContent = `${avgR.toFixed(2)}R`;
+      discEl.textContent = `${discScore} / 100`;
+      tradesNoteEl.textContent = `${total} trade${total === 1 ? "" : "s"} logged`;
+
+      const rows = list.slice(0, 10).map(t => {
+        const discPct = t.checklistTotal
+          ? Math.round((t.checklistHits / t.checklistTotal) * 100)
+          : 0;
+        const badgeClass = t.resultR > 0 ? "badge-win" : t.resultR < 0 ? "badge-loss" : "";
+        const badgeLabel = t.resultR > 0 ? "Win" : t.resultR < 0 ? "Loss" : t.resultType || "";
+        return `
           <tr>
             <td>${t.date}</td>
             <td>${t.pair}</td>
-            <td>${t.dir}</td>
-            <td>${t.risk}R</td>
+            <td>${t.direction}</td>
+            <td>${isNaN(t.risk) ? "-" : t.risk}</td>
+            <td>
+              <span class="${badgeClass}">${badgeLabel}</span>
+              &nbsp;${isNaN(t.resultR) ? "" : `${t.resultR}R`}
+            </td>
+            <td>${discPct}%</td>
           </tr>`;
-      });
+      }).join("");
 
-      // Simple winrate placeholder
-      document.getElementById("winrate").innerText = list.length ? "100%" : "0%";
-      document.getElementById("avgR").innerText = list.length ? "1.50R" : "0.00R";
-      document.getElementById("disc").innerText = list.length ? "83 / 100" : "0 / 100";
+      body.innerHTML = rows;
     }
 
+    loadDraftIfAny();
+    updateChecklistSummary();
     render();
   </script>
-
 </body>
 </html>
