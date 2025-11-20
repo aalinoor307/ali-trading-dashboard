@@ -34,7 +34,7 @@
       body {
         margin: 0;
         min-height: 100vh;
-        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'SF Pro Text',
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
           -apple-system, sans-serif;
         background: radial-gradient(circle at top, #172033 0, #050816 45%);
         color: var(--text);
@@ -530,6 +530,8 @@
         <div class="header-right">
           <div class="pill">Local session • Browser storage only</div>
           <div class="pill positive">Built for serious traders</div>
+          <button class="btn-small" onclick="exportBackup()">Export backup</button>
+          <button class="btn-small" onclick="triggerImport()">Import backup</button>
           <button class="btn-small warning" onclick="clearAllData()">
             Clear local data
           </button>
@@ -742,7 +744,7 @@
               <div class="stat-card">
                 <div class="stat-label">DISCIPLINE SCORE</div>
                 <div class="stat-value" id="disciplineScore">0 / 100</div>
-                <div class="stat-sub" id="disciplineSub">Average of checklist %.</div>
+                <div class="stat-sub" id="disciplineSub">Average of checklist hits.</div>
               </div>
             </div>
 
@@ -805,44 +807,36 @@
       </main>
     </div>
 
+    <!-- hidden file input for import -->
+    <input
+      type="file"
+      id="importFile"
+      accept="application/json"
+      style="display: none;"
+    />
+
     <script>
-      /*************** SIMPLE PASSWORD GATE (client-side only) ***************/
+      /*************** REAL PASSWORD (simple, client-side) ***************/
+      // 👉 EDIT THIS to your own secret.
+      // Example: "AliNoor!2025"
+      const DASHBOARD_PASSWORD = Alihandroz@2099;
+
       (function passwordGate() {
-        const KEY = "tredlogPasswordHashV1";
-
-        function hash(text) {
-          return btoa("tredlog::" + text);
-        }
-
+        if (!DASHBOARD_PASSWORD) return; // leave blank to disable protection
         try {
-          const stored = localStorage.getItem(KEY);
-          if (!stored) {
-            // First visit on this browser: create a password
-            let pw = prompt(
-              "Set a password to open this dashboard (stored only in this browser):"
-            );
-            if (!pw) {
-              alert("Password required to continue.");
-              window.location.href = "about:blank";
-              return;
+          let ok = false;
+          for (let i = 0; i < 5; i++) {
+            const pw = prompt("Enter your TredLog dashboard password:");
+            if (pw === null) continue;
+            if (pw === DASHBOARD_PASSWORD) {
+              ok = true;
+              break;
             }
-            localStorage.setItem(KEY, hash(pw));
-          } else {
-            // Ask to unlock
-            let ok = false;
-            for (let i = 0; i < 5; i++) {
-              const pw = prompt("Enter your TredLog dashboard password:");
-              if (!pw) continue;
-              if (hash(pw) === stored) {
-                ok = true;
-                break;
-              }
-              alert("Incorrect password. Try again.");
-            }
-            if (!ok) {
-              alert("Too many attempts. Reload the page to try again.");
-              window.location.href = "about:blank";
-            }
+            alert("Incorrect password. Try again.");
+          }
+          if (!ok) {
+            alert("Access denied.");
+            window.location.href = "about:blank";
           }
         } catch (e) {
           console.warn("Password gate error:", e);
@@ -1039,6 +1033,32 @@
         renderAll();
       }
 
+      /******************* BACKUP EXPORT / IMPORT *******************/
+
+      function exportBackup() {
+        const payload = {
+          settings,
+          trades,
+          exportedAt: new Date().toISOString(),
+        };
+        const blob = new Blob([JSON.stringify(payload, null, 2)], {
+          type: "application/json",
+        });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download =
+          "tredlog-backup-" + new Date().toISOString().slice(0, 10) + ".json";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+
+      function triggerImport() {
+        document.getElementById("importFile").click();
+      }
+
       /******************* STATS & CHARTS *******************/
 
       function computeStats() {
@@ -1051,10 +1071,15 @@
         trades.forEach((t) => {
           totalR += Number(t.resultR || 0);
           if (t.resultR > 0) wins++;
+
+          // include every trade in discipline average;
+          // trades with no checklist simply contribute 0%
           if (t.checklistTotal > 0) {
             totalDiscipline += (t.checklistHits / t.checklistTotal) * 100;
-            disciplineCount++;
+          } else {
+            totalDiscipline += 0;
           }
+          disciplineCount++;
         });
 
         const winRate = totalTrades ? (wins / totalTrades) * 100 : 0;
@@ -1099,9 +1124,7 @@
         document.getElementById("disciplineScore").textContent =
           s.avgDisc.toFixed(0) + " / 100";
         document.getElementById("disciplineSub").textContent =
-          s.totalTrades > 0
-            ? "Average of checklist discipline per trade."
-            : "Use the checklist to track discipline.";
+          "Average of checklist discipline per trade.";
 
         document.getElementById("moneySummary").textContent =
           "Total PnL: $" +
@@ -1434,6 +1457,34 @@
         document
           .querySelectorAll("#checklistArea input[type='checkbox']")
           .forEach((b) => b.addEventListener("change", updateChecklistSummary));
+
+        // handle import
+        const importInput = document.getElementById("importFile");
+        importInput.addEventListener("change", (e) => {
+          const file = e.target.files[0];
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = () => {
+            try {
+              const data = JSON.parse(reader.result);
+              if (!data || !Array.isArray(data.trades)) {
+                throw new Error("Invalid backup format");
+              }
+              trades = data.trades;
+              settings = Object.assign(settings, data.settings || {});
+              saveState();
+              restoreForm();
+              renderAll();
+              alert("Backup imported successfully.");
+            } catch (err) {
+              console.error(err);
+              alert("Could not import this file. Make sure it is a TredLog backup JSON.");
+            } finally {
+              importInput.value = "";
+            }
+          };
+          reader.readAsText(file);
+        });
       });
     </script>
   </body>
