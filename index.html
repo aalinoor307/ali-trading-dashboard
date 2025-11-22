@@ -15,7 +15,7 @@
 </head>
 <body class="min-h-screen bg-black text-white">
 
-  <!-- Landing Page (Public) -->
+  <!-- Public Landing Page -->
   <div id="landing" class="max-w-7xl mx-auto px-6 pt-20 text-center">
     <h1>TREDLOG</h1>
     <p class="text-2xl mt-4 text-gray-400">Track Every Pip. Build Your Edge.</p>
@@ -41,36 +41,33 @@
       </div>
     </div>
 
-    <!-- Access Button -->
     <div class="mt-20">
-      <button onclick="showPassword()" class="px-12 py-6 bg-cyan-500 hover:bg-cyan-400 text-black text-2xl font-bold rounded-full">
+      <button onclick="showPassword()" class="px-12 py-6 bg-cyan-500 hover:bg-cyan-400 text-black text-2xl font-bold rounded-full transition">
         Access Dashboard
       </button>
       <p class="mt-8 text-gray-500">@Alimaxfx • 2025</p>
     </div>
   </div>
 
-  <!-- Password Modal -->
-  <div id="passwordModal" class="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center hidden">
-    <div class="bg-gray-900 p-10 rounded-2xl border border-cyan-500 text-center">
+  <!-- Password Modal – NO HINT -->
+  <div id="passwordModal" class="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center hidden z-50">
+    <div class="bg-gray-900 p-10 rounded-2xl border border-cyan-500 text-center max-w-sm">
       <h2 class="text-3xl text-cyan-400 mb-6">Enter Password</h2>
-      <input type="password" id="passInput" class="bg-black border border-gray-700 px-4 py-3 rounded-lg text-xl mb-6 w-64" placeholder="Password">
+      <input type="password" id="passInput" class="bg-black border border-gray-700 px-4 py-3 rounded-lg text-xl mb-6 w-full" placeholder="••••••••••••">
       <br>
       <button onclick="checkPassword()" class="px-8 py-4 bg-cyan-500 hover:bg-cyan-400 text-black font-bold rounded-full">
         Enter Dashboard
       </button>
-      <p class="mt-4 text-sm text-gray-500">Hint: Alihandroz2099</p>
     </div>
   </div>
 
   <script>
     function showPassword() { document.getElementById('passwordModal').classList.remove('hidden'); }
     function checkPassword() {
-      const input = document.getElementById('passInput').value;
-      if (input === "Alihandroz2099") {
-        window.location.href = "/dashboard.html";  // ← your current dashboard file
+      if (document.getElementById('passInput').value === "Alihandroz2099") {
+        window.location.href = "dashboard.html";  // your real dashboard
       } else {
-        alert("Wrong password");
+        alert("Incorrect password");
       }
     }
 
