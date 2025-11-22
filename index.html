@@ -10,26 +10,25 @@
   <style>
     body { font-family: 'Inter', sans-serif; background: #0a0a0a; color: #e0e0e0; }
     .chart-container { background: #111; border-radius: 16px; padding: 20px; margin: 20px auto; max-width: 800px; }
+    h1 { font-size: 4rem; font-weight: 800; background: linear-gradient(to right, #00ffc4, #00ff9d); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
   </style>
 </head>
 <body class="min-h-screen bg-black text-white">
-  <!-- Hero Section -->
+  <!-- Hero -->
   <div class="max-w-7xl mx-auto px-6 pt-20 text-center">
-    <h1 class="text-6xl font-black bg-gradient-to-r from-cyan-400 to-green-400 bg-clip-text text-transparent mb-4">
-      TREDLOG
-    </h1>
-    <p class="text-2xl text-gray-400 mb-8">Track Every Pip. Build Your Edge.</p>
-    <p class="text-5xl font-bold text-cyan-400 mb-2">+$48,720</p>
+    <h1>TREDLOG</h1>
+    <p class="text-2xl mt-4 text-gray-400">Track Every Pip. Build Your Edge.</p>
+    <p class="text-5xl mt-8 font-bold text-cyan-400">+$48,720</p>
     <p class="text-xl text-gray-500">68% Win Rate • 2.84 Avg R • Discipline 94/100</p>
   </div>
 
-  <!-- Dashboard: Equity Curve -->
+  <!-- Equity Curve Dashboard -->
   <div class="chart-container">
     <h3 class="text-center text-cyan-400 mb-4 text-xl">Equity Curve Dashboard</h3>
     <canvas id="equityCurve" height="300"></canvas>
   </div>
 
-  <!-- Dashboard: Recent Trades -->
+  <!-- Recent Trades Dashboard -->
   <div class="max-w-6xl mx-auto mt-16 px-6">
     <h3 class="text-center text-cyan-400 mb-8 text-2xl">Recent Trades Dashboard</h3>
     <div class="grid md:grid-cols-3 gap-8">
@@ -53,14 +52,12 @@
 
   <!-- Waitlist CTA -->
   <div class="text-center mt-20 mb-20">
-    <a href="https://tally.so/r/w8gJ5L" target="_blank" 
-       class="inline-block px-12 py-6 bg-cyan-500 hover:bg-cyan-400 text-black text-2xl font-bold rounded-full transition-all duration-300 transform hover:scale-105">
+    <a href="https://tally.so/r/w8gJ5L" target="_blank" class="inline-block px-12 py-6 bg-cyan-500 hover:bg-cyan-400 text-black text-2xl font-bold rounded-full transition">
       Join the Waitlist – Early Access Free
     </a>
     <p class="mt-6 text-gray-500">@Alimaxfx • 2025</p>
   </div>
 
-  <!-- Chart Script for Dashboard -->
   <script>
     const ctx = document.getElementById('equityCurve').getContext('2d');
     new Chart(ctx, {
