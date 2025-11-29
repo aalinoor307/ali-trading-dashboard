@@ -5,13 +5,6 @@
     <title>TredLog – Probability-driven trading journal – Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <!-- Google Identity Services (for Drive auth) -->
-    <script
-      src="https://accounts.google.com/gsi/client"
-      async
-      defer
-    ></script>
-
     <!-- ============ SIMPLE PASSWORD GATE (CLIENT-SIDE ONLY) ============ -->
     <script>
       // EDIT ONLY THIS VALUE IF YOU WANT TO CHANGE YOUR PASSWORD
@@ -151,9 +144,13 @@
         cursor: pointer;
       }
 
-      .pill[disabled] {
-        opacity: 0.6;
-        cursor: default;
+      .pill button {
+        background: transparent;
+        border: none;
+        color: inherit;
+        font: inherit;
+        cursor: pointer;
+        padding: 0;
       }
 
       main {
@@ -578,20 +575,25 @@
           </div>
         </div>
         <div class="header-pills">
-          <div class="pill">Local session • Browser storage only</div>
+          <div id="storageModePill" class="pill">
+            Local autosave • Browser only
+          </div>
           <div class="pill good">Built for serious traders</div>
           <button id="exportBtn" class="pill btn-small">Export backup</button>
           <button id="importBtn" class="pill btn-small">Import backup</button>
-          <!-- Google Drive controls -->
-          <button id="driveSignInBtn" class="pill btn-small">
+          <div id="driveStatusPill" class="pill">
+            Drive: not connected
+          </div>
+          <button id="googleSignInBtn" class="pill btn-small">
             Sign in with Google
           </button>
-          <button id="driveSyncBtn" class="pill btn-small" disabled>
-            Sync to Drive
+          <button
+            id="googleSignOutBtn"
+            class="pill btn-small"
+            style="display: none"
+          >
+            Sign out
           </button>
-          <div id="driveStatusPill" class="pill">
-            Drive: Local only
-          </div>
           <div id="clearBtn" class="pill danger">Clear local data</div>
         </div>
       </header>
@@ -712,8 +714,8 @@
             <!-- Weighted checklist -->
             <div class="section-heading">Weighted checklist</div>
             <div class="small-text" style="margin-bottom: 4px">
-              Tick only what actually happened on this trade. Custom setup rules are
-              for you only – discipline % is based on the core rules.
+              Tick only what actually happened on this trade. Custom setup rules
+              are for you only – discipline % is based on the core rules.
             </div>
 
             <div class="checklist-grid">
@@ -721,10 +723,15 @@
               <div class="checklist-card">
                 <div class="checklist-title">Custom setup checklist</div>
                 <div class="small-text" style="margin-bottom: 4px">
-                  Add your own rules (e.g. "Clean close at level", "No double wick").
-                  These are just for you – they don’t change discipline %.
+                  Add your own rules (e.g. "Clean close at level", "No double
+                  wick"). These are just for you – they don’t change discipline
+                  %.
                 </div>
-                <div id="customRulesList" class="small-text" style="min-height: 36px">
+                <div
+                  id="customRulesList"
+                  class="small-text"
+                  style="min-height: 36px"
+                >
                   <em>No custom rules yet. Add your checklist items above.</em>
                 </div>
                 <div style="margin-top: 4px; display: flex; gap: 4px">
@@ -781,9 +788,9 @@
                 </button>
               </div>
               <div>
-                <span id="disciplineLabel">
-                  0 / 6 rules followed (0% discipline).
-                </span>
+                <span id="disciplineLabel"
+                  >0 / 6 rules followed (0% discipline).</span
+                >
                 <span class="small-text">
                   Higher score → higher discipline per trade.
                 </span>
@@ -803,9 +810,9 @@
             <div class="card-title-row">
               <div class="card-title">Equity & discipline overview</div>
               <div class="card-subtitle">
-                <span id="toplineTotals">
-                  Total PnL: $0.00 • Balance: $0.00 • Starting: $0.00
-                </span>
+                <span id="toplineTotals"
+                  >Total PnL: $0.00 • Balance: $0.00 • Starting: $0.00</span
+                >
               </div>
             </div>
 
@@ -840,7 +847,8 @@
                 <div class="chart-title-row">
                   <div class="chart-title">Equity curve (cumulative R)</div>
                   <div id="equityCaption" class="chart-caption">
-                    No trades yet. Log your first setup to start drawing your curve.
+                    No trades yet. Log your first setup to start drawing your
+                    curve.
                   </div>
                 </div>
                 <canvas id="equityChart" height="180"></canvas>
@@ -967,7 +975,7 @@
               </div>
             </div>
 
-            <!-- Recent trades table (month-filtered, screenshot links) -->
+            <!-- Recent trades table -->
             <div class="chart-box" style="margin-top: 8px">
               <div class="chart-title-row">
                 <div class="chart-title">Recent trades</div>
@@ -1006,209 +1014,13 @@
     </div>
 
     <script>
-      /* ========= GOOGLE DRIVE BACKUP CONFIG =========
-         Replace the placeholders below with your real values.
-         - DRIVE_CLIENT_ID: OAuth 2.0 Web client ID
-         - DRIVE_API_KEY:   API key 1
-      */
-      const DRIVE_CLIENT_ID = "41189729388-rksho3qtsot9qv7h2g4c0s8q81ghub6u.apps.googleusercontent.com";
-      const DRIVE_API_KEY = "AIzaSyD3SRe0koUE0MdEE0JWllD5V8L1koP7iGs";
-      const DRIVE_SCOPES = "https://www.googleapis.com/auth/drive.file";
-      const DRIVE_BACKUP_FILENAME = "tredlog-dashboard-backup.json";
-
-      let driveAccessToken = null;
-      let driveTokenClient = null;
-      let driveFileId = null;
-
-      function driveLog(...args) {
-        console.log("[Drive]", ...args);
-      }
-
-      function updateDriveUi() {
-        const status = document.getElementById("driveStatusPill");
-        const signBtn = document.getElementById("driveSignInBtn");
-        const syncBtn = document.getElementById("driveSyncBtn");
-
-        if (!status || !signBtn || !syncBtn) return;
-
-        if (!driveAccessToken) {
-          status.textContent = "Drive: Local only";
-          status.classList.remove("good");
-          signBtn.disabled = false;
-          signBtn.textContent = "Sign in with Google";
-          syncBtn.disabled = true;
-        } else {
-          status.textContent = "Drive: Connected (manual sync)";
-          status.classList.add("good");
-          signBtn.disabled = false;
-          signBtn.textContent = "Reconnect Google";
-          syncBtn.disabled = false;
-        }
-      }
-
-      function initDriveTokenClient() {
-        if (!window.google || driveTokenClient) return;
-        if (!DRIVE_CLIENT_ID || DRIVE_CLIENT_ID.startsWith("YOUR_")) {
-          console.warn("Drive Client ID not configured yet.");
-          return;
-        }
-
-        driveTokenClient = google.accounts.oauth2.initTokenClient({
-          client_id: DRIVE_CLIENT_ID,
-          scope: DRIVE_SCOPES,
-          callback: async (tokenResponse) => {
-            if (tokenResponse && tokenResponse.access_token) {
-              driveAccessToken = tokenResponse.access_token;
-              driveLog("Got access token");
-              updateDriveUi();
-              try {
-                await ensureDriveBackupFile();
-                await syncFromDrive(); // Load remote backup into app on first sign-in
-                alert(
-                  "Connected to Google Drive. Your trades have been synced from backup (if any)."
-                );
-              } catch (err) {
-                console.error(err);
-                alert(
-                  "Signed in to Google, but there was an error accessing Drive backup."
-                );
-              }
-            }
-          },
-        });
-      }
-
-      async function ensureDriveBackupFile() {
-        if (!driveAccessToken) return;
-        if (driveFileId) return;
-
-        const query = encodeURIComponent(
-          `name = '${DRIVE_BACKUP_FILENAME}' and trashed = false`
-        );
-
-        const resp = await fetch(
-          `https://www.googleapis.com/drive/v3/files?q=${query}&fields=files(id,name)&key=${DRIVE_API_KEY}`,
-          {
-            headers: {
-              Authorization: "Bearer " + driveAccessToken,
-            },
-          }
-        );
-
-        if (!resp.ok) {
-          throw new Error("Drive list error: " + (await resp.text()));
-        }
-
-        const data = await resp.json();
-        if (data.files && data.files.length) {
-          driveFileId = data.files[0].id;
-          driveLog("Found existing backup file", driveFileId);
-          return;
-        }
-
-        // No file yet → create empty file based on current local state
-        await syncToDrive(true);
-      }
-
-      function buildMultipartBody(metadata, contentObj) {
-        const boundary = "-------314159265358979323846";
-        const delimiter = "\r\n--" + boundary + "\r\n";
-        const closeDelim = "\r\n--" + boundary + "--";
-
-        const contentType = 'application/json; charset=UTF-8';
-
-        const multipartRequestBody =
-          delimiter +
-          "Content-Type: application/json; charset=UTF-8\r\n\r\n" +
-          JSON.stringify(metadata) +
-          delimiter +
-          "Content-Type: " +
-          contentType +
-          "\r\n\r\n" +
-          JSON.stringify(contentObj) +
-          closeDelim;
-
-        return { body: multipartRequestBody, boundary };
-      }
-
-      async function syncToDrive(isCreateIfMissing = false) {
-        if (!driveAccessToken) {
-          alert("Connect Google Drive first.");
-          return;
-        }
-
-        // Build JSON backup from current state
-        const content = {
-          ...state,
-          _lastSyncedAt: new Date().toISOString(),
-        };
-
-        const metadata = {
-          name: DRIVE_BACKUP_FILENAME,
-          mimeType: "application/json",
-        };
-
-        const { body, boundary } = buildMultipartBody(metadata, content);
-
-        let method = "PATCH";
-        let url = `https://www.googleapis.com/upload/drive/v3/files/${driveFileId}?uploadType=multipart&key=${DRIVE_API_KEY}`;
-
-        if (!driveFileId || isCreateIfMissing) {
-          method = "POST";
-          url =
-            "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&key=" +
-            DRIVE_API_KEY;
-        }
-
-        const resp = await fetch(url, {
-          method,
-          headers: {
-            Authorization: "Bearer " + driveAccessToken,
-            "Content-Type": 'multipart/related; boundary="' + boundary + '"',
-          },
-          body,
-        });
-
-        if (!resp.ok) {
-          const t = await resp.text();
-          throw new Error("Drive sync error: " + t);
-        }
-
-        const data = await resp.json();
-        if (data && data.id) {
-          driveFileId = data.id;
-          driveLog("Backup saved to Drive", driveFileId);
-        }
-      }
-
-      async function syncFromDrive() {
-        if (!driveAccessToken || !driveFileId) return;
-
-        const url = `https://www.googleapis.com/drive/v3/files/${driveFileId}?alt=media&key=${DRIVE_API_KEY}`;
-        const resp = await fetch(url, {
-          headers: { Authorization: "Bearer " + driveAccessToken },
-        });
-        if (!resp.ok) {
-          const t = await resp.text();
-          throw new Error("Drive download error: " + t);
-        }
-        const data = await resp.json();
-        if (!data || typeof data !== "object") {
-          driveLog("Drive backup empty or invalid, keeping local state.");
-          return;
-        }
-
-        // Overwrite local state with remote
-        state = {
-          startingBalance: Number(data.startingBalance) || 0,
-          riskPerTrade: Number(data.riskPerTrade) || 0,
-          trades: Array.isArray(data.trades) ? data.trades : [],
-          customRules: Array.isArray(data.customRules) ? data.customRules : [],
-        };
-        saveState();
-        renderCustomRules();
-        recalcDashboard();
-      }
+      // ========= Google Drive config (fill these with your real values) =========
+      const GOOGLE_CLIENT_ID = "41189729388-rksho3qtsot9qv7h2g4c0s8q81ghub6u.apps.googleusercontent.com";
+      const GOOGLE_API_KEY = "AIzaSyD3SRe0koUE0MdEE0JWllD5V8L1koP7iGs";
+      const GOOGLE_DISCOVERY_DOCS = [
+        "https://www.googleapis.com/discovery/v1/apis/drive/v3/rest",
+      ];
+      const GOOGLE_SCOPES = "https://www.googleapis.com/auth/drive.file";
 
       // ========= Storage / state =========
       const STORAGE_KEY = "tredlog_dashboard_v3";
@@ -1222,6 +1034,13 @@
 
       // Month offset for calendar & recent trades filtering
       let calendarMonthOffset = 0; // 0 = current month
+
+      // Google Drive runtime state
+      let gapiInitialized = false;
+      let googleAuthInstance = null;
+      let isSignedIn = false;
+      let driveFileId = null;
+      let driveSaveTimeout = null;
 
       // ========= Helpers =========
       const $ = (id) => document.getElementById(id);
@@ -1262,12 +1081,13 @@
         return isFinite(v) ? v : 0;
       }
 
-      function saveState() {
+      function saveState(shouldSyncDrive = true) {
         try {
           localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
         } catch (e) {
           console.warn("Failed to save state", e);
         }
+        if (shouldSyncDrive) scheduleDriveSave();
       }
 
       function loadState() {
@@ -1347,6 +1167,225 @@
         );
       }
 
+      // ========= Google Drive helpers =========
+      function setDriveStatus(text, isOffOrError) {
+        const pill = $("driveStatusPill");
+        if (!pill) return;
+        pill.textContent = text;
+        if (isOffOrError) {
+          pill.style.borderColor = "rgba(239,68,68,0.7)";
+          pill.style.color = "#fecaca";
+          pill.style.background = "rgba(127,29,29,0.2)";
+        } else {
+          pill.style.borderColor = "rgba(22,163,74,0.7)";
+          pill.style.color = "#bbf7d0";
+          pill.style.background = "rgba(22,163,74,0.15)";
+        }
+      }
+
+      function scheduleDriveSave() {
+        if (!gapiInitialized || !isSignedIn) return;
+        if (driveSaveTimeout) clearTimeout(driveSaveTimeout);
+        driveSaveTimeout = setTimeout(() => {
+          saveBackupToDrive().catch((err) =>
+            console.error("Drive autosync failed", err)
+          );
+        }, 1500); // debounce autosync ~1.5s
+      }
+
+      // Called by Google API script tag
+      function gapiLoaded() {
+        if (!GOOGLE_CLIENT_ID || !GOOGLE_API_KEY) {
+          console.warn(
+            "Google Client ID / API key missing. Drive sync disabled until you fill them."
+          );
+          return;
+        }
+        window.gapi.load("client:auth2", initGapiClient);
+      }
+
+      async function initGapiClient() {
+        try {
+          await gapi.client.init({
+            apiKey: GOOGLE_API_KEY,
+            clientId: GOOGLE_CLIENT_ID,
+            discoveryDocs: GOOGLE_DISCOVERY_DOCS,
+            scope: GOOGLE_SCOPES,
+          });
+          googleAuthInstance = gapi.auth2.getAuthInstance();
+          googleAuthInstance.isSignedIn.listen(updateSigninStatus);
+          updateSigninStatus(googleAuthInstance.isSignedIn.get());
+          gapiInitialized = true;
+        } catch (err) {
+          console.error("Error initializing Google API client", err);
+          setDriveStatus("Drive: init error", true);
+        }
+      }
+
+      function updateSigninStatus(signedIn) {
+        isSignedIn = signedIn;
+        const signInBtn = $("googleSignInBtn");
+        const signOutBtn = $("googleSignOutBtn");
+        const storagePill = $("storageModePill");
+
+        if (signedIn) {
+          signInBtn.style.display = "none";
+          signOutBtn.style.display = "inline-flex";
+          storagePill.textContent = "Local autosave + Drive autosync";
+          setDriveStatus("Drive: connected (autosync on)", false);
+          // Once signed in, load backup if it exists
+          loadBackupFromDrive().catch((err) =>
+            console.error("Failed to load Drive backup", err)
+          );
+        } else {
+          signInBtn.style.display = "inline-flex";
+          signOutBtn.style.display = "none";
+          storagePill.textContent = "Local autosave • Browser only";
+          setDriveStatus("Drive: not connected", true);
+        }
+      }
+
+      function handleSignInClick() {
+        if (!googleAuthInstance) {
+          alert(
+            "Google client not ready yet. If this keeps happening, check your API key / Client ID."
+          );
+          return;
+        }
+        googleAuthInstance.signIn();
+      }
+
+      function handleSignOutClick() {
+        if (!googleAuthInstance) return;
+        googleAuthInstance.signOut();
+      }
+
+      async function loadBackupFromDrive() {
+        if (!gapiInitialized || !isSignedIn) return;
+
+        setDriveStatus("Drive: checking backup…", false);
+
+        // Look for existing backup file
+        const listResp = await gapi.client.drive.files.list({
+          q: "name = 'tredlog-dashboard-backup.json' and trashed = false",
+          spaces: "drive",
+          fields: "files(id, name, modifiedTime)",
+          pageSize: 1,
+        });
+
+        const files = listResp.result.files || [];
+        if (!files.length) {
+          setDriveStatus("Drive: no backup yet (will create)", false);
+          return;
+        }
+
+        const file = files[0];
+        driveFileId = file.id;
+
+        const getResp = await gapi.client.drive.files.get({
+          fileId: driveFileId,
+          alt: "media",
+        });
+
+        const cloudState = getResp.result || null;
+        if (!cloudState || typeof cloudState !== "object") {
+          setDriveStatus("Drive: backup found but invalid", true);
+          return;
+        }
+
+        const hasLocalTrades = state.trades && state.trades.length > 0;
+
+        if (!hasLocalTrades) {
+          // If local is empty, just adopt cloud state
+          state = {
+            startingBalance: Number(cloudState.startingBalance) || 0,
+            riskPerTrade: Number(cloudState.riskPerTrade) || 0,
+            trades: Array.isArray(cloudState.trades) ? cloudState.trades : [],
+            customRules: Array.isArray(cloudState.customRules)
+              ? cloudState.customRules
+              : [],
+          };
+          saveState(false);
+          renderCustomRules();
+          recalcDashboard();
+          setDriveStatus("Drive: backup loaded", false);
+        } else {
+          const useCloud = confirm(
+            "A TredLog backup was found on Google Drive.\n\n" +
+              "Click OK to replace your current local data with the Drive backup.\n" +
+              "Click Cancel to keep your local data and overwrite Drive next save."
+          );
+          if (useCloud) {
+            state = {
+              startingBalance: Number(cloudState.startingBalance) || 0,
+              riskPerTrade: Number(cloudState.riskPerTrade) || 0,
+              trades: Array.isArray(cloudState.trades)
+                ? cloudState.trades
+                : [],
+              customRules: Array.isArray(cloudState.customRules)
+                ? cloudState.customRules
+                : [],
+            };
+            saveState(false);
+            renderCustomRules();
+            recalcDashboard();
+            setDriveStatus("Drive: backup loaded", false);
+          } else {
+            setDriveStatus("Drive: will overwrite backup on next sync", false);
+          }
+        }
+      }
+
+      async function saveBackupToDrive() {
+        if (!gapiInitialized || !isSignedIn) return;
+
+        try {
+          setDriveStatus("Drive: syncing…", false);
+          const fileContent = JSON.stringify(state, null, 2);
+          const metadata = {
+            name: "tredlog-dashboard-backup.json",
+          };
+
+          const accessToken = gapi.auth.getToken().access_token;
+
+          const form = new FormData();
+          form.append(
+            "metadata",
+            new Blob([JSON.stringify(metadata)], { type: "application/json" })
+          );
+          form.append("file", new Blob([fileContent], { type: "application/json" }));
+
+          let method = "POST";
+          let url =
+            "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart";
+
+          if (driveFileId) {
+            method = "PATCH";
+            url =
+              "https://www.googleapis.com/upload/drive/v3/files/" +
+              encodeURIComponent(driveFileId) +
+              "?uploadType=multipart";
+          }
+
+          const res = await fetch(url, {
+            method,
+            headers: new Headers({ Authorization: "Bearer " + accessToken }),
+            body: form,
+          });
+
+          if (!res.ok) {
+            throw new Error("Drive upload failed: " + res.status);
+          }
+
+          const data = await res.json();
+          driveFileId = data.id;
+          setDriveStatus("Drive: synced just now", false);
+        } catch (err) {
+          console.error("Error saving backup to Drive", err);
+          setDriveStatus("Drive: sync error", true);
+        }
+      }
+
       // ========= Recalc dashboard =========
       function recalcDashboard() {
         const trades = [...state.trades].sort(
@@ -1363,11 +1402,10 @@
             ? "1 trade logged"
             : `${trades.length} trades logged`;
 
-        // Compute PnL in R & USD per trade (defensive)
+        // Compute PnL in R & USD per trade
         trades.forEach((t) => {
           t.resultR = Number(t.resultR) || 0;
           t.riskR = Number(t.riskR) || 1;
-          // pnlR is resultR (assuming result is net R on account risk)
           t.pnlR = t.resultR;
           t.pnlUSD = t.pnlR * riskPerTrade;
         });
@@ -1840,6 +1878,7 @@
             resetInputs();
             renderCustomRules();
             recalcDashboard();
+            saveState();
           }
         });
 
@@ -1855,48 +1894,10 @@
           recalcDashboard();
         });
 
+        $("googleSignInBtn").addEventListener("click", handleSignInClick);
+        $("googleSignOutBtn").addEventListener("click", handleSignOutClick);
+
         window.addEventListener("resize", recalcDashboard);
-
-        // Drive buttons
-        const signInBtn = $("driveSignInBtn");
-        const syncBtn = $("driveSyncBtn");
-        if (signInBtn) {
-          signInBtn.addEventListener("click", () => {
-            if (!window.google) {
-              alert(
-                "Google auth library is still loading. Please wait a moment and try again."
-              );
-              return;
-            }
-            initDriveTokenClient();
-            if (!driveTokenClient) {
-              alert(
-                "Drive client ID is not configured yet. Edit the constants at the top of the script."
-              );
-              return;
-            }
-            driveTokenClient.requestAccessToken({
-              prompt: driveAccessToken ? "" : "consent",
-            });
-          });
-        }
-
-        if (syncBtn) {
-          syncBtn.addEventListener("click", async () => {
-            try {
-              await ensureDriveBackupFile();
-              await syncToDrive(false);
-              alert("Backup synced to Google Drive.");
-            } catch (err) {
-              console.error(err);
-              alert(
-                "Could not sync to Drive. Check console for details and make sure your API key & OAuth client are correct."
-              );
-            }
-          });
-        }
-
-        updateDriveUi();
       }
 
       function renderCustomRules() {
@@ -1958,14 +1959,13 @@
           state.trades.push(trade);
           saveState();
           resetInputs();
-          renderCustomRules();
           recalcDashboard();
         } else {
           alert("Draft saved locally in your browser (not added to log yet).");
         }
       }
 
-      // ========= Backup import / export (local file) =========
+      // ========= Backup import / export =========
       function exportBackup() {
         try {
           const data = JSON.stringify(state, null, 2);
@@ -1980,7 +1980,7 @@
           document.body.removeChild(a);
           URL.revokeObjectURL(url);
           alert(
-            "Backup exported. You can store it safely (e.g. in OneDrive / Google Drive) as an extra copy."
+            "Backup exported. You can store this anywhere (Drive, Dropbox, etc.) as an extra copy."
           );
         } catch (e) {
           console.error(e);
@@ -2027,5 +2027,13 @@
 
       document.addEventListener("DOMContentLoaded", init);
     </script>
+
+    <!-- Google API JS (loads gapi and then calls gapiLoaded) -->
+    <script
+      src="https://apis.google.com/js/api.js"
+      async
+      defer
+      onload="gapiLoaded()"
+    ></script>
   </body>
 </html>
