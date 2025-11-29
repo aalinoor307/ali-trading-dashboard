@@ -1014,16 +1014,48 @@
     </div>
 
     <script>
-      // ========= Google Drive config (fill these with your real values) =========
-      const GOOGLE_CLIENT_ID = "41189729388-nkf5kc7jve9dh8m13b0r5g761p1kpfe1.apps.googleusercontent.com";
-      const GOOGLE_API_KEY = "AIzaSyD3SRe0koUE0MdEE0JWllD5V8L1koP7iGs";
-      const GOOGLE_DISCOVERY_DOCS = [
-        "https://www.googleapis.com/discovery/v1/apis/drive/v3/rest",
-      ];
-      const GOOGLE_SCOPES = "https://www.googleapis.com/auth/drive.file";
+     // ========= Google Drive config (fill these with your real values) =========
+const GOOGLE_CLIENT_ID = "41189729388-nkf5kc7jve9dh8m13b0r5g761p1kpfe1.apps.googleusercontent.com";
+const GOOGLE_API_KEY   = "AIzaSyD3SRe0koUE0MdEE0JWllD5V8L1koP7iGs";
+const GOOGLE_DISCOVERY_DOCS = [
+  "https://www.googleapis.com/discovery/v1/apis/drive/v3/rest",
+];
+const GOOGLE_SCOPES = "https://www.googleapis.com/auth/drive.file";
 
-      // ========= Storage / state =========
-      const STORAGE_KEY = "tredlog_dashboard_v3";
+// ========= NEW REQUIRED GOOGLE FUNCTIONS (INSERT HERE) =========
+let tokenClient;
+
+function gisLoaded() {
+  console.log("GIS Loaded");
+  tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: GOOGLE_CLIENT_ID,
+    scope: GOOGLE_SCOPES,
+    callback: "", // this will be set later when requesting token
+  });
+}
+
+function gapiLoaded() {
+  console.log("GAPI Loaded");
+  gapi.load("client", initGapiClient);
+}
+
+async function initGapiClient() {
+  try {
+    await gapi.client.init({
+      apiKey: GOOGLE_API_KEY,
+      discoveryDocs: GOOGLE_DISCOVERY_DOCS,
+    });
+    gapiInitialized = true;
+    console.log("GAPI client initialized");
+  } catch (e) {
+    console.error("GAPI init error:", e);
+  }
+}
+// ========= END INSERT =========
+
+
+// ========= Storage / state =========
+const STORAGE_KEY = "tredlog_dashboard_v3";
 
       let state = {
         startingBalance: 0,
@@ -2024,16 +2056,24 @@
         });
         input.click();
       }
+<script>
+  document.addEventListener("DOMContentLoaded", init);
+</script>
 
-      document.addEventListener("DOMContentLoaded", init);
-    </script>
+<!-- Google Identity Services (creates tokenClient in gisLoaded) -->
+<script
+  src="https://accounts.google.com/gsi/client"
+  async
+  defer
+  onload="gisLoaded()"
+></script>
 
-    <!-- Google API JS (loads gapi and then calls gapiLoaded) -->
-    <script
-      src="https://apis.google.com/js/api.js"
-      async
-      defer
-      onload="gapiLoaded()"
-    ></script>
-  </body>
+<!-- Google API JS (loads gapi and then calls gapiLoaded) -->
+<script
+  src="https://apis.google.com/js/api.js"
+  async
+  defer
+  onload="gapiLoaded()"
+></script>
+</body>
 </html>
