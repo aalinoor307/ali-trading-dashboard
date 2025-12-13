@@ -41,19 +41,28 @@
 
     <style>
       :root {
-        --bg: #050816;
-        --panel: #0b1020;
-        --panel-soft: #101524;
-        --border-soft: rgba(148, 163, 184, 0.35);
-        --accent: #ffc24b;
-        --accent-soft: rgba(255, 194, 75, 0.14);
-        --accent-strong: #f97316;
-        --text: #f9fafb;
-        --muted: #9ca3af;
-        --danger: #f87171;
-        --success: #4ade80;
-        --card-radius: 16px;
-        --pill-radius: 999px;
+        --bg0: #070a14;
+        --bg1: #0b1020;
+        --panel: rgba(18, 24, 45, 0.82);
+        --panel2: rgba(14, 20, 38, 0.92);
+        --border: rgba(148, 163, 184, 0.18);
+        --border2: rgba(148, 163, 184, 0.26);
+        --muted: rgba(148, 163, 184, 0.78);
+        --text: #f8fafc;
+
+        --good: #7fe0b5;
+        --good2: rgba(34, 197, 94, 0.12);
+        --bad: #ff8a8a;
+        --bad2: rgba(248, 113, 113, 0.12);
+
+        --chip: rgba(2, 6, 23, 0.35);
+        --shadow: 0 18px 60px rgba(0, 0, 0, 0.45);
+
+        --r: 18px;
+        --r2: 14px;
+        --pill: 999px;
+
+        --btn: rgba(2, 6, 23, 0.35);
       }
 
       * {
@@ -64,47 +73,56 @@
         margin: 0;
         font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
           sans-serif;
-        background: radial-gradient(circle at top, #101933 0, #050816 50%);
         color: var(--text);
+        background: radial-gradient(
+            1000px 500px at 20% 0%,
+            rgba(70, 120, 160, 0.24),
+            transparent 60%
+          ),
+          radial-gradient(
+            900px 500px at 80% 0%,
+            rgba(34, 197, 94, 0.12),
+            transparent 55%
+          ),
+          radial-gradient(circle at top, #121a33 0, var(--bg0) 55%);
         display: flex;
         justify-content: center;
       }
 
       .shell {
         width: 100%;
-        max-width: 1300px;
-        padding: 24px 16px 40px;
+        max-width: 1320px;
+        padding: 22px 16px 40px;
       }
 
+      /* Top bar */
       header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 18px;
+        gap: 12px;
+        margin-bottom: 14px;
       }
 
       .logo-row {
         display: flex;
         align-items: center;
         gap: 10px;
+        min-width: 280px;
       }
 
       .logo-icon {
-        width: 30px;
-        height: 30px;
-        border-radius: 999px;
-        background: radial-gradient(
-          circle at 30% 20%,
-          #ffe29f,
-          #ff9f4a 45%,
-          #ff3c3c 100%
-        );
-        box-shadow: 0 0 0 4px rgba(255, 194, 75, 0.15);
+        width: 34px;
+        height: 34px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, rgba(127, 224, 181, 0.7), rgba(54, 122, 255, 0.45));
+        box-shadow: 0 0 0 4px rgba(127, 224, 181, 0.12);
       }
 
       .logo-text-main {
-        font-weight: 600;
-        letter-spacing: 0.03em;
+        font-weight: 650;
+        letter-spacing: 0.02em;
+        font-size: 14px;
       }
 
       .logo-text-sub {
@@ -117,74 +135,98 @@
         gap: 8px;
         flex-wrap: wrap;
         justify-content: flex-end;
+        align-items: center;
       }
 
       .pill {
-        padding: 5px 10px;
-        border-radius: var(--pill-radius);
-        border: 1px solid rgba(148, 163, 184, 0.35);
+        padding: 6px 10px;
+        border-radius: var(--pill);
+        border: 1px solid var(--border2);
         font-size: 11px;
         color: var(--muted);
-        background: rgba(15, 23, 42, 0.8);
+        background: rgba(2, 6, 23, 0.28);
         display: inline-flex;
         align-items: center;
-        gap: 4px;
+        gap: 6px;
+        backdrop-filter: blur(10px);
       }
 
       .pill.good {
-        border-color: rgba(22, 163, 74, 0.7);
-        color: #bbf7d0;
-        background: rgba(22, 163, 74, 0.1);
+        border-color: rgba(34, 197, 94, 0.35);
+        color: rgba(187, 247, 208, 0.92);
+        background: rgba(34, 197, 94, 0.09);
       }
 
       .pill.danger {
-        border-color: rgba(239, 68, 68, 0.7);
-        color: #fecaca;
-        background: rgba(127, 29, 29, 0.2);
+        border-color: rgba(248, 113, 113, 0.35);
+        color: rgba(254, 202, 202, 0.92);
+        background: rgba(127, 29, 29, 0.16);
         cursor: pointer;
       }
 
-      .pill button {
-        background: transparent;
-        border: none;
-        color: inherit;
-        font: inherit;
+      .pill.btn-small {
         cursor: pointer;
-        padding: 0;
+        color: rgba(226, 232, 240, 0.9);
+      }
+
+      .pill.btn-small:hover {
+        border-color: rgba(226, 232, 240, 0.35);
+      }
+
+      .page-title {
+        margin: 10px 2px 16px;
+      }
+      .page-title h1 {
+        margin: 0;
+        font-size: 34px;
+        letter-spacing: -0.02em;
+      }
+      .page-title p {
+        margin: 6px 0 0;
+        color: var(--muted);
+        font-size: 12px;
       }
 
       main {
         display: grid;
-        grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.1fr);
-        gap: 18px;
+        grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.25fr);
+        gap: 16px;
       }
 
       .card {
-        background: radial-gradient(circle at top left, #151932 0, #050816 70%);
-        border-radius: var(--card-radius);
-        border: 1px solid rgba(148, 163, 184, 0.35);
-        box-shadow: 0 18px 40px rgba(15, 23, 42, 0.8);
+        background: linear-gradient(
+          180deg,
+          rgba(24, 32, 60, 0.65),
+          rgba(8, 10, 18, 0.65)
+        );
+        border-radius: var(--r);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(12px);
+        overflow: hidden;
       }
 
       .card-inner {
-        padding: 14px 18px 14px;
+        padding: 14px 16px 16px;
       }
 
       .card-title-row {
         display: flex;
         justify-content: space-between;
         align-items: baseline;
+        gap: 10px;
         margin-bottom: 8px;
       }
 
       .card-title {
         font-size: 13px;
-        font-weight: 600;
+        font-weight: 650;
       }
 
       .card-subtitle {
         font-size: 11px;
         color: var(--muted);
+        white-space: nowrap;
       }
 
       .row {
@@ -200,69 +242,77 @@
         display: block;
         font-size: 11px;
         color: var(--muted);
-        margin-bottom: 3px;
+        margin-bottom: 4px;
       }
 
       input,
       select,
       textarea {
         width: 100%;
-        background: rgba(15, 23, 42, 0.95);
-        border-radius: 9px;
-        border: 1px solid rgba(55, 65, 81, 0.9);
+        background: rgba(2, 6, 23, 0.45);
+        border-radius: 12px;
+        border: 1px solid rgba(148, 163, 184, 0.22);
         color: var(--text);
         font-size: 12px;
-        padding: 7px 9px;
+        padding: 8px 10px;
         outline: none;
       }
 
       textarea {
         resize: vertical;
-        min-height: 70px;
+        min-height: 78px;
       }
 
       input::placeholder,
       textarea::placeholder {
-        color: rgba(148, 163, 184, 0.7);
+        color: rgba(148, 163, 184, 0.65);
       }
 
       .btn {
-        border-radius: 999px;
-        border: none;
+        border-radius: var(--pill);
+        border: 1px solid rgba(148, 163, 184, 0.26);
         cursor: pointer;
         font-size: 12px;
-        padding: 7px 14px;
-        font-weight: 500;
+        padding: 8px 14px;
+        font-weight: 600;
+        background: rgba(2, 6, 23, 0.34);
+        color: rgba(226, 232, 240, 0.92);
+      }
+
+      .btn:hover {
+        border-color: rgba(226, 232, 240, 0.35);
       }
 
       .btn-primary {
-        background: linear-gradient(90deg, #ffc24b, #f97316);
-        color: #111827;
-        box-shadow: 0 16px 32px rgba(248, 196, 113, 0.5);
-      }
-
-      .btn-ghost {
-        background: transparent;
-        border: 1px solid rgba(148, 163, 184, 0.6);
-        color: var(--muted);
-      }
-
-      .btn-small {
-        padding: 4px 8px;
-        font-size: 11px;
+        border: none;
+        background: linear-gradient(90deg, rgba(127, 224, 181, 0.9), rgba(54, 122, 255, 0.65));
+        color: #081018;
+        box-shadow: 0 18px 40px rgba(34, 197, 94, 0.10);
       }
 
       .btn-primary:hover {
         filter: brightness(1.05);
       }
 
+      .btn-small {
+        padding: 5px 10px;
+        font-size: 11px;
+      }
+
       .section-heading {
         font-size: 12px;
-        font-weight: 600;
-        margin-top: 8px;
+        font-weight: 650;
+        margin-top: 10px;
         margin-bottom: 6px;
       }
 
+      .small-text {
+        font-size: 10.5px;
+        color: rgba(148, 163, 184, 0.72);
+        line-height: 1.35;
+      }
+
+      /* Checklist cards */
       .checklist-grid {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -270,23 +320,24 @@
       }
 
       .checklist-card {
-        background: rgba(15, 23, 42, 0.9);
-        border-radius: 12px;
-        border: 1px solid rgba(31, 41, 55, 0.9);
-        padding: 7px 9px 8px;
-        font-size: 11px;
+        background: rgba(2, 6, 23, 0.35);
+        border-radius: var(--r2);
+        border: 1px solid rgba(148, 163, 184, 0.16);
+        padding: 10px 10px 10px;
       }
 
       .checklist-title {
-        font-weight: 600;
-        margin-bottom: 4px;
+        font-weight: 650;
+        margin-bottom: 6px;
+        font-size: 11.5px;
       }
 
       .checklist-item {
         display: flex;
         align-items: flex-start;
-        gap: 5px;
-        margin-bottom: 3px;
+        gap: 8px;
+        margin-bottom: 6px;
+        user-select: none;
       }
 
       .checklist-item input {
@@ -294,104 +345,194 @@
         margin-top: 2px;
       }
 
-      .small-text {
-        font-size: 10px;
-        color: var(--muted);
-      }
-
       .footer-row {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 6px;
-        font-size: 10px;
+        display: grid;
+        grid-template-columns: 1fr 1.4fr 1fr;
+        gap: 10px;
+        align-items: center;
+        margin-top: 10px;
+        font-size: 10.5px;
         color: var(--muted);
-        gap: 8px;
-        flex-wrap: wrap;
       }
 
       .footer-row strong {
-        color: var(--accent);
+        color: var(--good);
       }
 
-      /* Right-side cards */
-
-      .overview-grid {
+      /* Dashboard metrics (PerfectTrade-like) */
+      .dash-grid {
         display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 8px;
-        margin-bottom: 8px;
+        grid-template-columns: 1.4fr 1fr;
+        gap: 10px;
+        margin-bottom: 10px;
       }
 
-      .overview-box {
-        background: rgba(15, 23, 42, 0.98);
-        border-radius: 12px;
-        border: 1px solid rgba(31, 41, 55, 0.9);
-        padding: 8px 9px;
+      .dash-big {
+        border-radius: var(--r);
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        background: radial-gradient(
+          900px 240px at 30% 10%,
+          rgba(127, 224, 181, 0.18),
+          transparent 60%
+        ),
+        rgba(2, 6, 23, 0.35);
+        padding: 14px 14px 12px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .dash-big .label {
+        color: rgba(148, 163, 184, 0.8);
         font-size: 11px;
       }
 
-      .overview-label {
-        color: var(--muted);
-        font-size: 10px;
-        margin-bottom: 3px;
+      .dash-big .value {
+        font-size: 48px;
+        font-weight: 750;
+        letter-spacing: -0.02em;
+        margin-top: 6px;
+        color: var(--good);
       }
 
-      .overview-value {
-        font-size: 13px;
-        font-weight: 600;
+      .dash-big .sub {
+        margin-top: 4px;
+        color: rgba(187, 247, 208, 0.86);
+        font-size: 12px;
       }
 
-      .overview-note {
-        font-size: 10px;
-        color: var(--muted);
+      .dash-big .icon {
+        position: absolute;
+        right: 14px;
+        top: 14px;
+        width: 42px;
+        height: 42px;
+        border-radius: 14px;
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        background: rgba(127, 224, 181, 0.12);
+        display: grid;
+        place-items: center;
+        color: rgba(187, 247, 208, 0.9);
+        font-weight: 750;
+      }
+
+      .dash-right {
+        display: grid;
+        gap: 10px;
+      }
+
+      .dash-side {
+        border-radius: var(--r);
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        background: rgba(2, 6, 23, 0.35);
+        padding: 12px 12px 12px;
+        overflow: hidden;
+      }
+
+      .dash-side .label {
+        color: rgba(148, 163, 184, 0.82);
+        font-size: 11px;
+      }
+
+      .dash-side .value {
+        font-size: 26px;
+        font-weight: 740;
+        margin-top: 6px;
+      }
+
+      .dash-side.good .value {
+        color: rgba(187, 247, 208, 0.92);
+      }
+
+      .dash-side.bad {
+        background: radial-gradient(
+          700px 240px at 40% 0%,
+          rgba(248, 113, 113, 0.18),
+          transparent 60%
+        ),
+        rgba(2, 6, 23, 0.35);
+      }
+
+      .dash-side.bad .value {
+        color: rgba(254, 202, 202, 0.92);
+      }
+
+      .dash-side .sub {
         margin-top: 2px;
+        font-size: 11px;
+        color: rgba(148, 163, 184, 0.75);
       }
 
+      .dash-mini {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+
+      .mini {
+        border-radius: var(--r);
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        background: rgba(2, 6, 23, 0.35);
+        padding: 10px 10px 10px;
+      }
+
+      .mini .label {
+        color: rgba(148, 163, 184, 0.8);
+        font-size: 11px;
+        margin-bottom: 6px;
+      }
+
+      .mini .value {
+        font-size: 16px;
+        font-weight: 700;
+      }
+
+      /* Charts & lower cards */
       canvas {
         width: 100%;
         height: 180px;
-        background: rgba(15, 23, 42, 0.9);
-        border-radius: 12px;
-        border: 1px solid rgba(31, 41, 55, 0.9);
+        background: rgba(2, 6, 23, 0.35);
+        border-radius: var(--r2);
+        border: 1px solid rgba(148, 163, 184, 0.16);
       }
 
       .chart-row {
         display: grid;
         grid-template-columns: 2.1fr 1.1fr;
-        gap: 8px;
-        margin-bottom: 8px;
+        gap: 10px;
+        margin-bottom: 10px;
       }
 
       .chart-box {
-        background: rgba(15, 23, 42, 0.98);
-        border-radius: 12px;
-        border: 1px solid rgba(31, 41, 55, 0.9);
-        padding: 6px 9px 9px;
-        font-size: 11px;
+        background: rgba(2, 6, 23, 0.35);
+        border-radius: var(--r);
+        border: 1px solid rgba(148, 163, 184, 0.16);
+        padding: 10px 10px 10px;
       }
 
       .chart-title-row {
         display: flex;
         justify-content: space-between;
         align-items: baseline;
-        margin-bottom: 4px;
+        gap: 10px;
+        margin-bottom: 6px;
       }
 
       .chart-title {
-        font-size: 11px;
-        font-weight: 600;
+        font-size: 11.5px;
+        font-weight: 700;
       }
 
       .chart-caption {
-        font-size: 10px;
-        color: var(--muted);
+        font-size: 10.5px;
+        color: rgba(148, 163, 184, 0.72);
       }
 
       .three-grid {
         display: grid;
-        grid-template-columns: 1.4fr 1.4fr 1.2fr;
-        gap: 8px;
-        margin-top: 6px;
+        grid-template-columns: 1.2fr 1.2fr 1.2fr;
+        gap: 10px;
+        margin-top: 10px;
       }
 
       .table {
@@ -402,22 +543,27 @@
 
       .table th,
       .table td {
-        padding: 4px 6px;
-        border-bottom: 1px solid rgba(31, 41, 55, 0.9);
+        padding: 6px 8px;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.14);
         text-align: left;
+        vertical-align: top;
       }
 
       .table th {
-        font-weight: 500;
-        color: var(--muted);
+        font-weight: 650;
+        color: rgba(148, 163, 184, 0.85);
+        position: sticky;
+        top: 0;
+        background: rgba(2, 6, 23, 0.55);
+        backdrop-filter: blur(10px);
       }
 
-      .table tbody tr:last-child td {
-        border-bottom: none;
+      .table tbody tr:hover td {
+        background: rgba(127, 224, 181, 0.05);
       }
 
       .table a {
-        color: var(--accent);
+        color: rgba(187, 247, 208, 0.9);
         text-decoration: none;
       }
 
@@ -429,103 +575,266 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 4px;
+        gap: 10px;
+        margin-bottom: 6px;
       }
 
       .calendar-title {
-        font-size: 11px;
-        font-weight: 600;
+        font-size: 11.5px;
+        font-weight: 700;
       }
 
       .calendar-nav {
         display: flex;
-        gap: 4px;
+        gap: 6px;
       }
 
       .calendar-nav button {
-        border-radius: 999px;
-        border: 1px solid rgba(55, 65, 81, 0.9);
-        background: rgba(15, 23, 42, 0.9);
-        color: var(--muted);
+        border-radius: var(--pill);
+        border: 1px solid rgba(148, 163, 184, 0.22);
+        background: rgba(2, 6, 23, 0.34);
+        color: rgba(226, 232, 240, 0.86);
         cursor: pointer;
-        font-size: 10px;
-        padding: 2px 6px;
+        font-size: 11px;
+        padding: 4px 10px;
+      }
+
+      .calendar-nav button:hover {
+        border-color: rgba(226, 232, 240, 0.35);
       }
 
       .calendar-grid {
         width: 100%;
         border-collapse: collapse;
-        font-size: 10px;
+        font-size: 10.5px;
       }
 
       .calendar-grid th,
       .calendar-grid td {
         text-align: center;
-        padding: 3px 0;
+        padding: 6px 0;
       }
 
       .calendar-grid th {
-        color: var(--muted);
-        font-weight: 500;
+        color: rgba(148, 163, 184, 0.8);
+        font-weight: 650;
       }
 
       .calendar-day {
-        border-radius: 6px;
-        padding: 3px 0;
-        margin: 1px;
+        border-radius: 10px;
+        padding: 7px 0;
+        margin: 2px;
+        border: 1px solid rgba(148, 163, 184, 0.10);
+        background: rgba(2, 6, 23, 0.25);
+        min-height: 44px;
+        display: grid;
+        place-items: center;
       }
 
       .calendar-day.has-trades {
-        background: rgba(34, 197, 94, 0.12);
-        border: 1px solid rgba(34, 197, 94, 0.6);
+        background: rgba(34, 197, 94, 0.10);
+        border-color: rgba(34, 197, 94, 0.25);
       }
 
       .calendar-day.negative {
-        background: rgba(248, 113, 113, 0.12);
-        border-color: rgba(248, 113, 113, 0.6);
+        background: rgba(248, 113, 113, 0.10);
+        border-color: rgba(248, 113, 113, 0.25);
       }
 
       .calendar-pnl {
         display: block;
-        font-size: 9px;
+        font-size: 10px;
+        margin-top: 2px;
+        opacity: 0.95;
       }
 
       .eval-list {
         list-style: none;
         padding: 0;
-        margin: 4px 0 0;
-        font-size: 10px;
-        color: var(--muted);
+        margin: 6px 0 0;
+        font-size: 10.5px;
+        color: rgba(148, 163, 184, 0.8);
       }
 
       .eval-list li {
         display: flex;
         justify-content: space-between;
-        padding: 2px 0;
+        gap: 12px;
+        padding: 5px 0;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.10);
       }
 
-      .eval-label {
-        opacity: 0.9;
+      .eval-list li:last-child {
+        border-bottom: none;
       }
 
       .eval-value {
-        color: var(--text);
-        font-weight: 500;
-        padding-left: 10px;
+        color: rgba(226, 232, 240, 0.92);
+        font-weight: 650;
+      }
+
+      /* Confluence builder */
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin: 6px 0 8px;
+      }
+
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border-radius: var(--pill);
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        background: rgba(2, 6, 23, 0.35);
+        padding: 5px 10px;
+        font-size: 11px;
+        color: rgba(226, 232, 240, 0.9);
+        user-select: none;
+      }
+
+      .chip button {
+        border: none;
+        background: transparent;
+        color: rgba(148, 163, 184, 0.9);
+        cursor: pointer;
+        font-size: 14px;
+        line-height: 1;
+        padding: 0;
+        margin: 0;
+      }
+
+      .chip button:hover {
+        color: rgba(226, 232, 240, 0.95);
+      }
+
+      .rule-row {
+        display: grid;
+        grid-template-columns: 1.1fr 2.2fr 0.8fr auto;
+        gap: 8px;
+        align-items: end;
+        margin-top: 8px;
+      }
+
+      .rules-list {
+        margin-top: 10px;
+        border-top: 1px solid rgba(148, 163, 184, 0.12);
+        padding-top: 10px;
+        display: grid;
+        gap: 10px;
+      }
+
+      .tf-group {
+        border: 1px solid rgba(148, 163, 184, 0.14);
+        border-radius: var(--r2);
+        background: rgba(2, 6, 23, 0.22);
+        padding: 10px 10px 8px;
+      }
+
+      .tf-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 10px;
+        margin-bottom: 6px;
+      }
+
+      .tf-title {
+        font-weight: 750;
+        font-size: 11.5px;
+      }
+
+      .tf-pct {
+        font-size: 11px;
+        color: rgba(187, 247, 208, 0.9);
+      }
+
+      .rule-line {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 10px;
+        align-items: center;
+        padding: 5px 0;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.10);
+      }
+
+      .rule-line:last-child {
+        border-bottom: none;
+      }
+
+      .rule-line .x {
+        border: none;
+        background: transparent;
+        color: rgba(148, 163, 184, 0.85);
+        cursor: pointer;
+        font-size: 14px;
+        padding: 0 2px;
+      }
+
+      .rule-line .x:hover {
+        color: rgba(226, 232, 240, 0.95);
+      }
+
+      .confluence-summary {
+        margin-top: 8px;
+        padding: 10px;
+        border-radius: var(--r2);
+        border: 1px solid rgba(148, 163, 184, 0.14);
+        background: radial-gradient(
+          800px 200px at 40% 0%,
+          rgba(127, 224, 181, 0.14),
+          transparent 60%
+        ),
+        rgba(2, 6, 23, 0.28);
+      }
+
+      .confluence-summary .big {
+        font-size: 48px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        line-height: 1;
+        margin: 8px 0 4px;
+        color: rgba(127, 224, 181, 0.9);
+        text-align: center;
+      }
+
+      .confluence-summary .tagline {
+        text-align: center;
+        color: rgba(226, 232, 240, 0.9);
+        font-size: 12px;
+        font-weight: 650;
+      }
+
+      .confluence-summary .minirow {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 10px;
+      }
+
+      .mini-pill {
+        border-radius: var(--pill);
+        border: 1px solid rgba(148, 163, 184, 0.16);
+        background: rgba(2, 6, 23, 0.30);
+        padding: 6px 10px;
+        font-size: 11px;
+        color: rgba(226, 232, 240, 0.9);
       }
 
       footer {
-        margin-top: 12px;
-        font-size: 10px;
-        color: var(--muted);
+        margin-top: 14px;
+        font-size: 10.5px;
+        color: rgba(148, 163, 184, 0.75);
         display: flex;
         justify-content: space-between;
-        gap: 6px;
+        gap: 8px;
         flex-wrap: wrap;
       }
 
       footer a {
-        color: var(--accent);
+        color: rgba(187, 247, 208, 0.9);
         text-decoration: none;
       }
 
@@ -533,78 +842,15 @@
         text-decoration: underline;
       }
 
-      /* ===== Confluence UI (new, compact) ===== */
-      .mini-pill {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        border: 1px solid rgba(148, 163, 184, 0.35);
-        border-radius: 999px;
-        padding: 3px 8px;
-        font-size: 10px;
-        color: var(--muted);
-        background: rgba(15, 23, 42, 0.75);
-        margin: 2px 4px 2px 0;
-      }
-
-      .mini-pill strong {
-        color: var(--text);
-        font-weight: 600;
-      }
-
-      .danger-x {
-        border: none;
-        background: transparent;
-        color: #fecaca;
-        cursor: pointer;
-        font-size: 12px;
-        line-height: 1;
-        padding: 0 2px;
-      }
-
-      details.confluence-details {
-        border: 1px solid rgba(31, 41, 55, 0.9);
-        border-radius: 12px;
-        background: rgba(15, 23, 42, 0.9);
-        padding: 6px 8px;
-        margin: 6px 0;
-      }
-
-      details.confluence-details > summary {
-        cursor: pointer;
-        font-weight: 600;
-        list-style: none;
-        outline: none;
-      }
-
-      details.confluence-details > summary::-webkit-details-marker {
-        display: none;
-      }
-
-      .rule-row {
-        display: flex;
-        gap: 6px;
-        align-items: center;
-        margin-top: 6px;
-        flex-wrap: wrap;
-      }
-
-      .rule-row > * {
-        flex: 1 1 0;
-        min-width: 120px;
-      }
-
-      .rule-row .btn {
-        flex: 0 0 auto;
-      }
-
       @media (max-width: 1100px) {
         main {
           grid-template-columns: minmax(0, 1fr);
         }
-
         .three-grid {
           grid-template-columns: minmax(0, 1fr);
+        }
+        .dash-mini {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
         }
       }
 
@@ -612,27 +858,33 @@
         header {
           flex-direction: column;
           align-items: flex-start;
-          gap: 8px;
         }
-
         .row {
           flex-direction: column;
         }
-
-        .overview-grid {
+        .checklist-grid {
           grid-template-columns: minmax(0, 1fr);
         }
-
+        .dash-grid {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .dash-mini {
+          grid-template-columns: minmax(0, 1fr);
+        }
         .chart-row {
           grid-template-columns: minmax(0, 1fr);
         }
-
-        .checklist-grid {
+        .footer-row {
+          grid-template-columns: 1fr;
+          gap: 8px;
+        }
+        .rule-row {
           grid-template-columns: minmax(0, 1fr);
         }
       }
     </style>
   </head>
+
   <body>
     <div class="shell">
       <header>
@@ -645,29 +897,23 @@
             </div>
           </div>
         </div>
+
         <div class="header-pills">
-          <div id="storageModePill" class="pill">
-            Local autosave • Browser only
-          </div>
+          <div id="storageModePill" class="pill">Local autosave • Browser only</div>
           <div class="pill good">Built for serious traders</div>
           <button id="exportBtn" class="pill btn-small">Export backup</button>
           <button id="importBtn" class="pill btn-small">Import backup</button>
-          <div id="driveStatusPill" class="pill">
-            Drive: not connected
-          </div>
-          <button id="googleSignInBtn" class="pill btn-small">
-            Sign in with Google
-          </button>
-          <button
-            id="googleSignOutBtn"
-            class="pill btn-small"
-            style="display: none"
-          >
-            Sign out
-          </button>
+          <div id="driveStatusPill" class="pill">Drive: not connected</div>
+          <button id="googleSignInBtn" class="pill btn-small">Sign in with Google</button>
+          <button id="googleSignOutBtn" class="pill btn-small" style="display: none">Sign out</button>
           <div id="clearBtn" class="pill danger">Clear local data</div>
         </div>
       </header>
+
+      <div class="page-title">
+        <h1>Trading Dashboard</h1>
+        <p>Your trading performance at a glance.</p>
+      </div>
 
       <main>
         <!-- LEFT: account & new trade -->
@@ -684,28 +930,16 @@
             <div class="row">
               <div class="col-2">
                 <label for="startingBalance">Starting balance (USD)</label>
-                <input
-                  id="startingBalance"
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  placeholder="e.g. 10,000"
-                />
+                <input id="startingBalance" type="number" min="0" step="0.01" placeholder="e.g. 10,000" />
               </div>
               <div class="col-2">
                 <label for="riskPerTrade">Risk per trade (USD)</label>
-                <input
-                  id="riskPerTrade"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  placeholder="e.g. 1,000"
-                />
+                <input id="riskPerTrade" type="number" step="0.01" min="0" placeholder="e.g. 1,000" />
               </div>
             </div>
 
             <!-- Trade core -->
-            <div class="row" style="margin-top: 6px">
+            <div class="row" style="margin-top: 8px">
               <div class="col-2">
                 <label for="tradeDate">Date</label>
                 <input id="tradeDate" type="date" />
@@ -716,7 +950,7 @@
               </div>
             </div>
 
-            <div class="row" style="margin-top: 6px">
+            <div class="row" style="margin-top: 8px">
               <div class="col-2">
                 <label for="direction">Direction</label>
                 <select id="direction">
@@ -733,87 +967,63 @@
               </div>
             </div>
 
-            <div class="row" style="margin-top: 6px">
+            <div class="row" style="margin-top: 8px">
               <div class="col-2">
                 <label for="riskR">Risk (R)</label>
-                <input
-                  id="riskR"
-                  type="number"
-                  step="0.01"
-                  placeholder="1"
-                  value="1"
-                />
+                <input id="riskR" type="number" step="0.01" placeholder="1" value="1" />
               </div>
               <div class="col-2">
                 <label for="resultR">Result (R)</label>
-                <input
-                  id="resultR"
-                  type="number"
-                  step="0.01"
-                  placeholder="e.g. -1, 0.5, 2"
-                />
+                <input id="resultR" type="number" step="0.01" placeholder="e.g. -1, 0.5, 2" />
               </div>
             </div>
 
-            <div class="row" style="margin-top: 6px">
+            <div class="row" style="margin-top: 8px">
               <div class="col-2">
-                <label for="setup">Setup</label>
-                <input
-                  id="setup"
-                  type="text"
-                  placeholder="Momentum, pullback, range break…"
-                />
+                <label for="setup">Setup (custom)</label>
+                <input id="setup" type="text" placeholder="Type anything (saved per trade)" />
               </div>
+              <div class="col-2">
+                <label for="entrySignal">Entry signal (custom)</label>
+                <input id="entrySignal" type="text" placeholder="Type anything (saved per trade)" />
+              </div>
+            </div>
+
+            <div class="row" style="margin-top: 8px">
               <div class="col-2">
                 <label for="screenshot">Screenshot / chart link</label>
-                <input
-                  id="screenshot"
-                  type="text"
-                  placeholder="Paste TradingView or chart URL"
-                />
+                <input id="screenshot" type="text" placeholder="Paste TradingView or chart URL" />
+              </div>
+              <div class="col-2">
+                <label for="fees">Fees (USD) (optional)</label>
+                <input id="fees" type="number" step="0.01" placeholder="0.00" />
               </div>
             </div>
 
-            <div style="margin-top: 6px">
+            <div style="margin-top: 8px">
               <label for="notes">Journal notes</label>
-              <textarea
-                id="notes"
-                placeholder="What did you see? Which rules were met? Where could you improve?"
-              ></textarea>
+              <textarea id="notes" placeholder="What did you see? Which rules were met? Where could you improve?"></textarea>
             </div>
 
-            <!-- Weighted checklist (existing) -->
+            <!-- Weighted checklist -->
             <div class="section-heading">Weighted checklist</div>
-            <div class="small-text" style="margin-bottom: 4px">
-              Tick only what actually happened on this trade. Custom setup rules
-              are for you only – discipline % is based on the core rules.
+            <div class="small-text" style="margin-bottom: 6px">
+              Tick only what actually happened on this trade. Discipline % is based on the core rules.
             </div>
 
             <div class="checklist-grid">
-              <!-- Custom setup -->
+              <!-- Custom setup (global list - your personal reminders) -->
               <div class="checklist-card">
                 <div class="checklist-title">Custom setup checklist</div>
-                <div class="small-text" style="margin-bottom: 4px">
-                  Add your own rules (e.g. "Clean close at level", "No double
-                  wick"). These are just for you – they don’t change discipline
-                  %.
+                <div class="small-text" style="margin-bottom: 6px">
+                  Add your own reminders (e.g. “Clean close at level”). These are stored globally and shown here.
                 </div>
-                <div
-                  id="customRulesList"
-                  class="small-text"
-                  style="min-height: 36px"
-                >
-                  <em>No custom rules yet. Add your checklist items above.</em>
+                <div id="customRulesList" class="small-text" style="min-height: 40px">
+                  <em>No custom rules yet. Add your checklist items below.</em>
                 </div>
-                <div style="margin-top: 4px; display: flex; gap: 4px">
-                  <input
-                    id="newCustomRule"
-                    type="text"
-                    placeholder="e.g. Clean close at level"
-                  />
-                  <button id="addCustomRuleBtn" class="btn btn-ghost btn-small">
-                    Add
-                  </button>
+                <div style="margin-top: 8px; display: flex; gap: 6px">
+                  <input id="newCustomRule" type="text" placeholder="e.g. Clean close at level" />
+                  <button id="addCustomRuleBtn" class="btn btn-small">Add</button>
                 </div>
               </div>
 
@@ -852,139 +1062,141 @@
               </div>
             </div>
 
-            <!-- ===== NEW: Confluence checklist (custom timeframes + rules) ===== -->
-            <div class="section-heading">Confluence checklist (custom)</div>
-            <div class="small-text" style="margin-bottom: 6px">
-              Create your own timeframes (default: <strong>4H, M30, M15</strong>)
-              and rules with weights. Confluence % updates live and is saved inside each trade.
+            <!-- Confluence checklist (custom) -->
+            <div class="section-heading" style="margin-top: 14px">
+              Confluence checklist (custom)
+            </div>
+            <div class="small-text">
+              Create your own timeframes (default: 4H, M30, M15) and rules with weights. Confluence % updates live and is stored inside each trade.
             </div>
 
-            <!-- Confluence builder -->
-            <div class="checklist-card">
+            <div class="checklist-card" style="margin-top: 10px">
               <div class="checklist-title">Confluence builder</div>
 
-              <div class="small-text" style="margin-bottom: 4px">
-                Timeframes (tap × to remove)
+              <div class="small-text">Timeframes (tap × to remove)</div>
+              <div id="tfChips" class="chips"></div>
+
+              <div class="row" style="margin-top: 8px">
+                <div class="col-2">
+                  <label for="newTfInput">Add timeframe</label>
+                  <input id="newTfInput" type="text" placeholder="e.g. 4H, M30, M15" />
+                </div>
+                <div class="col-2" style="display: flex; gap: 8px; align-items: end">
+                  <button id="addTfBtn" class="btn btn-small">Add TF</button>
+                  <button id="resetTfBtn" class="btn btn-small">Reset defaults</button>
+                </div>
               </div>
-              <div id="tfPills" style="margin-bottom: 6px"></div>
 
               <div class="rule-row">
-                <div>
-                  <label for="newTfName">Add timeframe</label>
-                  <input id="newTfName" type="text" placeholder="e.g. 4H, M30, M15" />
-                </div>
-                <div style="flex: 0 0 auto; min-width: auto">
-                  <label>&nbsp;</label>
-                  <button id="addTfBtn" class="btn btn-ghost btn-small">Add TF</button>
-                </div>
-                <div style="flex: 0 0 auto; min-width: auto">
-                  <label>&nbsp;</label>
-                  <button id="resetConfluenceBtn" class="btn btn-ghost btn-small">
-                    Reset defaults
-                  </button>
-                </div>
-              </div>
-
-              <div class="rule-row" style="margin-top: 8px">
                 <div>
                   <label for="ruleTfSelect">Timeframe</label>
                   <select id="ruleTfSelect"></select>
                 </div>
                 <div>
-                  <label for="newRuleText">Rule</label>
-                  <input
-                    id="newRuleText"
-                    type="text"
-                    placeholder='e.g. "Trend aligned", "At AOI rejected"'
-                  />
+                  <label for="ruleText">Rule</label>
+                  <input id="ruleText" type="text" placeholder="e.g. Trend aligned, At AOI / rejected..." />
                 </div>
-                <div style="max-width: 140px">
-                  <label for="newRuleWeight">Weight</label>
-                  <input id="newRuleWeight" type="number" step="1" min="0" value="10" />
+                <div>
+                  <label for="ruleWeight">Weight</label>
+                  <input id="ruleWeight" type="number" step="1" min="1" max="100" value="10" />
                 </div>
-                <div style="flex: 0 0 auto; min-width: auto">
-                  <label>&nbsp;</label>
-                  <button id="addRuleBtn" class="btn btn-ghost btn-small">Add rule</button>
+                <div>
+                  <button id="addRuleBtn" class="btn btn-small">Add rule</button>
                 </div>
               </div>
 
-              <div class="small-text" style="margin-top: 6px">
-                Rules (per timeframe):
-              </div>
-              <div id="tfRulesList" class="small-text" style="margin-top: 4px"></div>
-            </div>
+              <div id="rulesList" class="rules-list"></div>
 
-            <!-- Confluence checklist for THIS trade -->
-            <div class="checklist-card" style="margin-top: 8px">
-              <div class="checklist-title">This trade – Confluence checklist</div>
-              <div id="confluenceChecklist"></div>
+              <div class="section-heading" style="margin-top: 12px">This trade – Confluence checklist</div>
+              <div id="tradeConfluenceArea"></div>
 
-              <div style="margin-top: 8px">
-                <div class="small-text" style="margin-bottom: 4px">Confluence summary</div>
-                <div id="confluenceSummaryRow"></div>
-                <div class="small-text" style="margin-top: 4px">
-                  <span id="confluenceOverallLabel">Overall: 0% (Weak Setup)</span>
-                </div>
+              <div class="confluence-summary">
+                <div class="small-text" style="text-align:center">TOTAL OVERALL SCORE</div>
+                <div id="confluenceOverallBig" class="big">0%</div>
+                <div id="confluenceTagline" class="tagline">Weak Setup</div>
+                <div id="confluenceMiniRow" class="minirow"></div>
               </div>
             </div>
 
             <div class="footer-row">
               <div>
-                <button id="saveDraftBtn" class="btn btn-ghost btn-small">
-                  Save draft
-                </button>
+                <button id="saveDraftBtn" class="btn btn-small">Save draft</button>
               </div>
               <div>
-                <span id="disciplineLabel"
-                  >0 / 6 rules followed (0% discipline).</span
-                >
-                <span class="small-text">
-                  Higher score → higher discipline per trade.
-                </span>
+                <span id="disciplineLabel">0 / 6 rules followed (0% discipline).</span>
+                <div class="small-text">Higher score → higher discipline per trade.</div>
               </div>
-              <div>
-                <button id="addTradeBtn" class="btn btn-primary">
-                  Add trade to log
-                </button>
+              <div style="text-align: right">
+                <button id="addTradeBtn" class="btn btn-primary">Add trade to log</button>
               </div>
             </div>
           </div>
         </section>
 
-        <!-- RIGHT: stats, charts, calendar, evaluation, recent trades -->
+        <!-- RIGHT: dashboard -->
         <section class="card">
           <div class="card-inner">
             <div class="card-title-row">
-              <div class="card-title">Equity & discipline overview</div>
+              <div class="card-title">Equity & performance overview</div>
               <div class="card-subtitle">
-                <span id="toplineTotals"
-                  >Total PnL: $0.00 • Balance: $0.00 • Starting: $0.00</span
-                >
+                <span id="toplineTotals">Total PnL: $0.00 • Balance: $0.00 • Starting: $0.00</span>
               </div>
             </div>
 
-            <!-- Top three metrics -->
-            <div class="overview-grid">
-              <div class="overview-box">
-                <div class="overview-label">WIN RATE</div>
-                <div id="winRateValue" class="overview-value">0%</div>
-                <div id="winRateNote" class="overview-note">
-                  Based on trades with R ≠ 0.
+            <!-- PerfectTrade-like top cards -->
+            <div class="dash-grid">
+              <div class="dash-big">
+                <div class="label">Net Profit &amp; Loss</div>
+                <div id="netPnlBig" class="value">$0.00</div>
+                <div id="netPnlSub" class="sub">+ 0 trades completed</div>
+                <div class="icon">$</div>
+
+                <div style="display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin-top: 12px;">
+                  <div class="mini" style="border-radius:14px">
+                    <div class="label">Win Rate</div>
+                    <div id="winRateValue" class="value">0%</div>
+                  </div>
+                  <div class="mini" style="border-radius:14px">
+                    <div class="label">Profit Factor</div>
+                    <div id="profitFactorValue" class="value">0.00</div>
+                  </div>
+                  <div class="mini" style="border-radius:14px">
+                    <div class="label">Avg Confluence</div>
+                    <div id="avgConfluenceValue" class="value">0%</div>
+                  </div>
                 </div>
               </div>
-              <div class="overview-box">
-                <div class="overview-label">AVG R (REALIZED)</div>
-                <div id="avgRValue" class="overview-value">0.0R</div>
-                <div class="overview-note">From all logged trades.</div>
+
+              <div class="dash-right">
+                <div class="dash-side good">
+                  <div class="label">Total Profit</div>
+                  <div id="totalProfitValue" class="value">$0.00</div>
+                  <div id="totalProfitSub" class="sub">0 winning trades</div>
+                </div>
+                <div class="dash-side bad">
+                  <div class="label">Total Loss</div>
+                  <div id="totalLossValue" class="value">$0.00</div>
+                  <div id="totalLossSub" class="sub">0 losing trades</div>
+                </div>
               </div>
-              <div class="overview-box">
-                <div class="overview-label">DISCIPLINE SCORE</div>
-                <div id="disciplineScoreValue" class="overview-value">
-                  0 / 100
-                </div>
-                <div class="overview-note">
-                  Based on risk & behaviour checklist per trade.
-                </div>
+            </div>
+
+            <div class="dash-mini">
+              <div class="mini">
+                <div class="label">Largest Win</div>
+                <div id="largestWinValue" class="value">$0.00</div>
+              </div>
+              <div class="mini">
+                <div class="label">Largest Loss</div>
+                <div id="largestLossValue" class="value">$0.00</div>
+              </div>
+              <div class="mini">
+                <div class="label">Best Streak</div>
+                <div id="bestStreakValue" class="value">0</div>
+              </div>
+              <div class="mini">
+                <div class="label">Total Trades</div>
+                <div id="totalTradesMini" class="value">0</div>
               </div>
             </div>
 
@@ -994,50 +1206,45 @@
                 <div class="chart-title-row">
                   <div class="chart-title">Equity curve (cumulative R)</div>
                   <div id="equityCaption" class="chart-caption">
-                    No trades yet. Log your first setup to start drawing your
-                    curve.
+                    No trades yet. Log your first setup to start drawing your curve.
                   </div>
                 </div>
                 <canvas id="equityChart" height="180"></canvas>
               </div>
               <div class="chart-box">
                 <div class="chart-title-row">
-                  <div class="chart-title">
-                    Probability view (wins vs losses)
-                  </div>
+                  <div class="chart-title">Probability view (wins vs losses)</div>
                   <div id="probCaption" class="chart-caption"></div>
                 </div>
                 <canvas id="probChart" height="180"></canvas>
               </div>
             </div>
 
-            <!-- Three lower cards: weekly/monthly, calendar, evaluation -->
+            <!-- Three lower cards -->
             <div class="three-grid">
               <!-- Weekly & monthly stats -->
               <div class="chart-box">
                 <div class="chart-title">Weekly & monthly stats</div>
-                <div class="small-text">
-                  Quick glance at last 7 and 30 days.
-                </div>
-                <ul class="eval-list" style="margin-top: 6px">
+                <div class="small-text">Quick glance at last 7 and 30 days.</div>
+                <ul class="eval-list">
                   <li>
-                    <span class="eval-label">Last 7 days:</span>
+                    <span>Last 7 days</span>
                     <span id="last7PnL" class="eval-value"></span>
                   </li>
                   <li>
-                    <span class="eval-label">Last 30 days:</span>
+                    <span>Last 30 days</span>
                     <span id="last30PnL" class="eval-value"></span>
                   </li>
                   <li>
-                    <span class="eval-label">Total trades:</span>
+                    <span>Total trades</span>
                     <span id="totalTradesEval" class="eval-value"></span>
                   </li>
                   <li>
-                    <span class="eval-label">Best day (USD):</span>
+                    <span>Best day (USD)</span>
                     <span id="bestDayEval" class="eval-value"></span>
                   </li>
                   <li>
-                    <span class="eval-label">Worst day (USD):</span>
+                    <span>Worst day (USD)</span>
                     <span id="worstDayEval" class="eval-value"></span>
                   </li>
                 </ul>
@@ -1046,9 +1253,7 @@
               <!-- Calendar -->
               <div class="chart-box">
                 <div class="calendar-header">
-                  <div class="calendar-title" id="calendarTitle">
-                    Calendar – this month
-                  </div>
+                  <div class="calendar-title" id="calendarTitle">Calendar – this month</div>
                   <div class="calendar-nav">
                     <button id="calPrevBtn">‹</button>
                     <button id="calNextBtn">›</button>
@@ -1070,52 +1275,52 @@
                 </table>
               </div>
 
-              <!-- Evaluation panel -->
+              <!-- Evaluation -->
               <div class="chart-box">
                 <div class="chart-title">Evaluation</div>
                 <ul class="eval-list">
                   <li>
-                    <span class="eval-label">Total number of trades</span>
+                    <span>Total number of trades</span>
                     <span id="evalTotalTrades" class="eval-value"></span>
                   </li>
                   <li>
-                    <span class="eval-label">Avg. profit per trading day</span>
+                    <span>Avg. profit per trading day</span>
                     <span id="evalAvgDay" class="eval-value"></span>
                   </li>
                   <li>
-                    <span class="eval-label">Biggest winner</span>
+                    <span>Biggest winner</span>
                     <span id="evalBiggestWinner" class="eval-value"></span>
                   </li>
                   <li>
-                    <span class="eval-label">Biggest loser</span>
+                    <span>Biggest loser</span>
                     <span id="evalBiggestLoser" class="eval-value"></span>
                   </li>
                   <li>
-                    <span class="eval-label">Total fees</span>
+                    <span>Total fees</span>
                     <span id="evalFees" class="eval-value">$0.00</span>
                   </li>
                   <li>
-                    <span class="eval-label">Winrate w/o BE</span>
+                    <span>Winrate w/o BE</span>
                     <span id="evalWinNoBE" class="eval-value"></span>
                   </li>
                   <li>
-                    <span class="eval-label">ROI</span>
+                    <span>ROI</span>
                     <span id="evalROI" class="eval-value"></span>
                   </li>
                   <li>
-                    <span class="eval-label">Max drawdown</span>
+                    <span>Max drawdown</span>
                     <span id="evalDrawdown" class="eval-value"></span>
                   </li>
                   <li>
-                    <span class="eval-label">Winning / Losing days</span>
+                    <span>Winning / Losing days</span>
                     <span id="evalWinLoseDays" class="eval-value"></span>
                   </li>
                   <li>
-                    <span class="eval-label">Trades per day / week</span>
+                    <span>Trades per day / week</span>
                     <span id="evalTradesPer" class="eval-value"></span>
                   </li>
                   <li>
-                    <span class="eval-label">Current streak</span>
+                    <span>Current streak</span>
                     <span id="evalStreak" class="eval-value"></span>
                   </li>
                 </ul>
@@ -1123,12 +1328,13 @@
             </div>
 
             <!-- Recent trades table -->
-            <div class="chart-box" style="margin-top: 8px">
+            <div class="chart-box" style="margin-top: 10px">
               <div class="chart-title-row">
                 <div class="chart-title">Recent trades</div>
                 <div class="chart-caption" id="recentCaption"></div>
               </div>
-              <div style="max-height: 180px; overflow: auto">
+
+              <div style="max-height: 220px; overflow: auto; border-radius: 14px">
                 <table class="table">
                   <thead>
                     <tr>
@@ -1181,16 +1387,11 @@
       // ========= Storage / state =========
       const STORAGE_KEY = "tredlog_dashboard_v3";
 
-      let state = {
-        startingBalance: 0,
-        riskPerTrade: 0,
-        trades: [],
-        customRules: [],
-        confluenceTemplate: null, // NEW
-      };
-
       // Month offset for calendar & recent trades filtering
       let calendarMonthOffset = 0; // 0 = current month
+
+      // Draft confluence checks for the current trade form (not saved until trade is added)
+      let draftConfluenceChecked = {}; // { TF: { ruleId: true } }
 
       // ========= Helpers =========
       const $ = (id) => document.getElementById(id);
@@ -1220,8 +1421,8 @@
         if (!isFinite(v)) return "0%";
         return (
           Number(v).toLocaleString("en-US", {
-            minimumFractionDigits: 1,
-            maximumFractionDigits: 1,
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0,
           }) + "%"
         );
       }
@@ -1231,14 +1432,78 @@
         return isFinite(v) ? v : 0;
       }
 
-      function uid(prefix) {
-        return (
-          (prefix || "id") +
-          "_" +
-          Math.random().toString(16).slice(2) +
-          "_" +
-          Date.now().toString(16)
-        );
+      function uid() {
+        return Math.random().toString(16).slice(2) + Date.now().toString(16);
+      }
+
+      function clamp(n, a, b) {
+        return Math.max(a, Math.min(b, n));
+      }
+
+      // ========= Default Confluence (4H, M30, M15) =========
+      function getDefaultConfluence() {
+        const timeframes = ["4H", "M30", "M15"];
+        const rules = {
+          "4H": [
+            { id: uid(), text: "Trend aligned", weight: 10 },
+            { id: uid(), text: "At AOI / rejected", weight: 10 },
+            { id: uid(), text: "Break & retest pattern", weight: 10 },
+          ],
+          "M30": [
+            { id: uid(), text: "Touching EMA / dynamic level", weight: 5 },
+            { id: uid(), text: "Round psychological level", weight: 5 },
+            { id: uid(), text: "Candlestick rejection from AOI", weight: 10 },
+          ],
+          "M15": [
+            { id: uid(), text: "Entry alignment / clean trigger", weight: 10 },
+            { id: uid(), text: "Rejection from previous structure", weight: 10 },
+            { id: uid(), text: "No chop / clear space to target", weight: 5 },
+          ],
+        };
+        return { timeframes, rules };
+      }
+
+      // ========= State =========
+      let state = {
+        startingBalance: 0,
+        riskPerTrade: 0,
+        trades: [],
+        customRules: [],
+        confluence: getDefaultConfluence(),
+      };
+
+      function ensureStateShape(obj) {
+        const base = {
+          startingBalance: 0,
+          riskPerTrade: 0,
+          trades: [],
+          customRules: [],
+          confluence: getDefaultConfluence(),
+        };
+
+        const s = Object.assign({}, base, (obj && typeof obj === "object" ? obj : {}));
+        s.startingBalance = Number(s.startingBalance) || 0;
+        s.riskPerTrade = Number(s.riskPerTrade) || 0;
+        s.trades = Array.isArray(s.trades) ? s.trades : [];
+        s.customRules = Array.isArray(s.customRules) ? s.customRules : [];
+
+        // Confluence shape
+        if (!s.confluence || typeof s.confluence !== "object") s.confluence = getDefaultConfluence();
+        if (!Array.isArray(s.confluence.timeframes)) s.confluence.timeframes = getDefaultConfluence().timeframes.slice();
+        if (!s.confluence.rules || typeof s.confluence.rules !== "object") s.confluence.rules = getDefaultConfluence().rules;
+
+        // Ensure each TF exists in rules map
+        s.confluence.timeframes.forEach((tf) => {
+          if (!Array.isArray(s.confluence.rules[tf])) s.confluence.rules[tf] = [];
+          // Ensure rule items have ids
+          s.confluence.rules[tf] = s.confluence.rules[tf].map((r) => ({
+            id: r && r.id ? String(r.id) : uid(),
+            text: (r && r.text ? String(r.text) : "").trim(),
+            weight: clamp(parseNumber(r && r.weight), 1, 100) || 10,
+          })).filter(r => r.text);
+        });
+
+        return s;
       }
 
       function saveState(shouldSyncDrive = true) {
@@ -1255,15 +1520,7 @@
           const raw = localStorage.getItem(STORAGE_KEY);
           if (!raw) return;
           const data = JSON.parse(raw);
-          if (!data || typeof data !== "object") return;
-          state.startingBalance = Number(data.startingBalance) || 0;
-          state.riskPerTrade = Number(data.riskPerTrade) || 0;
-          state.customRules = Array.isArray(data.customRules) ? data.customRules : [];
-          state.trades = Array.isArray(data.trades) ? data.trades : [];
-          state.confluenceTemplate =
-            data.confluenceTemplate && typeof data.confluenceTemplate === "object"
-              ? data.confluenceTemplate
-              : null;
+          state = ensureStateShape(data);
         } catch (e) {
           console.warn("Failed to load state", e);
         }
@@ -1277,8 +1534,11 @@
         $("riskR").value = "1";
         $("resultR").value = "";
         $("setup").value = "";
+        $("entrySignal").value = "";
         $("screenshot").value = "";
+        $("fees").value = "";
         $("notes").value = "";
+
         [
           "chkPlannedRespected",
           "chkNoRevenge",
@@ -1290,18 +1550,13 @@
           $(id).checked = false;
         });
 
-        // NEW: clear confluence checks
-        const conBox = $("confluenceChecklist");
-        if (conBox) {
-          conBox.querySelectorAll("input[type='checkbox']").forEach((cb) => {
-            cb.checked = false;
-          });
-        }
-        updateConfluencePreview();
+        draftConfluenceChecked = {};
         updateDisciplinePreview();
+        renderTradeConfluenceArea(); // resets confluence checkboxes
+        updateConfluenceSummaryUI(); // resets summary
       }
 
-      // ========= Checklist discipline % =========
+      // ========= Discipline % =========
       function updateDisciplinePreview() {
         const coreChecks = [
           "chkPlannedRespected",
@@ -1336,13 +1591,13 @@
         if (!pill) return;
         pill.textContent = text;
         if (isOffOrError) {
-          pill.style.borderColor = "rgba(239,68,68,0.7)";
-          pill.style.color = "#fecaca";
-          pill.style.background = "rgba(127,29,29,0.2)";
+          pill.style.borderColor = "rgba(248,113,113,0.35)";
+          pill.style.color = "rgba(254,202,202,0.92)";
+          pill.style.background = "rgba(127,29,29,0.16)";
         } else {
-          pill.style.borderColor = "rgba(22,163,74,0.7)";
-          pill.style.color = "#bbf7d0";
-          pill.style.background = "rgba(22,163,74,0.15)";
+          pill.style.borderColor = "rgba(34,197,94,0.35)";
+          pill.style.color = "rgba(187,247,208,0.92)";
+          pill.style.background = "rgba(34,197,94,0.09)";
         }
       }
 
@@ -1371,12 +1626,11 @@
           saveBackupToDrive().catch((err) =>
             console.error("Drive autosync failed", err)
           );
-        }, 1500); // debounce autosync ~1.5s
+        }, 1500);
       }
 
       // ========= Google Identity / gapi entrypoints =========
       function gisLoaded() {
-        console.log("GIS Loaded");
         tokenClient = google.accounts.oauth2.initTokenClient({
           client_id: GOOGLE_CLIENT_ID,
           scope: GOOGLE_SCOPES,
@@ -1386,7 +1640,6 @@
               alert("Google authentication error.");
               return;
             }
-            console.log("Access token received");
             isSignedIn = true;
             updateSigninUI();
             if (gapiInitialized) {
@@ -1402,7 +1655,6 @@
       }
 
       function gapiLoaded() {
-        console.log("GAPI script loaded");
         if (!GOOGLE_API_KEY) {
           console.warn("API key missing. Drive sync disabled.");
           return;
@@ -1417,7 +1669,16 @@
             discoveryDocs: GOOGLE_DISCOVERY_DOCS,
           });
           gapiInitialized = true;
-          console.log("GAPI client initialized");
+
+          // If the user already signed in (GIS callback fired before gapi init), load backup now.
+          if (isSignedIn) {
+            try {
+              await loadBackupFromDrive();
+            } catch (err) {
+              console.error("Failed to load Drive backup", err);
+              setDriveStatus("Drive: backup load error", true);
+            }
+          }
         } catch (e) {
           console.error("GAPI init error:", e);
           setDriveStatus("Drive: init error", true);
@@ -1477,25 +1738,12 @@
         });
 
         const cloudState = getResp.result || null;
-        if (!cloudState || typeof cloudState !== "object") {
-          setDriveStatus("Drive: backup found but invalid", true);
-          return;
-        }
+        const normalizedCloud = ensureStateShape(cloudState);
 
         const hasLocalTrades = state.trades && state.trades.length > 0;
 
         if (!hasLocalTrades) {
-          state = {
-            startingBalance: Number(cloudState.startingBalance) || 0,
-            riskPerTrade: Number(cloudState.riskPerTrade) || 0,
-            trades: Array.isArray(cloudState.trades) ? cloudState.trades : [],
-            customRules: Array.isArray(cloudState.customRules) ? cloudState.customRules : [],
-            confluenceTemplate:
-              cloudState.confluenceTemplate && typeof cloudState.confluenceTemplate === "object"
-                ? cloudState.confluenceTemplate
-                : null,
-          };
-          ensureConfluenceTemplate();
+          state = normalizedCloud;
           saveState(false);
           renderCustomRules();
           renderConfluenceBuilder();
@@ -1508,17 +1756,7 @@
               "Click Cancel to keep your local data and overwrite Drive next save."
           );
           if (useCloud) {
-            state = {
-              startingBalance: Number(cloudState.startingBalance) || 0,
-              riskPerTrade: Number(cloudState.riskPerTrade) || 0,
-              trades: Array.isArray(cloudState.trades) ? cloudState.trades : [],
-              customRules: Array.isArray(cloudState.customRules) ? cloudState.customRules : [],
-              confluenceTemplate:
-                cloudState.confluenceTemplate && typeof cloudState.confluenceTemplate === "object"
-                  ? cloudState.confluenceTemplate
-                  : null,
-            };
-            ensureConfluenceTemplate();
+            state = normalizedCloud;
             saveState(false);
             renderCustomRules();
             renderConfluenceBuilder();
@@ -1536,22 +1774,14 @@
         try {
           setDriveStatus("Drive: syncing…", false);
           const fileContent = JSON.stringify(state, null, 2);
-          const metadata = {
-            name: "tredlog-dashboard-backup.json",
-          };
+          const metadata = { name: "tredlog-dashboard-backup.json" };
 
           const token = gapi.client.getToken();
-          if (!token || !token.access_token) {
-            console.warn("No access token available for Drive upload.");
-            return;
-          }
+          if (!token || !token.access_token) return;
           const accessToken = token.access_token;
 
           const form = new FormData();
-          form.append(
-            "metadata",
-            new Blob([JSON.stringify(metadata)], { type: "application/json" })
-          );
+          form.append("metadata", new Blob([JSON.stringify(metadata)], { type: "application/json" }));
           form.append("file", new Blob([fileContent], { type: "application/json" }));
 
           let method = "POST";
@@ -1572,9 +1802,7 @@
             body: form,
           });
 
-          if (!res.ok) {
-            throw new Error("Drive upload failed: " + res.status);
-          }
+          if (!res.ok) throw new Error("Drive upload failed: " + res.status);
 
           const data = await res.json();
           driveFileId = data.id;
@@ -1585,303 +1813,256 @@
         }
       }
 
-      // ========= NEW: Confluence template (custom TF + rules) =========
-      function defaultConfluenceTemplate() {
-        // Requested defaults: 4H, M30, M15 (+ allow custom)
-        return {
-          version: 1,
-          timeframes: [
-            {
-              id: uid("tf"),
-              name: "4H",
-              rules: [
-                { id: uid("r"), text: "Trend aligned", weight: 10 },
-                { id: uid("r"), text: "At AOI / rejected", weight: 10 },
-                { id: uid("r"), text: "Break & retest pattern", weight: 10 },
-              ],
-            },
-            {
-              id: uid("tf"),
-              name: "M30",
-              rules: [
-                { id: uid("r"), text: "Touching EMA / dynamic level", weight: 5 },
-                { id: uid("r"), text: "Round psychological level", weight: 5 },
-                { id: uid("r"), text: "Candlestick rejection from AOI", weight: 10 },
-              ],
-            },
-            {
-              id: uid("tf"),
-              name: "M15",
-              rules: [
-                { id: uid("r"), text: "Entry alignment / clean trigger", weight: 10 },
-                { id: uid("r"), text: "Rejection from previous structure", weight: 10 },
-                { id: uid("r"), text: "No chop / clear space to target", weight: 5 },
-              ],
-            },
-            {
-              id: uid("tf"),
-              name: "ENTRY SIGNAL",
-              rules: [
-                { id: uid("r"), text: "SOS", weight: 10 },
-                { id: uid("r"), text: "Engulfing candle (M15/M30/4H)", weight: 10 },
-              ],
-            },
-            {
-              id: uid("tf"),
-              name: "STOP LOSS & TAKE PROFIT",
-              rules: [
-                { id: uid("r"), text: "Stop loss placed correctly", weight: 10 },
-                { id: uid("r"), text: "Take profit planned / levels clear", weight: 10 },
-              ],
-            },
-          ],
-        };
-      }
+      // ========= Confluence engine =========
+      function getConfluenceTotalsFromChecked(checkedMap) {
+        const tfs = state.confluence.timeframes || [];
+        const rules = state.confluence.rules || {};
+        let overallHave = 0;
+        let overallTotal = 0;
 
-      function ensureConfluenceTemplate() {
-        if (!state.confluenceTemplate || !Array.isArray(state.confluenceTemplate.timeframes)) {
-          state.confluenceTemplate = defaultConfluenceTemplate();
-          // keep your existing customRules feature unchanged (no breaking)
-          saveState(false);
-        }
-
-        // Defensive cleanup
-        state.confluenceTemplate.timeframes = state.confluenceTemplate.timeframes
-          .filter((tf) => tf && typeof tf === "object" && tf.name)
-          .map((tf) => {
-            tf.id = tf.id || uid("tf");
-            tf.rules = Array.isArray(tf.rules) ? tf.rules : [];
-            tf.rules = tf.rules
-              .filter((r) => r && typeof r === "object" && r.text)
-              .map((r) => ({
-                id: r.id || uid("r"),
-                text: String(r.text),
-                weight: isFinite(Number(r.weight)) ? Number(r.weight) : 0,
-              }));
-            return tf;
+        const byTf = {};
+        tfs.forEach((tf) => {
+          const list = Array.isArray(rules[tf]) ? rules[tf] : [];
+          const totalW = list.reduce((s, r) => s + (Number(r.weight) || 0), 0);
+          let hitW = 0;
+          list.forEach((r) => {
+            if (checkedMap?.[tf]?.[r.id]) hitW += Number(r.weight) || 0;
           });
-      }
+          const pct = totalW ? (hitW / totalW) * 100 : 0;
+          byTf[tf] = { hitW, totalW, pct: Math.round(pct) };
 
-      function renderConfluenceBuilder() {
-        ensureConfluenceTemplate();
-
-        // Pills
-        const pills = $("tfPills");
-        if (!pills) return;
-        pills.innerHTML = "";
-
-        state.confluenceTemplate.timeframes.forEach((tf) => {
-          const pill = document.createElement("span");
-          pill.className = "mini-pill";
-          pill.innerHTML = `<strong>${escapeHtml(tf.name)}</strong> <button class="danger-x" title="Remove timeframe" data-action="rmTF" data-tfid="${tf.id}">×</button>`;
-          pills.appendChild(pill);
+          overallHave += hitW;
+          overallTotal += totalW;
         });
 
-        // TF select for adding rules
-        const sel = $("ruleTfSelect");
-        if (sel) {
-          sel.innerHTML = "";
-          state.confluenceTemplate.timeframes.forEach((tf) => {
-            const opt = document.createElement("option");
-            opt.value = tf.id;
-            opt.textContent = tf.name;
-            sel.appendChild(opt);
-          });
-        }
-
-        // Rules list
-        const list = $("tfRulesList");
-        if (list) {
-          list.innerHTML = "";
-          state.confluenceTemplate.timeframes.forEach((tf) => {
-            const block = document.createElement("div");
-            block.style.marginBottom = "6px";
-            const title = document.createElement("div");
-            title.style.fontWeight = "600";
-            title.textContent = tf.name + ":";
-            block.appendChild(title);
-
-            if (!tf.rules.length) {
-              const em = document.createElement("em");
-              em.textContent = "No rules yet.";
-              block.appendChild(em);
-            } else {
-              tf.rules.forEach((r) => {
-                const row = document.createElement("div");
-                row.style.display = "flex";
-                row.style.justifyContent = "space-between";
-                row.style.gap = "8px";
-                row.style.alignItems = "center";
-                row.style.marginTop = "2px";
-                row.innerHTML = `<span>${escapeHtml(r.text)} <span style="opacity:.75">(${Number(r.weight) || 0})</span></span>
-                                 <button class="danger-x" title="Remove rule" data-action="rmRule" data-tfid="${tf.id}" data-rid="${r.id}">×</button>`;
-                block.appendChild(row);
-              });
-            }
-            list.appendChild(block);
-          });
-        }
-
-        renderConfluenceTradeChecklist();
+        const overallPct = overallTotal ? Math.round((overallHave / overallTotal) * 100) : 0;
+        return { overallPct, overallHave, overallTotal, byTf };
       }
 
-      function renderConfluenceTradeChecklist() {
-        ensureConfluenceTemplate();
-        const box = $("confluenceChecklist");
-        if (!box) return;
+      function confluenceLabelFromPct(p) {
+        if (p >= 75) return "Strong Setup";
+        if (p >= 50) return "Decent Setup";
+        if (p >= 30) return "Average Setup";
+        return "Weak Setup";
+      }
 
-        box.innerHTML = "";
+      function updateConfluenceSummaryUI() {
+        const { overallPct, byTf } = getConfluenceTotalsFromChecked(draftConfluenceChecked);
+        $("confluenceOverallBig").textContent = `${overallPct}%`;
+        $("confluenceTagline").textContent = confluenceLabelFromPct(overallPct);
 
-        // Use <details> per timeframe for compact UI (mobile friendly)
-        state.confluenceTemplate.timeframes.forEach((tf) => {
-          const details = document.createElement("details");
-          details.className = "confluence-details";
-          details.open = true;
+        const miniRow = $("confluenceMiniRow");
+        miniRow.innerHTML = "";
+        (state.confluence.timeframes || []).forEach((tf) => {
+          const p = byTf?.[tf]?.pct ?? 0;
+          const div = document.createElement("div");
+          div.className = "mini-pill";
+          div.textContent = `${tf} ${p}%`;
+          miniRow.appendChild(div);
+        });
+      }
 
-          const summary = document.createElement("summary");
-          summary.innerHTML = `${escapeHtml(tf.name)} <span class="small-text" id="tfPct_${tf.id}" style="margin-left:6px; opacity:.85">0%</span>`;
-          details.appendChild(summary);
+      function renderTradeConfluenceArea() {
+        const area = $("tradeConfluenceArea");
+        area.innerHTML = "";
 
-          const body = document.createElement("div");
-          body.style.marginTop = "6px";
+        const tfs = state.confluence.timeframes || [];
+        const rules = state.confluence.rules || {};
 
-          if (!tf.rules.length) {
-            body.innerHTML = `<div class="small-text"><em>No rules in this timeframe yet. Add from Confluence builder.</em></div>`;
+        tfs.forEach((tf) => {
+          const list = Array.isArray(rules[tf]) ? rules[tf] : [];
+
+          const box = document.createElement("div");
+          box.className = "tf-group";
+
+          const head = document.createElement("div");
+          head.className = "tf-head";
+
+          const title = document.createElement("div");
+          title.className = "tf-title";
+          title.textContent = tf;
+
+          const pct = document.createElement("div");
+          pct.className = "tf-pct";
+          pct.id = `tfPct_${tf}`;
+          pct.textContent = "0%";
+
+          head.appendChild(title);
+          head.appendChild(pct);
+          box.appendChild(head);
+
+          if (!list.length) {
+            const empty = document.createElement("div");
+            empty.className = "small-text";
+            empty.innerHTML = "<em>No rules yet for this timeframe. Add them above.</em>";
+            box.appendChild(empty);
           } else {
-            tf.rules.forEach((r) => {
-              const label = document.createElement("label");
-              label.className = "checklist-item";
-              label.style.marginBottom = "4px";
-              label.innerHTML = `
-                <input type="checkbox" data-cb="conf" data-tfid="${tf.id}" data-rid="${r.id}" />
-                <span>${escapeHtml(r.text)} <span class="small-text">(+${Number(r.weight) || 0})</span></span>
-              `;
-              body.appendChild(label);
+            list.forEach((r) => {
+              const lab = document.createElement("label");
+              lab.className = "checklist-item";
+              const inp = document.createElement("input");
+              inp.type = "checkbox";
+              inp.checked = !!draftConfluenceChecked?.[tf]?.[r.id];
+              inp.addEventListener("change", () => {
+                if (!draftConfluenceChecked[tf]) draftConfluenceChecked[tf] = {};
+                draftConfluenceChecked[tf][r.id] = inp.checked;
+                updatePerTfPct(tf);
+                updateConfluenceSummaryUI();
+              });
+
+              const sp = document.createElement("span");
+              sp.textContent = `${r.text} (+${Number(r.weight) || 0})`;
+
+              lab.appendChild(inp);
+              lab.appendChild(sp);
+              box.appendChild(lab);
             });
           }
 
-          details.appendChild(body);
-          box.appendChild(details);
+          area.appendChild(box);
+          updatePerTfPct(tf);
         });
 
-        // Event delegation (single listener)
-        box.addEventListener("change", (e) => {
-          const t = e.target;
-          if (t && t.matches("input[type='checkbox'][data-cb='conf']")) {
-            updateConfluencePreview();
+        updateConfluenceSummaryUI();
+      }
+
+      function updatePerTfPct(tf) {
+        const list = state.confluence.rules?.[tf] || [];
+        const totalW = list.reduce((s, r) => s + (Number(r.weight) || 0), 0);
+        let hitW = 0;
+        list.forEach((r) => {
+          if (draftConfluenceChecked?.[tf]?.[r.id]) hitW += Number(r.weight) || 0;
+        });
+        const pct = totalW ? Math.round((hitW / totalW) * 100) : 0;
+        const el = document.getElementById(`tfPct_${tf}`);
+        if (el) el.textContent = `${pct}%`;
+      }
+
+      function renderConfluenceBuilder() {
+        // Timeframe chips
+        const chips = $("tfChips");
+        chips.innerHTML = "";
+
+        (state.confluence.timeframes || []).forEach((tf) => {
+          const c = document.createElement("div");
+          c.className = "chip";
+          c.textContent = tf;
+
+          const x = document.createElement("button");
+          x.type = "button";
+          x.textContent = "×";
+          x.title = "Remove timeframe";
+          x.addEventListener("click", () => {
+            state.confluence.timeframes = state.confluence.timeframes.filter((t) => t !== tf);
+            // Remove draft selection for that TF
+            delete draftConfluenceChecked[tf];
+            saveState();
+            renderConfluenceBuilder();
+            renderTradeConfluenceArea();
+          });
+
+          c.appendChild(x);
+          chips.appendChild(c);
+        });
+
+        // TF select
+        const sel = $("ruleTfSelect");
+        sel.innerHTML = "";
+        (state.confluence.timeframes || []).forEach((tf) => {
+          const opt = document.createElement("option");
+          opt.value = tf;
+          opt.textContent = tf;
+          sel.appendChild(opt);
+        });
+
+        // Rules list grouped
+        const listWrap = $("rulesList");
+        listWrap.innerHTML = "";
+
+        (state.confluence.timeframes || []).forEach((tf) => {
+          const group = document.createElement("div");
+          group.className = "tf-group";
+
+          const head = document.createElement("div");
+          head.className = "tf-head";
+
+          const title = document.createElement("div");
+          title.className = "tf-title";
+          title.textContent = `Rules for ${tf}`;
+
+          const meta = document.createElement("div");
+          meta.className = "small-text";
+          const totalW = (state.confluence.rules?.[tf] || []).reduce((s, r) => s + (Number(r.weight) || 0), 0);
+          meta.textContent = `Total weight: ${totalW}`;
+
+          head.appendChild(title);
+          head.appendChild(meta);
+          group.appendChild(head);
+
+          const rules = state.confluence.rules?.[tf] || [];
+          if (!rules.length) {
+            const empty = document.createElement("div");
+            empty.className = "small-text";
+            empty.innerHTML = "<em>No rules yet.</em>";
+            group.appendChild(empty);
+          } else {
+            rules.forEach((r) => {
+              const line = document.createElement("div");
+              line.className = "rule-line";
+
+              const left = document.createElement("div");
+              left.className = "small-text";
+              left.style.color = "rgba(226,232,240,0.9)";
+              left.textContent = `${r.text} (+${Number(r.weight) || 0})`;
+
+              const x = document.createElement("button");
+              x.className = "x";
+              x.type = "button";
+              x.textContent = "×";
+              x.title = "Remove rule";
+              x.addEventListener("click", () => {
+                state.confluence.rules[tf] = (state.confluence.rules[tf] || []).filter((rr) => rr.id !== r.id);
+                if (draftConfluenceChecked?.[tf]) delete draftConfluenceChecked[tf][r.id];
+                saveState();
+                renderConfluenceBuilder();
+                renderTradeConfluenceArea();
+              });
+
+              line.appendChild(left);
+              line.appendChild(x);
+              group.appendChild(line);
+            });
+          }
+
+          listWrap.appendChild(group);
+        });
+      }
+
+      function addTimeframesFromInput(text) {
+        const parts = String(text || "")
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean);
+
+        if (!parts.length) return;
+
+        const existing = new Set(state.confluence.timeframes || []);
+        parts.forEach((tf) => {
+          if (!existing.has(tf)) {
+            state.confluence.timeframes.push(tf);
+            if (!Array.isArray(state.confluence.rules[tf])) state.confluence.rules[tf] = [];
+            existing.add(tf);
           }
         });
 
-        updateConfluencePreview();
+        saveState();
+        renderConfluenceBuilder();
+        renderTradeConfluenceArea();
       }
 
-      function updateConfluencePreview() {
-        ensureConfluenceTemplate();
-        const summaryRow = $("confluenceSummaryRow");
-        const overallLabel = $("confluenceOverallLabel");
-
-        if (!summaryRow || !overallLabel) return;
-
-        // Read checked boxes
-        const box = $("confluenceChecklist");
-        const checked = box
-          ? Array.from(box.querySelectorAll("input[type='checkbox'][data-cb='conf']:checked"))
-          : [];
-
-        const checkedByTF = new Map();
-        checked.forEach((cb) => {
-          const tfid = cb.getAttribute("data-tfid");
-          const rid = cb.getAttribute("data-rid");
-          if (!checkedByTF.has(tfid)) checkedByTF.set(tfid, new Set());
-          checkedByTF.get(tfid).add(rid);
-        });
-
-        let overallHit = 0;
-        let overallTotal = 0;
-
-        summaryRow.innerHTML = "";
-
-        state.confluenceTemplate.timeframes.forEach((tf) => {
-          const tfTotal = tf.rules.reduce((s, r) => s + (Number(r.weight) || 0), 0);
-          let tfHit = 0;
-          const set = checkedByTF.get(tf.id) || new Set();
-          tf.rules.forEach((r) => {
-            if (set.has(r.id)) tfHit += Number(r.weight) || 0;
-          });
-
-          overallHit += tfHit;
-          overallTotal += tfTotal;
-
-          const pct = tfTotal ? Math.round((tfHit / tfTotal) * 100) : 0;
-
-          const pill = document.createElement("span");
-          pill.className = "mini-pill";
-          pill.innerHTML = `<strong>${escapeHtml(tf.name)}</strong> <span>${pct}%</span>`;
-          summaryRow.appendChild(pill);
-
-          const tfPctEl = document.getElementById("tfPct_" + tf.id);
-          if (tfPctEl) tfPctEl.textContent = `${pct}%`;
-        });
-
-        const overallPct = overallTotal ? Math.round((overallHit / overallTotal) * 100) : 0;
-        const tag =
-          overallPct >= 70 ? "Strong Setup" : overallPct >= 40 ? "Moderate Setup" : "Weak Setup";
-        overallLabel.textContent = `Overall: ${overallPct}% (${tag})`;
-      }
-
-      function getConfluenceSnapshotForTrade() {
-        ensureConfluenceTemplate();
-        const box = $("confluenceChecklist");
-        const checked = box
-          ? Array.from(box.querySelectorAll("input[type='checkbox'][data-cb='conf']:checked"))
-          : [];
-
-        const selected = {}; // tfId -> [ruleId]
-        checked.forEach((cb) => {
-          const tfid = cb.getAttribute("data-tfid");
-          const rid = cb.getAttribute("data-rid");
-          if (!selected[tfid]) selected[tfid] = [];
-          selected[tfid].push(rid);
-        });
-
-        // Calculate percentages to store (so later template edits don't change old trades)
-        let overallHit = 0;
-        let overallTotal = 0;
-        const byTF = {}; // tfName -> pct
-
-        state.confluenceTemplate.timeframes.forEach((tf) => {
-          const tfTotal = tf.rules.reduce((s, r) => s + (Number(r.weight) || 0), 0);
-          let tfHit = 0;
-          const set = new Set(selected[tf.id] || []);
-          tf.rules.forEach((r) => {
-            if (set.has(r.id)) tfHit += Number(r.weight) || 0;
-          });
-
-          overallHit += tfHit;
-          overallTotal += tfTotal;
-          const pct = tfTotal ? Math.round((tfHit / tfTotal) * 100) : 0;
-          byTF[tf.name] = pct;
-        });
-
-        const overallPct = overallTotal ? Math.round((overallHit / overallTotal) * 100) : 0;
-
-        return { overallPct, byTF, selected };
-      }
-
-      function escapeHtml(s) {
-        return String(s)
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;")
-          .replace(/"/g, "&quot;")
-          .replace(/'/g, "&#039;");
-      }
-
-      // ========= Recalc dashboard (kept as-is, only adds Conf% column output) =========
+      // ========= Recalc dashboard =========
       function recalcDashboard() {
-        const trades = [...state.trades].sort(
-          (a, b) => new Date(a.date) - new Date(b.date)
-        );
+        const trades = [...state.trades].sort((a, b) => new Date(a.date) - new Date(b.date));
         const riskPerTrade = Number(state.riskPerTrade) || 0;
         const starting = Number(state.startingBalance) || 0;
 
@@ -1889,47 +2070,86 @@
         $("riskPerTrade").value = riskPerTrade || "";
 
         $("tradeCountLabel").textContent =
-          trades.length === 1
-            ? "1 trade logged"
-            : `${trades.length} trades logged`;
+          trades.length === 1 ? "1 trade logged" : `${trades.length} trades logged`;
 
+        // Normalize trade numbers
         trades.forEach((t) => {
           t.resultR = Number(t.resultR) || 0;
           t.riskR = Number(t.riskR) || 1;
           t.pnlR = t.resultR;
           t.pnlUSD = t.pnlR * riskPerTrade;
+          t.fees = Number(t.fees) || 0;
+          // net after fees (for metrics)
+          t.netUSD = t.pnlUSD - t.fees;
+          t.disciplinePct = Number(t.disciplinePct) || 0;
+          t.confluencePct = Number(t.confluencePct) || 0;
         });
 
         const totalR = trades.reduce((s, t) => s + t.pnlR, 0);
-        const totalUsd = trades.reduce((s, t) => s + t.pnlUSD, 0);
-        const balance = starting + totalUsd;
+        const totalUsdGross = trades.reduce((s, t) => s + t.pnlUSD, 0);
+        const totalFees = trades.reduce((s, t) => s + (Number(t.fees) || 0), 0);
+        const totalUsdNet = trades.reduce((s, t) => s + (Number(t.netUSD) || 0), 0);
 
-        $("toplineTotals").textContent = `Total PnL: ${fmtUSD(
-          totalUsd
-        )} • Balance: ${fmtUSD(balance)} • Starting: ${fmtUSD(starting)}`;
+        const balance = starting + totalUsdNet;
+
+        $("toplineTotals").textContent = `Total PnL: ${fmtUSD(totalUsdNet)} • Balance: ${fmtUSD(
+          balance
+        )} • Starting: ${fmtUSD(starting)}`;
+
+        // PerfectTrade-like summary
+        $("netPnlBig").textContent = fmtUSD(totalUsdNet);
+        $("netPnlBig").style.color = totalUsdNet >= 0 ? "var(--good)" : "var(--bad)";
+        $("netPnlSub").textContent = `+ ${trades.length} trades completed`;
 
         const nonBe = trades.filter((t) => t.pnlR !== 0);
         const wins = trades.filter((t) => t.pnlR > 0);
         const losses = trades.filter((t) => t.pnlR < 0);
         const winRate = nonBe.length ? (wins.length / nonBe.length) * 100 : 0;
-        const avgR = trades.length ? totalR / trades.length : 0;
-
         $("winRateValue").textContent = fmtPct(winRate);
-        $("winRateNote").textContent = nonBe.length
-          ? `Based on ${nonBe.length} trade(s) with R ≠ 0.`
-          : "No non-breakeven trades yet.";
-        $("avgRValue").textContent = fmtR(avgR);
 
-        let disciplineAvg = 0;
-        if (trades.length) {
-          disciplineAvg =
-            trades.reduce((s, t) => s + (Number(t.disciplinePct) || 0), 0) /
-            trades.length;
-        }
-        $("disciplineScoreValue").textContent = `${Math.round(
-          disciplineAvg
-        )} / 100`;
+        const totalProfit = trades.reduce((s, t) => (t.netUSD > 0 ? s + t.netUSD : s), 0);
+        const totalLossAbs = trades.reduce((s, t) => (t.netUSD < 0 ? s + Math.abs(t.netUSD) : s), 0);
+        $("totalProfitValue").textContent = fmtUSD(totalProfit);
+        $("totalLossValue").textContent = fmtUSD(totalLossAbs);
+        $("totalProfitSub").textContent = `${wins.length} winning trades`;
+        $("totalLossSub").textContent = `${losses.length} losing trades`;
 
+        const profitFactor = totalLossAbs > 0 ? totalProfit / totalLossAbs : 0;
+        $("profitFactorValue").textContent = (isFinite(profitFactor) ? profitFactor : 0).toFixed(2);
+
+        const avgConf = trades.length
+          ? trades.reduce((s, t) => s + (Number(t.confluencePct) || 0), 0) / trades.length
+          : 0;
+        $("avgConfluenceValue").textContent = `${Math.round(avgConf)}%`;
+
+        // Largest win/loss + best streak
+        let largestWin = 0;
+        let largestLoss = 0;
+        trades.forEach((t) => {
+          if (t.netUSD > largestWin) largestWin = t.netUSD;
+          if (t.netUSD < largestLoss) largestLoss = t.netUSD;
+        });
+        $("largestWinValue").textContent = fmtUSD(largestWin);
+        $("largestLossValue").textContent = fmtUSD(largestLoss); // negative is shown as negative
+
+        // Best streak (consecutive wins)
+        let bestStreak = 0;
+        let curStreak = 0;
+        trades
+          .slice()
+          .sort((a, b) => new Date(a.date) - new Date(b.date))
+          .forEach((t) => {
+            if (t.pnlR > 0) {
+              curStreak += 1;
+              bestStreak = Math.max(bestStreak, curStreak);
+            } else {
+              curStreak = 0;
+            }
+          });
+        $("bestStreakValue").textContent = String(bestStreak);
+        $("totalTradesMini").textContent = String(trades.length);
+
+        // Equity points in R
         const equityR = [];
         let runningR = 0;
         trades.forEach((t) => {
@@ -1940,16 +2160,15 @@
         const eqCaption =
           trades.length === 0
             ? "No trades yet. Log your first setup to start drawing your curve."
-            : `Total R: ${fmtR(totalR)} • PnL: ${fmtUSD(
-                totalUsd
-              )} • Starting balance: ${fmtUSD(
-                starting
-              )} • Current balance: ${fmtUSD(balance)}.`;
+            : `Total R: ${fmtR(totalR)} • Net PnL: ${fmtUSD(totalUsdNet)} • Fees: ${fmtUSD(
+                totalFees
+              )} • Starting: ${fmtUSD(starting)} • Balance: ${fmtUSD(balance)}.`;
         $("equityCaption").textContent = eqCaption;
 
         drawEquityChart(equityR);
         drawProbabilityChart(wins.length, losses.length);
 
+        // Last 7 / 30 days based on net
         const today = new Date();
         const dayMs = 24 * 60 * 60 * 1000;
         const last7Start = new Date(today.getTime() - 6 * dayMs);
@@ -1958,21 +2177,18 @@
         let pnl7 = 0,
           pnl30 = 0;
         const dayMap = new Map();
+
         trades.forEach((t) => {
           const d = new Date(t.date);
           const key = t.date;
           if (!dayMap.has(key)) dayMap.set(key, 0);
-          dayMap.set(key, dayMap.get(key) + t.pnlUSD);
-          if (d >= last7Start && d <= today) pnl7 += t.pnlUSD;
-          if (d >= last30Start && d <= today) pnl30 += t.pnlUSD;
+          dayMap.set(key, dayMap.get(key) + (t.netUSD || 0));
+          if (d >= last7Start && d <= today) pnl7 += t.netUSD || 0;
+          if (d >= last30Start && d <= today) pnl30 += t.netUSD || 0;
         });
 
-        $("last7PnL").textContent = `${fmtR(
-          pnl7 / (riskPerTrade || 1)
-        )} • ${fmtUSD(pnl7)}`;
-        $("last30PnL").textContent = `${fmtR(
-          pnl30 / (riskPerTrade || 1)
-        )} • ${fmtUSD(pnl30)}`;
+        $("last7PnL").textContent = `${fmtR(pnl7 / (riskPerTrade || 1))} • ${fmtUSD(pnl7)}`;
+        $("last30PnL").textContent = `${fmtR(pnl30 / (riskPerTrade || 1))} • ${fmtUSD(pnl30)}`;
         $("totalTradesEval").textContent = trades.length
           ? `${trades.length} trade${trades.length === 1 ? "" : "s"}`
           : "No trades yet.";
@@ -1988,7 +2204,7 @@
 
         renderCalendarAndRecent(trades);
         renderEvaluation(trades, {
-          totalUsd,
+          totalUsdNet,
           starting,
           balance,
           winRate,
@@ -1996,6 +2212,7 @@
           equityR,
           wins,
           losses,
+          totalFees,
         });
       }
 
@@ -2009,11 +2226,12 @@
 
         const daysInMonth = last.getDate();
         const perDay = Array.from({ length: daysInMonth }, () => 0);
+
         trades.forEach((t) => {
           const d = new Date(t.date);
           if (d.getFullYear() === year && d.getMonth() === month) {
             const day = d.getDate();
-            perDay[day - 1] += t.pnlUSD;
+            perDay[day - 1] += Number(t.netUSD) || 0;
           }
         });
 
@@ -2022,9 +2240,7 @@
         const firstWeekday = new Date(year, month, 1).getDay();
 
         let row = document.createElement("tr");
-        for (let i = 0; i < firstWeekday; i++) {
-          row.appendChild(document.createElement("td"));
-        }
+        for (let i = 0; i < firstWeekday; i++) row.appendChild(document.createElement("td"));
 
         for (let day = 1; day <= daysInMonth; day++) {
           if (row.children.length === 7) {
@@ -2050,9 +2266,7 @@
           row.appendChild(cell);
         }
         if (row.children.length > 0) {
-          while (row.children.length < 7) {
-            row.appendChild(document.createElement("td"));
-          }
+          while (row.children.length < 7) row.appendChild(document.createElement("td"));
           tbody.appendChild(row);
         }
 
@@ -2063,13 +2277,14 @@
 
         const recentBody = $("recentBody");
         recentBody.innerHTML = "";
+
         monthTrades
           .slice()
           .sort((a, b) => new Date(b.date) - new Date(a.date))
           .forEach((t, idx) => {
             const tr = document.createElement("tr");
             const discPct = isFinite(t.disciplinePct) ? Math.round(t.disciplinePct) : 0;
-            const confPct = t.confluence && isFinite(t.confluence.overallPct) ? t.confluence.overallPct : 0;
+            const confPct = isFinite(t.confluencePct) ? Math.round(t.confluencePct) : 0;
 
             const cells = [
               idx + 1,
@@ -2077,14 +2292,13 @@
               t.pair || "",
               t.direction || "",
               fmtR(t.pnlR),
-              fmtUSD(t.pnlUSD),
+              fmtUSD(t.netUSD),
               `${discPct}%`,
               `${confPct}%`,
-              t.screenshot
-                ? `<a href="${t.screenshot}" target="_blank">Open</a>`
-                : "",
-              t.notes || "",
+              t.screenshot ? `<a href="${t.screenshot}" target="_blank">Open</a>` : "",
+              (t.notes || "").replace(/</g, "&lt;").replace(/>/g, "&gt;"),
             ];
+
             cells.forEach((val) => {
               const td = document.createElement("td");
               td.innerHTML = val;
@@ -2094,38 +2308,30 @@
           });
 
         $("recentCaption").textContent = monthTrades.length
-          ? `${monthTrades.length} trade${
-              monthTrades.length === 1 ? "" : "s"
-            } in ${monthName} ${year}.`
+          ? `${monthTrades.length} trade${monthTrades.length === 1 ? "" : "s"} in ${monthName} ${year}.`
           : `No trades logged in ${monthName} ${year}.`;
       }
 
-      function renderEvaluation(
-        trades,
-        { totalUsd, starting, balance, winRate, pnlByDay, equityR, wins, losses }
-      ) {
+      function renderEvaluation(trades, { totalUsdNet, starting, balance, winRate, pnlByDay, equityR, wins, losses, totalFees }) {
         $("evalTotalTrades").textContent = trades.length || 0;
 
         const days = pnlByDay ? pnlByDay.size : 0;
-        const avgPerDay = days ? totalUsd / days : 0;
+        const avgPerDay = days ? totalUsdNet / days : 0;
         $("evalAvgDay").textContent = fmtUSD(avgPerDay);
 
         let biggestWin = 0,
           biggestLose = 0;
         trades.forEach((t) => {
-          if (t.pnlUSD > biggestWin) biggestWin = t.pnlUSD;
-          if (t.pnlUSD < biggestLose) biggestLose = t.pnlUSD;
+          if (t.netUSD > biggestWin) biggestWin = t.netUSD;
+          if (t.netUSD < biggestLose) biggestLose = t.netUSD;
         });
         $("evalBiggestWinner").textContent = fmtUSD(biggestWin);
         $("evalBiggestLoser").textContent = fmtUSD(biggestLose);
 
-        $("evalFees").textContent = "$0.00";
+        $("evalFees").textContent = fmtUSD(totalFees || 0);
 
         const nonBe = trades.filter((t) => t.pnlR !== 0);
-        const winNoBE =
-          nonBe.length && wins.length
-            ? (wins.length / nonBe.length) * 100
-            : 0;
+        const winNoBE = nonBe.length ? (wins.length / nonBe.length) * 100 : 0;
         $("evalWinNoBE").textContent = fmtPct(winNoBE);
 
         const roi = starting ? ((balance - starting) / starting) * 100 : 0;
@@ -2137,6 +2343,7 @@
           let equityUsd = starting;
           equityR.forEach((pt) => {
             equityUsd = starting + pt.y * (state.riskPerTrade || 0);
+            // subtract fees net adjustment approx: use net PnL for drawdown measure is complex; keep original approach
             if (equityUsd > peak) peak = equityUsd;
             const dd = peak > 0 ? (peak - equityUsd) / peak : 0;
             if (dd > maxDraw) maxDraw = dd;
@@ -2153,28 +2360,23 @@
         $("evalWinLoseDays").textContent = `${winDays} / ${loseDays}`;
 
         if (trades.length) {
-          const dates = trades
-            .map((t) => new Date(t.date))
-            .sort((a, b) => a - b);
+          const dates = trades.map((t) => new Date(t.date)).sort((a, b) => a - b);
           const dayMs = 24 * 60 * 60 * 1000;
-          const spanDays =
-            (dates[dates.length - 1] - dates[0]) / dayMs + 1 || 1;
+          const spanDays = (dates[dates.length - 1] - dates[0]) / dayMs + 1 || 1;
           const spanWeeks = spanDays / 7;
           const perDay = trades.length / spanDays;
           const perWeek = trades.length / spanWeeks;
-          $("evalTradesPer").textContent = `${perDay.toFixed(
-            2
-          )} / ${perWeek.toFixed(2)}`;
+          $("evalTradesPer").textContent = `${perDay.toFixed(2)} / ${perWeek.toFixed(2)}`;
         } else {
           $("evalTradesPer").textContent = "0.00 / 0.00";
         }
 
+        // Streak string (last 10 trades)
         let streakStr = "";
-        const maxStreakTrades = 10;
         trades
           .slice()
           .sort((a, b) => new Date(b.date) - new Date(a.date))
-          .slice(0, maxStreakTrades)
+          .slice(0, 10)
           .forEach((t) => {
             const c = t.pnlR > 0 ? "W" : t.pnlR < 0 ? "L" : "B";
             streakStr = c + (streakStr ? " " + streakStr : "");
@@ -2182,23 +2384,37 @@
         $("evalStreak").textContent = streakStr || "–";
       }
 
-      // ========= Charts =========
-      function clearCanvas(canvas) {
+      // ========= Canvas helpers =========
+      function resizeCanvasToDisplaySize(canvas, cssHeight = 180) {
+        const dpr = window.devicePixelRatio || 1;
+        const displayWidth = Math.floor(canvas.clientWidth * dpr);
+        const displayHeight = Math.floor(cssHeight * dpr);
+        if (canvas.width !== displayWidth || canvas.height !== displayHeight) {
+          canvas.width = displayWidth;
+          canvas.height = displayHeight;
+        }
+        return dpr;
+      }
+
+      function clearCanvas(canvas, cssHeight = 180) {
+        const dpr = resizeCanvasToDisplaySize(canvas, cssHeight);
         const ctx = canvas.getContext("2d");
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = "rgba(15,23,42,0.9)";
+        ctx.fillStyle = "rgba(2,6,23,0.35)";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
+        return { ctx, dpr };
       }
 
       function drawEquityChart(points) {
         const canvas = $("equityChart");
-        const ctx = canvas.getContext("2d");
-        clearCanvas(canvas);
+        const { ctx } = clearCanvas(canvas, 180);
         if (!points.length) return;
 
-        const padding = 20;
+        const padding = 22 * (window.devicePixelRatio || 1);
         const w = canvas.width;
         const h = canvas.height;
+
         const xs = points.map((p) => p.x.getTime());
         const ys = points.map((p) => p.y);
         const minX = Math.min(...xs);
@@ -2207,14 +2423,14 @@
         const maxY = Math.max(...ys);
 
         const xScale = (x) =>
-          padding +
-          ((x - minX) / (maxX - minX || 1)) * (w - padding * 2);
+          padding + ((x - minX) / (maxX - minX || 1)) * (w - padding * 2);
         const yScale = (y) =>
           h - padding - ((y - minY) / (maxY - minY || 1)) * (h - padding * 2);
 
         ctx.beginPath();
-        ctx.strokeStyle = "#4ade80";
-        ctx.lineWidth = 2;
+        ctx.strokeStyle = "rgba(127,224,181,0.95)";
+        ctx.lineWidth = 2 * (window.devicePixelRatio || 1);
+
         points.forEach((p, i) => {
           const x = xScale(p.x.getTime());
           const y = yScale(p.y);
@@ -2223,9 +2439,11 @@
         });
         ctx.stroke();
 
+        // zero line
         if (minY < 0 && maxY > 0) {
           ctx.beginPath();
-          ctx.strokeStyle = "rgba(148,163,184,0.4)";
+          ctx.strokeStyle = "rgba(148,163,184,0.24)";
+          ctx.lineWidth = 1 * (window.devicePixelRatio || 1);
           const y0 = yScale(0);
           ctx.moveTo(padding, y0);
           ctx.lineTo(w - padding, y0);
@@ -2235,41 +2453,30 @@
 
       function drawProbabilityChart(wins, losses) {
         const canvas = $("probChart");
-        const ctx = canvas.getContext("2d");
-        clearCanvas(canvas);
-        const total = wins + losses;
-        $("probCaption").textContent = total
-          ? `${wins} win(s), ${losses} loss(es).`
-          : "No win/loss data yet.";
+        const { ctx } = clearCanvas(canvas, 180);
 
+        const total = wins + losses;
+        $("probCaption").textContent = total ? `${wins} win(s), ${losses} loss(es).` : "No win/loss data yet.";
         if (!total) return;
 
         const w = canvas.width;
         const h = canvas.height;
-        const barWidth = 60;
-        const gap = 40;
-        const maxHeight = h - 40;
+        const dpr = window.devicePixelRatio || 1;
+
+        const barWidth = 56 * dpr;
+        const gap = 34 * dpr;
+        const maxHeight = h - 44 * dpr;
 
         const winHeight = (wins / total) * maxHeight;
         const lossHeight = (losses / total) * maxHeight;
 
-        const baseY = h - 20;
+        const baseY = h - 22 * dpr;
 
-        ctx.fillStyle = "#22c55e";
-        ctx.fillRect(
-          w / 2 - barWidth - gap / 2,
-          baseY - winHeight,
-          barWidth,
-          winHeight
-        );
+        ctx.fillStyle = "rgba(127,224,181,0.95)";
+        ctx.fillRect(w / 2 - barWidth - gap / 2, baseY - winHeight, barWidth, winHeight);
 
-        ctx.fillStyle = "#f97373";
-        ctx.fillRect(
-          w / 2 + gap / 2,
-          baseY - lossHeight,
-          barWidth,
-          lossHeight
-        );
+        ctx.fillStyle = "rgba(255,138,138,0.92)";
+        ctx.fillRect(w / 2 + gap / 2, baseY - lossHeight, barWidth, lossHeight);
       }
 
       // ========= Backup import / export =========
@@ -2286,9 +2493,7 @@
           a.click();
           document.body.removeChild(a);
           URL.revokeObjectURL(url);
-          alert(
-            "Backup exported. You can store this anywhere (Drive, Dropbox, etc.) as an extra copy."
-          );
+          alert("Backup exported.");
         } catch (e) {
           console.error(e);
           alert("Could not export backup.");
@@ -2306,24 +2511,11 @@
           reader.onload = (e) => {
             try {
               const data = JSON.parse(e.target.result);
-              if (!data || typeof data !== "object") {
-                alert("File does not look like a TredLog backup.");
-                return;
-              }
-              state = {
-                startingBalance: Number(data.startingBalance) || 0,
-                riskPerTrade: Number(data.riskPerTrade) || 0,
-                trades: Array.isArray(data.trades) ? data.trades : [],
-                customRules: Array.isArray(data.customRules) ? data.customRules : [],
-                confluenceTemplate:
-                  data.confluenceTemplate && typeof data.confluenceTemplate === "object"
-                    ? data.confluenceTemplate
-                    : null,
-              };
-              ensureConfluenceTemplate();
+              state = ensureStateShape(data);
               saveState();
               renderCustomRules();
               renderConfluenceBuilder();
+              resetInputs();
               recalcDashboard();
               alert("Backup imported.");
             } catch (err) {
@@ -2341,8 +2533,7 @@
         const container = $("customRulesList");
         container.innerHTML = "";
         if (!state.customRules.length) {
-          container.innerHTML =
-            '<em>No custom rules yet. Add your checklist items above.</em>';
+          container.innerHTML = '<em>No custom rules yet. Add your checklist items below.</em>';
           return;
         }
         state.customRules.forEach((rule, idx) => {
@@ -2358,14 +2549,17 @@
           alert("Please select a trade date.");
           return;
         }
+
         const pair = $("pair").value.trim();
         const direction = $("direction").value;
         const session = $("session").value.trim();
         const riskR = parseNumber($("riskR").value) || 1;
         const resultR = parseNumber($("resultR").value);
         const setup = $("setup").value.trim();
+        const entrySignal = $("entrySignal").value.trim();
         const screenshot = $("screenshot").value.trim();
         const notes = $("notes").value.trim();
+        const fees = parseNumber($("fees").value);
 
         const checklistCore = [
           $("chkPlannedRespected").checked,
@@ -2378,8 +2572,12 @@
         const disciplinePct =
           (checklistCore.filter(Boolean).length / checklistCore.length) * 100;
 
-        // NEW: Confluence snapshot stored per trade
-        const confluence = getConfluenceSnapshotForTrade();
+        // Confluence for this trade
+        const conf = getConfluenceTotalsFromChecked(draftConfluenceChecked);
+        const confluencePct = conf.overallPct;
+
+        // Store checked map inside the trade so it always matches later (and is part of backups)
+        const confluenceChecked = JSON.parse(JSON.stringify(draftConfluenceChecked || {}));
 
         const trade = {
           id: Date.now(),
@@ -2390,10 +2588,13 @@
           riskR,
           resultR,
           setup,
+          entrySignal,
           screenshot,
           notes,
+          fees,
           disciplinePct,
-          confluence, // NEW
+          confluencePct,
+          confluenceChecked,
         };
 
         if (!isDraft) {
@@ -2402,26 +2603,25 @@
           resetInputs();
           recalcDashboard();
         } else {
+          saveState();
           alert("Draft saved locally in your browser (not added to log yet).");
         }
       }
 
       function init() {
         loadState();
-        ensureConfluenceTemplate();
+        state = ensureStateShape(state);
 
-        if (state.startingBalance) {
-          $("startingBalance").value = state.startingBalance;
-        }
-        if (state.riskPerTrade) {
-          $("riskPerTrade").value = state.riskPerTrade;
-        }
+        if (state.startingBalance) $("startingBalance").value = state.startingBalance;
+        if (state.riskPerTrade) $("riskPerTrade").value = state.riskPerTrade;
 
         renderCustomRules();
         renderConfluenceBuilder();
+        renderTradeConfluenceArea();
         recalcDashboard();
         updateSigninUI();
-        updateConfluencePreview();
+        updateDisciplinePreview();
+        updateConfluenceSummaryUI();
 
         $("startingBalance").addEventListener("change", () => {
           state.startingBalance = parseNumber($("startingBalance").value);
@@ -2455,86 +2655,43 @@
           renderCustomRules();
         });
 
-        // ===== NEW: Confluence builder actions =====
+        // Confluence builder actions
         $("addTfBtn").addEventListener("click", (e) => {
           e.preventDefault();
-          const name = $("newTfName").value.trim();
-          if (!name) return;
-          ensureConfluenceTemplate();
-          state.confluenceTemplate.timeframes.push({
-            id: uid("tf"),
-            name,
-            rules: [],
-          });
-          $("newTfName").value = "";
-          saveState();
-          renderConfluenceBuilder();
-          updateConfluencePreview();
+          addTimeframesFromInput($("newTfInput").value);
+          $("newTfInput").value = "";
         });
 
-        $("resetConfluenceBtn").addEventListener("click", (e) => {
+        $("resetTfBtn").addEventListener("click", (e) => {
           e.preventDefault();
-          if (!confirm("Reset confluence timeframes & rules to defaults?")) return;
-          state.confluenceTemplate = defaultConfluenceTemplate();
+          state.confluence = getDefaultConfluence();
+          draftConfluenceChecked = {};
           saveState();
           renderConfluenceBuilder();
-          updateConfluencePreview();
+          renderTradeConfluenceArea();
+          updateConfluenceSummaryUI();
         });
 
         $("addRuleBtn").addEventListener("click", (e) => {
           e.preventDefault();
-          ensureConfluenceTemplate();
-          const tfid = $("ruleTfSelect").value;
-          const text = $("newRuleText").value.trim();
-          const weight = parseNumber($("newRuleWeight").value);
-          if (!tfid || !text) return;
-
-          const tf = state.confluenceTemplate.timeframes.find((x) => x.id === tfid);
-          if (!tf) return;
-          tf.rules.push({ id: uid("r"), text, weight });
-          $("newRuleText").value = "";
+          const tf = $("ruleTfSelect").value;
+          const text = $("ruleText").value.trim();
+          const weight = clamp(parseNumber($("ruleWeight").value), 1, 100) || 10;
+          if (!tf) return alert("Pick a timeframe.");
+          if (!text) return alert("Enter a rule.");
+          if (!Array.isArray(state.confluence.rules[tf])) state.confluence.rules[tf] = [];
+          state.confluence.rules[tf].push({ id: uid(), text, weight });
+          $("ruleText").value = "";
+          $("ruleWeight").value = "10";
           saveState();
           renderConfluenceBuilder();
-          updateConfluencePreview();
-        });
-
-        // Click handlers for remove TF / remove rule
-        document.addEventListener("click", (e) => {
-          const btn = e.target;
-          if (!btn || !btn.getAttribute) return;
-          const action = btn.getAttribute("data-action");
-          if (!action) return;
-
-          ensureConfluenceTemplate();
-
-          if (action === "rmTF") {
-            const tfid = btn.getAttribute("data-tfid");
-            if (!tfid) return;
-            if (!confirm("Remove this timeframe (and all its rules)?")) return;
-            state.confluenceTemplate.timeframes = state.confluenceTemplate.timeframes.filter(
-              (tf) => tf.id !== tfid
-            );
-            saveState();
-            renderConfluenceBuilder();
-            updateConfluencePreview();
-          }
-
-          if (action === "rmRule") {
-            const tfid = btn.getAttribute("data-tfid");
-            const rid = btn.getAttribute("data-rid");
-            if (!tfid || !rid) return;
-            const tf = state.confluenceTemplate.timeframes.find((x) => x.id === tfid);
-            if (!tf) return;
-            tf.rules = tf.rules.filter((r) => r.id !== rid);
-            saveState();
-            renderConfluenceBuilder();
-            updateConfluencePreview();
-          }
+          renderTradeConfluenceArea();
+          updateConfluenceSummaryUI();
         });
 
         $("addTradeBtn").addEventListener("click", (e) => {
           e.preventDefault();
-          addTradeFromForm();
+          addTradeFromForm(false);
         });
 
         $("saveDraftBtn").addEventListener("click", (e) => {
@@ -2543,19 +2700,10 @@
         });
 
         $("clearBtn").addEventListener("click", () => {
-          if (
-            confirm(
-              "This will clear all local trades and settings on this device. Continue?"
-            )
-          ) {
+          if (confirm("This will clear all local trades and settings on this device. Continue?")) {
             localStorage.removeItem(STORAGE_KEY);
-            state = {
-              startingBalance: 0,
-              riskPerTrade: 0,
-              trades: [],
-              customRules: [],
-              confluenceTemplate: defaultConfluenceTemplate(),
-            };
+            state = ensureStateShape({});
+            draftConfluenceChecked = {};
             resetInputs();
             renderCustomRules();
             renderConfluenceBuilder();
