@@ -1,163 +1,2752 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>TredLog – Probability-driven trading journal – Dashboard</title>
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+  <head>
+    <meta charset="UTF-8" />
+    <title>TredLog – Probability-driven trading journal – Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<!-- ================= PASSWORD GATE (SAFE) ================= -->
-<script>
-const DASHBOARD_PASSWORD = "Alihandroz2099";
-(function () {
-  if (!DASHBOARD_PASSWORD) return;
-  try {
-    const KEY = "tredlog_auth_v1";
-    if (sessionStorage.getItem(KEY) === "yes") return;
+    <!-- ============ SIMPLE PASSWORD GATE (CLIENT-SIDE ONLY) ============ -->
+    <script>
+      // EDIT ONLY THIS VALUE IF YOU WANT TO CHANGE YOUR PASSWORD
+      const DASHBOARD_PASSWORD = "Alihandroz2099";
 
-    let ok = false;
-    for (let i = 0; i < 5; i++) {
-      const pw = prompt("Enter your TredLog dashboard password:");
-      if (pw === null) break;
-      if (pw === DASHBOARD_PASSWORD) { ok = true; break; }
-      alert("Incorrect password, try again.");
-    }
-    if (!ok) {
-      document.body.innerHTML =
-        "<div style='padding:60px;font-family:system-ui;color:#111'>" +
-        "<h2>Access denied</h2><p>Reload the page to try again.</p></div>";
-    } else {
-      sessionStorage.setItem(KEY, "yes");
-    }
-  } catch (e) {
-    console.warn("Password gate error:", e);
-  }
-})();
-</script>
+      (function () {
+        if (!DASHBOARD_PASSWORD) return; // leave blank to disable
 
-<!-- ================= YOUR ORIGINAL STYLES (UNCHANGED) ================= -->
-<style>
-/* 🔒 EXACT SAME CSS YOU PROVIDED — NOT MODIFIED */
-</style>
+        try {
+          const KEY = "tredlog_auth_v1";
+          if (sessionStorage.getItem(KEY) === "yes") return;
 
-<!-- ================= ADDITIONS ONLY ================= -->
-<style>
-.calendar-grid td { padding: 10px 0; }
-.calendar-day { min-height: 64px; cursor: pointer; }
+          let ok = false;
+          for (let i = 0; i < 5; i++) {
+            const pw = prompt("Enter your TredLog dashboard password:");
+            if (pw === null) break; // user cancelled
+            if (pw === DASHBOARD_PASSWORD) {
+              ok = true;
+              break;
+            }
+            alert("Incorrect password, try again.");
+          }
+          if (!ok) {
+            alert("Access denied.");
+            document.documentElement.innerHTML = "";
+          } else {
+            sessionStorage.setItem(KEY, "yes");
+          }
+        } catch (e) {
+          console.warn("Password gate error:", e);
+        }
+      })();
+    </script>
 
-/* Image modal */
-#imageModal {
-  position: fixed;
-  inset: 0;
-  background: rgba(2,6,23,0.92);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-}
-#imageModal img {
-  max-width: 92%;
-  max-height: 92%;
-  border-radius: 16px;
-  border: 1px solid rgba(148,163,184,0.3);
-  box-shadow: 0 40px 120px rgba(0,0,0,0.6);
-}
-#imageModalClose {
-  position: absolute;
-  top: 18px;
-  right: 22px;
-  font-size: 28px;
-  color: #fff;
-  cursor: pointer;
-}
-</style>
-</head>
+    <style>
+      :root {
+        --bg0: #070a14;
+        --bg1: #0b1020;
+        --panel: rgba(18, 24, 45, 0.82);
+        --panel2: rgba(14, 20, 38, 0.92);
+        --border: rgba(148, 163, 184, 0.18);
+        --border2: rgba(148, 163, 184, 0.26);
+        --muted: rgba(148, 163, 184, 0.78);
+        --text: #f8fafc;
 
-<body>
+        --good: #7fe0b5;
+        --good2: rgba(34, 197, 94, 0.12);
+        --bad: #ff8a8a;
+        --bad2: rgba(248, 113, 113, 0.12);
 
-<!-- ================= YOUR ORIGINAL BODY (UNCHANGED) ================= -->
-<!-- EVERYTHING from <div class="shell"> ... </footer> is unchanged -->
+        --chip: rgba(2, 6, 23, 0.35);
+        --shadow: 0 18px 60px rgba(0, 0, 0, 0.45);
 
-<!-- ================= IMAGE MODAL ================= -->
-<div id="imageModal">
-  <div id="imageModalClose">×</div>
-  <img id="imageModalImg">
-</div>
+        --r: 18px;
+        --r2: 14px;
+        --pill: 999px;
 
-<script>
-/* ===== Image modal ===== */
-function openImageModal(url) {
-  if (!url.match(/\.(png|jpg|jpeg|webp)$/i)) {
-    window.open(url, "_blank");
-    return;
-  }
-  const modal = document.getElementById("imageModal");
-  document.getElementById("imageModalImg").src = url;
-  modal.style.display = "flex";
-}
-document.getElementById("imageModalClose").onclick = () => {
-  document.getElementById("imageModal").style.display = "none";
-};
-document.getElementById("imageModal").onclick = (e) => {
-  if (e.target.id === "imageModal") {
-    document.getElementById("imageModal").style.display = "none";
-  }
-};
+        --btn: rgba(2, 6, 23, 0.35);
+      }
 
-/* ===== Hook screenshot links safely ===== */
-const _origRender = renderCalendarAndRecent;
-renderCalendarAndRecent = function(trades) {
-  _origRender(trades);
-  document.querySelectorAll("#recentBody a").forEach(a => {
-    const url = a.getAttribute("href");
-    a.onclick = (e) => {
-      e.preventDefault();
-      openImageModal(url);
-    };
-  });
-};
+      * {
+        box-sizing: border-box;
+      }
 
-/* ===== Calendar click → filter trades ===== */
-document.addEventListener("click", function(e) {
-  const dayEl = e.target.closest(".calendar-day");
-  if (!dayEl) return;
+      body {
+        margin: 0;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+          sans-serif;
+        color: var(--text);
+        background: radial-gradient(
+            1000px 500px at 20% 0%,
+            rgba(70, 120, 160, 0.24),
+            transparent 60%
+          ),
+          radial-gradient(
+            900px 500px at 80% 0%,
+            rgba(34, 197, 94, 0.12),
+            transparent 55%
+          ),
+          radial-gradient(circle at top, #121a33 0, var(--bg0) 55%);
+        display: flex;
+        justify-content: center;
+      }
 
-  const day = parseInt(dayEl.firstChild.textContent,10);
-  if (!day) return;
+      .shell {
+        width: 100%;
+        max-width: 1320px;
+        padding: 22px 16px 40px;
+      }
 
-  const { first } = getCalendarMonthRange(calendarMonthOffset);
-  const y = first.getFullYear();
-  const m = String(first.getMonth()+1).padStart(2,"0");
-  const d = String(day).padStart(2,"0");
-  const dateStr = `${y}-${m}-${d}`;
+      /* Top bar */
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 14px;
+      }
 
-  const filtered = state.trades.filter(t => t.date === dateStr);
-  if (!filtered.length) return;
+      .logo-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 280px;
+      }
 
-  const body = document.getElementById("recentBody");
-  body.innerHTML = "";
-  filtered.forEach((t,i)=>{
-    const tr=document.createElement("tr");
-    [
-      i+1,t.date,t.pair,t.direction,
-      fmtR(t.pnlR),fmtUSD(t.pnlUSD),
-      `${Math.round(t.disciplinePct||0)}%`,
-      `${t.confluence?.overallPct||0}%`,
-      t.screenshot?`<a href="${t.screenshot}">Open</a>`:"",
-      (t.notes||"").replace(/</g,"&lt;")
-    ].forEach(v=>{
-      const td=document.createElement("td");
-      td.innerHTML=v;
-      tr.appendChild(td);
-    });
-    body.appendChild(tr);
-  });
-  body.scrollIntoView({behavior:"smooth"});
-});
-</script>
+      .logo-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, rgba(127, 224, 181, 0.7), rgba(54, 122, 255, 0.45));
+        box-shadow: 0 0 0 4px rgba(127, 224, 181, 0.12);
+      }
 
-<!-- ================= GOOGLE SCRIPTS (UNCHANGED) ================= -->
-<script src="https://accounts.google.com/gsi/client" async defer onload="gisLoaded()"></script>
-<script src="https://apis.google.com/js/api.js" async defer onload="gapiLoaded()"></script>
+      .logo-text-main {
+        font-weight: 650;
+        letter-spacing: 0.02em;
+        font-size: 14px;
+      }
 
-</body>
+      .logo-text-sub {
+        font-size: 11px;
+        color: var(--muted);
+      }
+
+      .header-pills {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        align-items: center;
+      }
+
+      .pill {
+        padding: 6px 10px;
+        border-radius: var(--pill);
+        border: 1px solid var(--border2);
+        font-size: 11px;
+        color: var(--muted);
+        background: rgba(2, 6, 23, 0.28);
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        backdrop-filter: blur(10px);
+      }
+
+      .pill.good {
+        border-color: rgba(34, 197, 94, 0.35);
+        color: rgba(187, 247, 208, 0.92);
+        background: rgba(34, 197, 94, 0.09);
+      }
+
+      .pill.danger {
+        border-color: rgba(248, 113, 113, 0.35);
+        color: rgba(254, 202, 202, 0.92);
+        background: rgba(127, 29, 29, 0.16);
+        cursor: pointer;
+      }
+
+      .pill.btn-small {
+        cursor: pointer;
+        color: rgba(226, 232, 240, 0.9);
+      }
+
+      .pill.btn-small:hover {
+        border-color: rgba(226, 232, 240, 0.35);
+      }
+
+      .page-title {
+        margin: 10px 2px 16px;
+      }
+      .page-title h1 {
+        margin: 0;
+        font-size: 34px;
+        letter-spacing: -0.02em;
+      }
+      .page-title p {
+        margin: 6px 0 0;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      main {
+        display: grid;
+        grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.25fr);
+        gap: 16px;
+      }
+
+      .card {
+        background: linear-gradient(
+          180deg,
+          rgba(24, 32, 60, 0.65),
+          rgba(8, 10, 18, 0.65)
+        );
+        border-radius: var(--r);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(12px);
+        overflow: hidden;
+      }
+
+      .card-inner {
+        padding: 14px 16px 16px;
+      }
+
+      .card-title-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 10px;
+        margin-bottom: 8px;
+      }
+
+      .card-title {
+        font-size: 13px;
+        font-weight: 650;
+      }
+
+      .card-subtitle {
+        font-size: 11px;
+        color: var(--muted);
+        white-space: nowrap;
+      }
+
+      .row {
+        display: flex;
+        gap: 10px;
+      }
+
+      .col-2 {
+        flex: 1 1 0;
+      }
+
+      label {
+        display: block;
+        font-size: 11px;
+        color: var(--muted);
+        margin-bottom: 4px;
+      }
+
+      input,
+      select,
+      textarea {
+        width: 100%;
+        background: rgba(2, 6, 23, 0.45);
+        border-radius: 12px;
+        border: 1px solid rgba(148, 163, 184, 0.22);
+        color: var(--text);
+        font-size: 12px;
+        padding: 8px 10px;
+        outline: none;
+      }
+
+      textarea {
+        resize: vertical;
+        min-height: 78px;
+      }
+
+      input::placeholder,
+      textarea::placeholder {
+        color: rgba(148, 163, 184, 0.65);
+      }
+
+      .btn {
+        border-radius: var(--pill);
+        border: 1px solid rgba(148, 163, 184, 0.26);
+        cursor: pointer;
+        font-size: 12px;
+        padding: 8px 14px;
+        font-weight: 600;
+        background: rgba(2, 6, 23, 0.34);
+        color: rgba(226, 232, 240, 0.92);
+      }
+
+      .btn:hover {
+        border-color: rgba(226, 232, 240, 0.35);
+      }
+
+      .btn-primary {
+        border: none;
+        background: linear-gradient(90deg, rgba(127, 224, 181, 0.9), rgba(54, 122, 255, 0.65));
+        color: #081018;
+        box-shadow: 0 18px 40px rgba(34, 197, 94, 0.10);
+      }
+
+      .btn-primary:hover {
+        filter: brightness(1.05);
+      }
+
+      .btn-small {
+        padding: 5px 10px;
+        font-size: 11px;
+      }
+
+      .section-heading {
+        font-size: 12px;
+        font-weight: 650;
+        margin-top: 10px;
+        margin-bottom: 6px;
+      }
+
+      .small-text {
+        font-size: 10.5px;
+        color: rgba(148, 163, 184, 0.72);
+        line-height: 1.35;
+      }
+
+      /* Checklist cards */
+      .checklist-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .checklist-card {
+        background: rgba(2, 6, 23, 0.35);
+        border-radius: var(--r2);
+        border: 1px solid rgba(148, 163, 184, 0.16);
+        padding: 10px 10px 10px;
+      }
+
+      .checklist-title {
+        font-weight: 650;
+        margin-bottom: 6px;
+        font-size: 11.5px;
+      }
+
+      .checklist-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        margin-bottom: 6px;
+        user-select: none;
+      }
+
+      .checklist-item input {
+        width: auto;
+        margin-top: 2px;
+      }
+
+      .footer-row {
+        display: grid;
+        grid-template-columns: 1fr 1.4fr 1fr;
+        gap: 10px;
+        align-items: center;
+        margin-top: 10px;
+        font-size: 10.5px;
+        color: var(--muted);
+      }
+
+      .footer-row strong {
+        color: var(--good);
+      }
+
+      /* Dashboard metrics (PerfectTrade-like) */
+      .dash-grid {
+        display: grid;
+        grid-template-columns: 1.4fr 1fr;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+
+      .dash-big {
+        border-radius: var(--r);
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        background: radial-gradient(
+          900px 240px at 30% 10%,
+          rgba(127, 224, 181, 0.18),
+          transparent 60%
+        ),
+        rgba(2, 6, 23, 0.35);
+        padding: 14px 14px 12px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .dash-big .label {
+        color: rgba(148, 163, 184, 0.8);
+        font-size: 11px;
+      }
+
+      .dash-big .value {
+        font-size: 48px;
+        font-weight: 750;
+        letter-spacing: -0.02em;
+        margin-top: 6px;
+        color: var(--good);
+      }
+
+      .dash-big .sub {
+        margin-top: 4px;
+        color: rgba(187, 247, 208, 0.86);
+        font-size: 12px;
+      }
+
+      .dash-big .icon {
+        position: absolute;
+        right: 14px;
+        top: 14px;
+        width: 42px;
+        height: 42px;
+        border-radius: 14px;
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        background: rgba(127, 224, 181, 0.12);
+        display: grid;
+        place-items: center;
+        color: rgba(187, 247, 208, 0.9);
+        font-weight: 750;
+      }
+
+      .dash-right {
+        display: grid;
+        gap: 10px;
+      }
+
+      .dash-side {
+        border-radius: var(--r);
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        background: rgba(2, 6, 23, 0.35);
+        padding: 12px 12px 12px;
+        overflow: hidden;
+      }
+
+      .dash-side .label {
+        color: rgba(148, 163, 184, 0.82);
+        font-size: 11px;
+      }
+
+      .dash-side .value {
+        font-size: 26px;
+        font-weight: 740;
+        margin-top: 6px;
+      }
+
+      .dash-side.good .value {
+        color: rgba(187, 247, 208, 0.92);
+      }
+
+      .dash-side.bad {
+        background: radial-gradient(
+          700px 240px at 40% 0%,
+          rgba(248, 113, 113, 0.18),
+          transparent 60%
+        ),
+        rgba(2, 6, 23, 0.35);
+      }
+
+      .dash-side.bad .value {
+        color: rgba(254, 202, 202, 0.92);
+      }
+
+      .dash-side .sub {
+        margin-top: 2px;
+        font-size: 11px;
+        color: rgba(148, 163, 184, 0.75);
+      }
+
+      .dash-mini {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+
+      .mini {
+        border-radius: var(--r);
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        background: rgba(2, 6, 23, 0.35);
+        padding: 10px 10px 10px;
+      }
+
+      .mini .label {
+        color: rgba(148, 163, 184, 0.8);
+        font-size: 11px;
+        margin-bottom: 6px;
+      }
+
+      .mini .value {
+        font-size: 16px;
+        font-weight: 700;
+      }
+
+      /* Charts & lower cards */
+      canvas {
+        width: 100%;
+        height: 180px;
+        background: rgba(2, 6, 23, 0.35);
+        border-radius: var(--r2);
+        border: 1px solid rgba(148, 163, 184, 0.16);
+      }
+
+      .chart-row {
+        display: grid;
+        grid-template-columns: 2.1fr 1.1fr;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+
+      .chart-box {
+        background: rgba(2, 6, 23, 0.35);
+        border-radius: var(--r);
+        border: 1px solid rgba(148, 163, 184, 0.16);
+        padding: 10px 10px 10px;
+      }
+
+      .chart-title-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 10px;
+        margin-bottom: 6px;
+      }
+
+      .chart-title {
+        font-size: 11.5px;
+        font-weight: 700;
+      }
+
+      .chart-caption {
+        font-size: 10.5px;
+        color: rgba(148, 163, 184, 0.72);
+      }
+
+      .three-grid {
+        display: grid;
+        grid-template-columns: 1.2fr 1.2fr 1.2fr;
+        gap: 10px;
+        margin-top: 10px;
+      }
+
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 11px;
+      }
+
+      .table th,
+      .table td {
+        padding: 6px 8px;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+        text-align: left;
+        vertical-align: top;
+      }
+
+      .table th {
+        font-weight: 650;
+        color: rgba(148, 163, 184, 0.85);
+        position: sticky;
+        top: 0;
+        background: rgba(2, 6, 23, 0.55);
+        backdrop-filter: blur(10px);
+      }
+
+      .table tbody tr:hover td {
+        background: rgba(127, 224, 181, 0.05);
+      }
+
+      .table a {
+        color: rgba(187, 247, 208, 0.9);
+        text-decoration: none;
+      }
+
+      .table a:hover {
+        text-decoration: underline;
+      }
+
+      .calendar-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 6px;
+      }
+
+      .calendar-title {
+        font-size: 11.5px;
+        font-weight: 700;
+      }
+
+      .calendar-nav {
+        display: flex;
+        gap: 6px;
+      }
+
+      .calendar-nav button {
+        border-radius: var(--pill);
+        border: 1px solid rgba(148, 163, 184, 0.22);
+        background: rgba(2, 6, 23, 0.34);
+        color: rgba(226, 232, 240, 0.86);
+        cursor: pointer;
+        font-size: 11px;
+        padding: 4px 10px;
+      }
+
+      .calendar-nav button:hover {
+        border-color: rgba(226, 232, 240, 0.35);
+      }
+
+      .calendar-grid {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 10.5px;
+      }
+
+      .calendar-grid th,
+      .calendar-grid td {
+        text-align: center;
+        padding: 6px 0;
+      }
+
+      .calendar-grid th {
+        color: rgba(148, 163, 184, 0.8);
+        font-weight: 650;
+      }
+
+      .calendar-day {
+        border-radius: 10px;
+        padding: 7px 0;
+        margin: 2px;
+        border: 1px solid rgba(148, 163, 184, 0.10);
+        background: rgba(2, 6, 23, 0.25);
+        min-height: 44px;
+        display: grid;
+        place-items: center;
+      }
+
+      .calendar-day.has-trades {
+        background: rgba(34, 197, 94, 0.10);
+        border-color: rgba(34, 197, 94, 0.25);
+      }
+
+      .calendar-day.negative {
+        background: rgba(248, 113, 113, 0.10);
+        border-color: rgba(248, 113, 113, 0.25);
+      }
+
+      .calendar-pnl {
+        display: block;
+        font-size: 10px;
+        margin-top: 2px;
+        opacity: 0.95;
+      }
+
+      .eval-list {
+        list-style: none;
+        padding: 0;
+        margin: 6px 0 0;
+        font-size: 10.5px;
+        color: rgba(148, 163, 184, 0.8);
+      }
+
+      .eval-list li {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 5px 0;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.10);
+      }
+
+      .eval-list li:last-child {
+        border-bottom: none;
+      }
+
+      .eval-value {
+        color: rgba(226, 232, 240, 0.92);
+        font-weight: 650;
+      }
+
+      /* Confluence builder */
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin: 6px 0 8px;
+      }
+
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border-radius: var(--pill);
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        background: rgba(2, 6, 23, 0.35);
+        padding: 5px 10px;
+        font-size: 11px;
+        color: rgba(226, 232, 240, 0.9);
+        user-select: none;
+      }
+
+      .chip button {
+        border: none;
+        background: transparent;
+        color: rgba(148, 163, 184, 0.9);
+        cursor: pointer;
+        font-size: 14px;
+        line-height: 1;
+        padding: 0;
+        margin: 0;
+      }
+
+      .chip button:hover {
+        color: rgba(226, 232, 240, 0.95);
+      }
+
+      .rule-row {
+        display: grid;
+        grid-template-columns: 1.1fr 2.2fr 0.8fr auto;
+        gap: 8px;
+        align-items: end;
+        margin-top: 8px;
+      }
+
+      .rules-list {
+        margin-top: 10px;
+        border-top: 1px solid rgba(148, 163, 184, 0.12);
+        padding-top: 10px;
+        display: grid;
+        gap: 10px;
+      }
+
+      .tf-group {
+        border: 1px solid rgba(148, 163, 184, 0.14);
+        border-radius: var(--r2);
+        background: rgba(2, 6, 23, 0.22);
+        padding: 10px 10px 8px;
+      }
+
+      .tf-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 10px;
+        margin-bottom: 6px;
+      }
+
+      .tf-title {
+        font-weight: 750;
+        font-size: 11.5px;
+      }
+
+      .tf-pct {
+        font-size: 11px;
+        color: rgba(187, 247, 208, 0.9);
+      }
+
+      .rule-line {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 10px;
+        align-items: center;
+        padding: 5px 0;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.10);
+      }
+
+      .rule-line:last-child {
+        border-bottom: none;
+      }
+
+      .rule-line .x {
+        border: none;
+        background: transparent;
+        color: rgba(148, 163, 184, 0.85);
+        cursor: pointer;
+        font-size: 14px;
+        padding: 0 2px;
+      }
+
+      .rule-line .x:hover {
+        color: rgba(226, 232, 240, 0.95);
+      }
+
+      .confluence-summary {
+        margin-top: 8px;
+        padding: 10px;
+        border-radius: var(--r2);
+        border: 1px solid rgba(148, 163, 184, 0.14);
+        background: radial-gradient(
+          800px 200px at 40% 0%,
+          rgba(127, 224, 181, 0.14),
+          transparent 60%
+        ),
+        rgba(2, 6, 23, 0.28);
+      }
+
+      .confluence-summary .big {
+        font-size: 48px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        line-height: 1;
+        margin: 8px 0 4px;
+        color: rgba(127, 224, 181, 0.9);
+        text-align: center;
+      }
+
+      .confluence-summary .tagline {
+        text-align: center;
+        color: rgba(226, 232, 240, 0.9);
+        font-size: 12px;
+        font-weight: 650;
+      }
+
+      .confluence-summary .minirow {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 10px;
+      }
+
+      .mini-pill {
+        border-radius: var(--pill);
+        border: 1px solid rgba(148, 163, 184, 0.16);
+        background: rgba(2, 6, 23, 0.30);
+        padding: 6px 10px;
+        font-size: 11px;
+        color: rgba(226, 232, 240, 0.9);
+      }
+
+      footer {
+        margin-top: 14px;
+        font-size: 10.5px;
+        color: rgba(148, 163, 184, 0.75);
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      footer a {
+        color: rgba(187, 247, 208, 0.9);
+        text-decoration: none;
+      }
+
+      footer a:hover {
+        text-decoration: underline;
+      }
+
+      @media (max-width: 1100px) {
+        main {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .three-grid {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .dash-mini {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 720px) {
+        header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+        .row {
+          flex-direction: column;
+        }
+        .checklist-grid {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .dash-grid {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .dash-mini {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .chart-row {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .footer-row {
+          grid-template-columns: 1fr;
+          gap: 8px;
+        }
+        .rule-row {
+          grid-template-columns: minmax(0, 1fr);
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="shell">
+      <header>
+        <div class="logo-row">
+          <div class="logo-icon"></div>
+          <div>
+            <div class="logo-text-main">TredLog</div>
+            <div class="logo-text-sub">
+              Probability-driven trading journal – Dashboard
+            </div>
+          </div>
+        </div>
+
+        <div class="header-pills">
+          <div id="storageModePill" class="pill">Local autosave • Browser only</div>
+          <div class="pill good">Built for serious traders</div>
+          <button id="exportBtn" class="pill btn-small">Export backup</button>
+          <button id="importBtn" class="pill btn-small">Import backup</button>
+          <div id="driveStatusPill" class="pill">Drive: not connected</div>
+          <button id="googleSignInBtn" class="pill btn-small">Sign in with Google</button>
+          <button id="googleSignOutBtn" class="pill btn-small" style="display: none">Sign out</button>
+          <div id="clearBtn" class="pill danger">Clear local data</div>
+        </div>
+      </header>
+
+      <div class="page-title">
+        <h1>Trading Dashboard</h1>
+        <p>Your trading performance at a glance.</p>
+      </div>
+
+      <main>
+        <!-- LEFT: account & new trade -->
+        <section class="card">
+          <div class="card-inner">
+            <div class="card-title-row">
+              <div class="card-title">Account & new trade</div>
+              <div class="card-subtitle">
+                <span id="tradeCountLabel">0 trades logged</span>
+              </div>
+            </div>
+
+            <!-- Account -->
+            <div class="row">
+              <div class="col-2">
+                <label for="startingBalance">Starting balance (USD)</label>
+                <input id="startingBalance" type="number" min="0" step="0.01" placeholder="e.g. 10,000" />
+              </div>
+              <div class="col-2">
+                <label for="riskPerTrade">Risk per trade (USD)</label>
+                <input id="riskPerTrade" type="number" step="0.01" min="0" placeholder="e.g. 1,000" />
+              </div>
+            </div>
+
+            <!-- Trade core -->
+            <div class="row" style="margin-top: 8px">
+              <div class="col-2">
+                <label for="tradeDate">Date</label>
+                <input id="tradeDate" type="date" />
+              </div>
+              <div class="col-2">
+                <label for="pair">Pair / symbol</label>
+                <input id="pair" type="text" placeholder="e.g. GBPUSD" />
+              </div>
+            </div>
+
+            <div class="row" style="margin-top: 8px">
+              <div class="col-2">
+                <label for="direction">Direction</label>
+                <select id="direction">
+                  <option value="">Select</option>
+                  <option value="Buy">Buy</option>
+                  <option value="Sell">Sell</option>
+                  <option value="Long">Long</option>
+                  <option value="Short">Short</option>
+                </select>
+              </div>
+              <div class="col-2">
+                <label for="session">Session</label>
+                <input id="session" type="text" placeholder="London, NY, Asia…" />
+              </div>
+            </div>
+
+            <div class="row" style="margin-top: 8px">
+              <div class="col-2">
+                <label for="riskR">Risk (R)</label>
+                <input id="riskR" type="number" step="0.01" placeholder="1" value="1" />
+              </div>
+              <div class="col-2">
+                <label for="resultR">Result (R)</label>
+                <input id="resultR" type="number" step="0.01" placeholder="e.g. -1, 0.5, 2" />
+              </div>
+            </div>
+
+            <div class="row" style="margin-top: 8px">
+              <div class="col-2">
+                <label for="setup">Setup (custom)</label>
+                <input id="setup" type="text" placeholder="Type anything (saved per trade)" />
+              </div>
+              <div class="col-2">
+                <label for="entrySignal">Entry signal (custom)</label>
+                <input id="entrySignal" type="text" placeholder="Type anything (saved per trade)" />
+              </div>
+            </div>
+
+            <div class="row" style="margin-top: 8px">
+              <div class="col-2">
+                <label for="screenshot">Screenshot / chart link</label>
+                <input id="screenshot" type="text" placeholder="Paste TradingView or chart URL" />
+              </div>
+              <div class="col-2">
+                <label for="fees">Fees (USD) (optional)</label>
+                <input id="fees" type="number" step="0.01" placeholder="0.00" />
+              </div>
+            </div>
+
+            <div style="margin-top: 8px">
+              <label for="notes">Journal notes</label>
+              <textarea id="notes" placeholder="What did you see? Which rules were met? Where could you improve?"></textarea>
+            </div>
+
+            <!-- Weighted checklist -->
+            <div class="section-heading">Weighted checklist</div>
+            <div class="small-text" style="margin-bottom: 6px">
+              Tick only what actually happened on this trade. Discipline % is based on the core rules.
+            </div>
+
+            <div class="checklist-grid">
+              <!-- Custom setup (global list - your personal reminders) -->
+              <div class="checklist-card">
+                <div class="checklist-title">Custom setup checklist</div>
+                <div class="small-text" style="margin-bottom: 6px">
+                  Add your own reminders (e.g. “Clean close at level”). These are stored globally and shown here.
+                </div>
+                <div id="customRulesList" class="small-text" style="min-height: 40px">
+                  <em>No custom rules yet. Add your checklist items below.</em>
+                </div>
+                <div style="margin-top: 8px; display: flex; gap: 6px">
+                  <input id="newCustomRule" type="text" placeholder="e.g. Clean close at level" />
+                  <button id="addCustomRuleBtn" class="btn btn-small">Add</button>
+                </div>
+              </div>
+
+              <!-- Risk & discipline -->
+              <div class="checklist-card">
+                <div class="checklist-title">Risk & discipline</div>
+                <label class="checklist-item">
+                  <input id="chkPlannedRespected" type="checkbox" />
+                  <span>Planned R respected.</span>
+                </label>
+                <label class="checklist-item">
+                  <input id="chkNoRevenge" type="checkbox" />
+                  <span>No revenge trades.</span>
+                </label>
+                <label class="checklist-item">
+                  <input id="chkNoAddRisk" type="checkbox" />
+                  <span>No adding risk mid-trade.</span>
+                </label>
+              </div>
+
+              <!-- Screenshots / behaviour -->
+              <div class="checklist-card">
+                <div class="checklist-title">Screenshots / behaviour</div>
+                <label class="checklist-item">
+                  <input id="chkScreenshotsSaved" type="checkbox" />
+                  <span>Screenshots saved for review.</span>
+                </label>
+                <label class="checklist-item">
+                  <input id="chkAnnotated" type="checkbox" />
+                  <span>Annotated before &amp; after.</span>
+                </label>
+                <label class="checklist-item">
+                  <input id="chkClearHeadspace" type="checkbox" />
+                  <span>Clear headspace / no FOMO late session.</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Confluence checklist (custom) -->
+            <div class="section-heading" style="margin-top: 14px">
+              Confluence checklist (custom)
+            </div>
+            <div class="small-text">
+              Create your own timeframes (default: 4H, M30, M15) and rules with weights. Confluence % updates live and is stored inside each trade.
+            </div>
+
+            <div class="checklist-card" style="margin-top: 10px">
+              <div class="checklist-title">Confluence builder</div>
+
+              <div class="small-text">Timeframes (tap × to remove)</div>
+              <div id="tfChips" class="chips"></div>
+
+              <div class="row" style="margin-top: 8px">
+                <div class="col-2">
+                  <label for="newTfInput">Add timeframe</label>
+                  <input id="newTfInput" type="text" placeholder="e.g. 4H, M30, M15" />
+                </div>
+                <div class="col-2" style="display: flex; gap: 8px; align-items: end">
+                  <button id="addTfBtn" class="btn btn-small">Add TF</button>
+                  <button id="resetTfBtn" class="btn btn-small">Reset defaults</button>
+                </div>
+              </div>
+
+              <div class="rule-row">
+                <div>
+                  <label for="ruleTfSelect">Timeframe</label>
+                  <select id="ruleTfSelect"></select>
+                </div>
+                <div>
+                  <label for="ruleText">Rule</label>
+                  <input id="ruleText" type="text" placeholder="e.g. Trend aligned, At AOI / rejected..." />
+                </div>
+                <div>
+                  <label for="ruleWeight">Weight</label>
+                  <input id="ruleWeight" type="number" step="1" min="1" max="100" value="10" />
+                </div>
+                <div>
+                  <button id="addRuleBtn" class="btn btn-small">Add rule</button>
+                </div>
+              </div>
+
+              <div id="rulesList" class="rules-list"></div>
+
+              <div class="section-heading" style="margin-top: 12px">This trade – Confluence checklist</div>
+              <div id="tradeConfluenceArea"></div>
+
+              <div class="confluence-summary">
+                <div class="small-text" style="text-align:center">TOTAL OVERALL SCORE</div>
+                <div id="confluenceOverallBig" class="big">0%</div>
+                <div id="confluenceTagline" class="tagline">Weak Setup</div>
+                <div id="confluenceMiniRow" class="minirow"></div>
+              </div>
+            </div>
+
+            <div class="footer-row">
+              <div>
+                <button id="saveDraftBtn" class="btn btn-small">Save draft</button>
+              </div>
+              <div>
+                <span id="disciplineLabel">0 / 6 rules followed (0% discipline).</span>
+                <div class="small-text">Higher score → higher discipline per trade.</div>
+              </div>
+              <div style="text-align: right">
+                <button id="addTradeBtn" class="btn btn-primary">Add trade to log</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- RIGHT: dashboard -->
+        <section class="card">
+          <div class="card-inner">
+            <div class="card-title-row">
+              <div class="card-title">Equity & performance overview</div>
+              <div class="card-subtitle">
+                <span id="toplineTotals">Total PnL: $0.00 • Balance: $0.00 • Starting: $0.00</span>
+              </div>
+            </div>
+
+            <!-- PerfectTrade-like top cards -->
+            <div class="dash-grid">
+              <div class="dash-big">
+                <div class="label">Net Profit &amp; Loss</div>
+                <div id="netPnlBig" class="value">$0.00</div>
+                <div id="netPnlSub" class="sub">+ 0 trades completed</div>
+                <div class="icon">$</div>
+
+                <div style="display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin-top: 12px;">
+                  <div class="mini" style="border-radius:14px">
+                    <div class="label">Win Rate</div>
+                    <div id="winRateValue" class="value">0%</div>
+                  </div>
+                  <div class="mini" style="border-radius:14px">
+                    <div class="label">Profit Factor</div>
+                    <div id="profitFactorValue" class="value">0.00</div>
+                  </div>
+                  <div class="mini" style="border-radius:14px">
+                    <div class="label">Avg Confluence</div>
+                    <div id="avgConfluenceValue" class="value">0%</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="dash-right">
+                <div class="dash-side good">
+                  <div class="label">Total Profit</div>
+                  <div id="totalProfitValue" class="value">$0.00</div>
+                  <div id="totalProfitSub" class="sub">0 winning trades</div>
+                </div>
+                <div class="dash-side bad">
+                  <div class="label">Total Loss</div>
+                  <div id="totalLossValue" class="value">$0.00</div>
+                  <div id="totalLossSub" class="sub">0 losing trades</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="dash-mini">
+              <div class="mini">
+                <div class="label">Largest Win</div>
+                <div id="largestWinValue" class="value">$0.00</div>
+              </div>
+              <div class="mini">
+                <div class="label">Largest Loss</div>
+                <div id="largestLossValue" class="value">$0.00</div>
+              </div>
+              <div class="mini">
+                <div class="label">Best Streak</div>
+                <div id="bestStreakValue" class="value">0</div>
+              </div>
+              <div class="mini">
+                <div class="label">Total Trades</div>
+                <div id="totalTradesMini" class="value">0</div>
+              </div>
+            </div>
+
+            <!-- Charts -->
+            <div class="chart-row">
+              <div class="chart-box">
+                <div class="chart-title-row">
+                  <div class="chart-title">Equity curve (cumulative R)</div>
+                  <div id="equityCaption" class="chart-caption">
+                    No trades yet. Log your first setup to start drawing your curve.
+                  </div>
+                </div>
+                <canvas id="equityChart" height="180"></canvas>
+              </div>
+              <div class="chart-box">
+                <div class="chart-title-row">
+                  <div class="chart-title">Probability view (wins vs losses)</div>
+                  <div id="probCaption" class="chart-caption"></div>
+                </div>
+                <canvas id="probChart" height="180"></canvas>
+              </div>
+            </div>
+
+            <!-- Three lower cards -->
+            <div class="three-grid">
+              <!-- Weekly & monthly stats -->
+              <div class="chart-box">
+                <div class="chart-title">Weekly & monthly stats</div>
+                <div class="small-text">Quick glance at last 7 and 30 days.</div>
+                <ul class="eval-list">
+                  <li>
+                    <span>Last 7 days</span>
+                    <span id="last7PnL" class="eval-value"></span>
+                  </li>
+                  <li>
+                    <span>Last 30 days</span>
+                    <span id="last30PnL" class="eval-value"></span>
+                  </li>
+                  <li>
+                    <span>Total trades</span>
+                    <span id="totalTradesEval" class="eval-value"></span>
+                  </li>
+                  <li>
+                    <span>Best day (USD)</span>
+                    <span id="bestDayEval" class="eval-value"></span>
+                  </li>
+                  <li>
+                    <span>Worst day (USD)</span>
+                    <span id="worstDayEval" class="eval-value"></span>
+                  </li>
+                </ul>
+              </div>
+
+              <!-- Calendar -->
+              <div class="chart-box">
+                <div class="calendar-header">
+                  <div class="calendar-title" id="calendarTitle">Calendar – this month</div>
+                  <div class="calendar-nav">
+                    <button id="calPrevBtn">‹</button>
+                    <button id="calNextBtn">›</button>
+                  </div>
+                </div>
+                <table class="calendar-grid">
+                  <thead>
+                    <tr>
+                      <th>Sun</th>
+                      <th>Mon</th>
+                      <th>Tue</th>
+                      <th>Wed</th>
+                      <th>Thu</th>
+                      <th>Fri</th>
+                      <th>Sat</th>
+                    </tr>
+                  </thead>
+                  <tbody id="calendarBody"></tbody>
+                </table>
+              </div>
+
+              <!-- Evaluation -->
+              <div class="chart-box">
+                <div class="chart-title">Evaluation</div>
+                <ul class="eval-list">
+                  <li>
+                    <span>Total number of trades</span>
+                    <span id="evalTotalTrades" class="eval-value"></span>
+                  </li>
+                  <li>
+                    <span>Avg. profit per trading day</span>
+                    <span id="evalAvgDay" class="eval-value"></span>
+                  </li>
+                  <li>
+                    <span>Biggest winner</span>
+                    <span id="evalBiggestWinner" class="eval-value"></span>
+                  </li>
+                  <li>
+                    <span>Biggest loser</span>
+                    <span id="evalBiggestLoser" class="eval-value"></span>
+                  </li>
+                  <li>
+                    <span>Total fees</span>
+                    <span id="evalFees" class="eval-value">$0.00</span>
+                  </li>
+                  <li>
+                    <span>Winrate w/o BE</span>
+                    <span id="evalWinNoBE" class="eval-value"></span>
+                  </li>
+                  <li>
+                    <span>ROI</span>
+                    <span id="evalROI" class="eval-value"></span>
+                  </li>
+                  <li>
+                    <span>Max drawdown</span>
+                    <span id="evalDrawdown" class="eval-value"></span>
+                  </li>
+                  <li>
+                    <span>Winning / Losing days</span>
+                    <span id="evalWinLoseDays" class="eval-value"></span>
+                  </li>
+                  <li>
+                    <span>Trades per day / week</span>
+                    <span id="evalTradesPer" class="eval-value"></span>
+                  </li>
+                  <li>
+                    <span>Current streak</span>
+                    <span id="evalStreak" class="eval-value"></span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Recent trades table -->
+            <div class="chart-box" style="margin-top: 10px">
+              <div class="chart-title-row">
+                <div class="chart-title">Recent trades</div>
+                <div class="chart-caption" id="recentCaption"></div>
+              </div>
+
+              <div style="max-height: 220px; overflow: auto; border-radius: 14px">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Date</th>
+                      <th>Pair</th>
+                      <th>Dir</th>
+                      <th>R</th>
+                      <th>PnL ($)</th>
+                      <th>Disc%</th>
+                      <th>Conf%</th>
+                      <th>Screenshot</th>
+                      <th>Notes</th>
+                    </tr>
+                  </thead>
+                  <tbody id="recentBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer>
+        <div>© 2025 TredLog. All rights reserved.</div>
+        <div>
+          Contact:
+          <a href="mailto:support@tredlog.com">support@tredlog.com</a>
+        </div>
+      </footer>
+    </div>
+
+    <script>
+      // ========= Google Drive config (TradingDashboard project) =========
+      const GOOGLE_CLIENT_ID =
+        "751789089838-mom366k6mhe6m0jee8b8cir1mvjb1p65.apps.googleusercontent.com";
+      const GOOGLE_API_KEY = "AIzaSyDgSO-jlOC4tVTJyDfDDC1yjvFxiOsaZmY";
+      const GOOGLE_DISCOVERY_DOCS = [
+        "https://www.googleapis.com/discovery/v1/apis/drive/v3/rest",
+      ];
+      const GOOGLE_SCOPES = "https://www.googleapis.com/auth/drive.file";
+
+      // ========= Google runtime state =========
+      let tokenClient = null;
+      let gapiInitialized = false;
+      let isSignedIn = false;
+      let driveFileId = null;
+      let driveSaveTimeout = null;
+
+      // ========= Storage / state =========
+      const STORAGE_KEY = "tredlog_dashboard_v3";
+
+      // Month offset for calendar & recent trades filtering
+      let calendarMonthOffset = 0; // 0 = current month
+
+      // Draft confluence checks for the current trade form (not saved until trade is added)
+      let draftConfluenceChecked = {}; // { TF: { ruleId: true } }
+
+      // ========= Helpers =========
+      const $ = (id) => document.getElementById(id);
+
+      function fmtUSD(v) {
+        if (!isFinite(v)) return "$0.00";
+        return (
+          "$" +
+          Number(v).toLocaleString("en-US", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })
+        );
+      }
+
+      function fmtR(v) {
+        if (!isFinite(v)) return "0.0R";
+        return (
+          Number(v).toLocaleString("en-US", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          }) + "R"
+        );
+      }
+
+      function fmtPct(v) {
+        if (!isFinite(v)) return "0%";
+        return (
+          Number(v).toLocaleString("en-US", {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0,
+          }) + "%"
+        );
+      }
+
+      function parseNumber(input) {
+        const v = Number(input);
+        return isFinite(v) ? v : 0;
+      }
+
+      function uid() {
+        return Math.random().toString(16).slice(2) + Date.now().toString(16);
+      }
+
+      function clamp(n, a, b) {
+        return Math.max(a, Math.min(b, n));
+      }
+
+      // ========= Default Confluence (4H, M30, M15) =========
+      function getDefaultConfluence() {
+        const timeframes = ["4H", "M30", "M15"];
+        const rules = {
+          "4H": [
+            { id: uid(), text: "Trend aligned", weight: 10 },
+            { id: uid(), text: "At AOI / rejected", weight: 10 },
+            { id: uid(), text: "Break & retest pattern", weight: 10 },
+          ],
+          "M30": [
+            { id: uid(), text: "Touching EMA / dynamic level", weight: 5 },
+            { id: uid(), text: "Round psychological level", weight: 5 },
+            { id: uid(), text: "Candlestick rejection from AOI", weight: 10 },
+          ],
+          "M15": [
+            { id: uid(), text: "Entry alignment / clean trigger", weight: 10 },
+            { id: uid(), text: "Rejection from previous structure", weight: 10 },
+            { id: uid(), text: "No chop / clear space to target", weight: 5 },
+          ],
+        };
+        return { timeframes, rules };
+      }
+
+      // ========= State =========
+      let state = {
+        startingBalance: 0,
+        riskPerTrade: 0,
+        trades: [],
+        customRules: [],
+        confluence: getDefaultConfluence(),
+      };
+
+      function ensureStateShape(obj) {
+        const base = {
+          startingBalance: 0,
+          riskPerTrade: 0,
+          trades: [],
+          customRules: [],
+          confluence: getDefaultConfluence(),
+        };
+
+        const s = Object.assign({}, base, (obj && typeof obj === "object" ? obj : {}));
+        s.startingBalance = Number(s.startingBalance) || 0;
+        s.riskPerTrade = Number(s.riskPerTrade) || 0;
+        s.trades = Array.isArray(s.trades) ? s.trades : [];
+        s.customRules = Array.isArray(s.customRules) ? s.customRules : [];
+
+        // Confluence shape
+        if (!s.confluence || typeof s.confluence !== "object") s.confluence = getDefaultConfluence();
+        if (!Array.isArray(s.confluence.timeframes)) s.confluence.timeframes = getDefaultConfluence().timeframes.slice();
+        if (!s.confluence.rules || typeof s.confluence.rules !== "object") s.confluence.rules = getDefaultConfluence().rules;
+
+        // Ensure each TF exists in rules map
+        s.confluence.timeframes.forEach((tf) => {
+          if (!Array.isArray(s.confluence.rules[tf])) s.confluence.rules[tf] = [];
+          // Ensure rule items have ids
+          s.confluence.rules[tf] = s.confluence.rules[tf].map((r) => ({
+            id: r && r.id ? String(r.id) : uid(),
+            text: (r && r.text ? String(r.text) : "").trim(),
+            weight: clamp(parseNumber(r && r.weight), 1, 100) || 10,
+          })).filter(r => r.text);
+        });
+
+        return s;
+      }
+
+      function saveState(shouldSyncDrive = true) {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        } catch (e) {
+          console.warn("Failed to save state", e);
+        }
+        if (shouldSyncDrive) scheduleDriveSave();
+      }
+
+      function loadState() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return;
+          const data = JSON.parse(raw);
+          state = ensureStateShape(data);
+        } catch (e) {
+          console.warn("Failed to load state", e);
+        }
+      }
+
+      function resetInputs() {
+        $("tradeDate").value = "";
+        $("pair").value = "";
+        $("direction").value = "";
+        $("session").value = "";
+        $("riskR").value = "1";
+        $("resultR").value = "";
+        $("setup").value = "";
+        $("entrySignal").value = "";
+        $("screenshot").value = "";
+        $("fees").value = "";
+        $("notes").value = "";
+
+        [
+          "chkPlannedRespected",
+          "chkNoRevenge",
+          "chkNoAddRisk",
+          "chkScreenshotsSaved",
+          "chkAnnotated",
+          "chkClearHeadspace",
+        ].forEach((id) => {
+          $(id).checked = false;
+        });
+
+        draftConfluenceChecked = {};
+        updateDisciplinePreview();
+        renderTradeConfluenceArea(); // resets confluence checkboxes
+        updateConfluenceSummaryUI(); // resets summary
+      }
+
+      // ========= Discipline % =========
+      function updateDisciplinePreview() {
+        const coreChecks = [
+          "chkPlannedRespected",
+          "chkNoRevenge",
+          "chkNoAddRisk",
+          "chkScreenshotsSaved",
+          "chkAnnotated",
+          "chkClearHeadspace",
+        ];
+        const total = coreChecks.length;
+        let hit = 0;
+        coreChecks.forEach((id) => {
+          if ($(id).checked) hit++;
+        });
+        const pct = total ? Math.round((hit / total) * 100) : 0;
+        $("disciplineLabel").textContent = `${hit} / ${total} rules followed (${pct}% discipline).`;
+      }
+
+      // ========= Calendar helpers =========
+      function getCalendarMonthRange(offset) {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = now.getMonth() + offset; // can be negative / >11
+        const first = new Date(year, month, 1);
+        const last = new Date(year, month + 1, 0);
+        return { first, last };
+      }
+
+      // ========= Google Drive helpers =========
+      function setDriveStatus(text, isOffOrError) {
+        const pill = $("driveStatusPill");
+        if (!pill) return;
+        pill.textContent = text;
+        if (isOffOrError) {
+          pill.style.borderColor = "rgba(248,113,113,0.35)";
+          pill.style.color = "rgba(254,202,202,0.92)";
+          pill.style.background = "rgba(127,29,29,0.16)";
+        } else {
+          pill.style.borderColor = "rgba(34,197,94,0.35)";
+          pill.style.color = "rgba(187,247,208,0.92)";
+          pill.style.background = "rgba(34,197,94,0.09)";
+        }
+      }
+
+      function updateSigninUI() {
+        const signInBtn = $("googleSignInBtn");
+        const signOutBtn = $("googleSignOutBtn");
+        const storagePill = $("storageModePill");
+
+        if (isSignedIn) {
+          signInBtn.style.display = "none";
+          signOutBtn.style.display = "inline-flex";
+          storagePill.textContent = "Local autosave + Drive autosync";
+          setDriveStatus("Drive: connected (autosync on)", false);
+        } else {
+          signInBtn.style.display = "inline-flex";
+          signOutBtn.style.display = "none";
+          storagePill.textContent = "Local autosave • Browser only";
+          setDriveStatus("Drive: not connected", true);
+        }
+      }
+
+      function scheduleDriveSave() {
+        if (!gapiInitialized || !isSignedIn) return;
+        if (driveSaveTimeout) clearTimeout(driveSaveTimeout);
+        driveSaveTimeout = setTimeout(() => {
+          saveBackupToDrive().catch((err) =>
+            console.error("Drive autosync failed", err)
+          );
+        }, 1500);
+      }
+
+      // ========= Google Identity / gapi entrypoints =========
+      function gisLoaded() {
+        tokenClient = google.accounts.oauth2.initTokenClient({
+          client_id: GOOGLE_CLIENT_ID,
+          scope: GOOGLE_SCOPES,
+          callback: async (tokenResponse) => {
+            if (tokenResponse.error) {
+              console.error("Token error", tokenResponse);
+              alert("Google authentication error.");
+              return;
+            }
+            isSignedIn = true;
+            updateSigninUI();
+            if (gapiInitialized) {
+              try {
+                await loadBackupFromDrive();
+              } catch (err) {
+                console.error("Failed to load Drive backup", err);
+                setDriveStatus("Drive: backup load error", true);
+              }
+            }
+          },
+        });
+      }
+
+      function gapiLoaded() {
+        if (!GOOGLE_API_KEY) {
+          console.warn("API key missing. Drive sync disabled.");
+          return;
+        }
+        gapi.load("client", initGapiClient);
+      }
+
+      async function initGapiClient() {
+        try {
+          await gapi.client.init({
+            apiKey: GOOGLE_API_KEY,
+            discoveryDocs: GOOGLE_DISCOVERY_DOCS,
+          });
+          gapiInitialized = true;
+
+          // If the user already signed in (GIS callback fired before gapi init), load backup now.
+          if (isSignedIn) {
+            try {
+              await loadBackupFromDrive();
+            } catch (err) {
+              console.error("Failed to load Drive backup", err);
+              setDriveStatus("Drive: backup load error", true);
+            }
+          }
+        } catch (e) {
+          console.error("GAPI init error:", e);
+          setDriveStatus("Drive: init error", true);
+        }
+      }
+
+      function handleSignInClick() {
+        if (!tokenClient) {
+          alert(
+            "Google client not ready yet. If this keeps happening, check your API key / Client ID."
+          );
+          return;
+        }
+        tokenClient.requestAccessToken({
+          prompt: isSignedIn ? "" : "consent",
+        });
+      }
+
+      function handleSignOutClick() {
+        const token = gapi.client.getToken();
+        if (token && token.access_token) {
+          google.accounts.oauth2.revoke(token.access_token, () => {
+            gapi.client.setToken("");
+            isSignedIn = false;
+            updateSigninUI();
+          });
+        } else {
+          isSignedIn = false;
+          updateSigninUI();
+        }
+      }
+
+      async function loadBackupFromDrive() {
+        if (!gapiInitialized || !isSignedIn) return;
+
+        setDriveStatus("Drive: checking backup…", false);
+
+        const listResp = await gapi.client.drive.files.list({
+          q: "name = 'tredlog-dashboard-backup.json' and trashed = false",
+          spaces: "drive",
+          fields: "files(id, name, modifiedTime)",
+          pageSize: 1,
+        });
+
+        const files = listResp.result.files || [];
+        if (!files.length) {
+          setDriveStatus("Drive: no backup yet (will create)", false);
+          return;
+        }
+
+        const file = files[0];
+        driveFileId = file.id;
+
+        const getResp = await gapi.client.drive.files.get({
+          fileId: driveFileId,
+          alt: "media",
+        });
+
+        const cloudState = getResp.result || null;
+        const normalizedCloud = ensureStateShape(cloudState);
+
+        const hasLocalTrades = state.trades && state.trades.length > 0;
+
+        if (!hasLocalTrades) {
+          state = normalizedCloud;
+          saveState(false);
+          renderCustomRules();
+          renderConfluenceBuilder();
+          recalcDashboard();
+          setDriveStatus("Drive: backup loaded", false);
+        } else {
+          const useCloud = confirm(
+            "A TredLog backup was found on Google Drive.\n\n" +
+              "Click OK to replace your current local data with the Drive backup.\n" +
+              "Click Cancel to keep your local data and overwrite Drive next save."
+          );
+          if (useCloud) {
+            state = normalizedCloud;
+            saveState(false);
+            renderCustomRules();
+            renderConfluenceBuilder();
+            recalcDashboard();
+            setDriveStatus("Drive: backup loaded", false);
+          } else {
+            setDriveStatus("Drive: will overwrite backup on next sync", false);
+          }
+        }
+      }
+
+      async function saveBackupToDrive() {
+        if (!gapiInitialized || !isSignedIn) return;
+
+        try {
+          setDriveStatus("Drive: syncing…", false);
+          const fileContent = JSON.stringify(state, null, 2);
+          const metadata = { name: "tredlog-dashboard-backup.json" };
+
+          const token = gapi.client.getToken();
+          if (!token || !token.access_token) return;
+          const accessToken = token.access_token;
+
+          const form = new FormData();
+          form.append("metadata", new Blob([JSON.stringify(metadata)], { type: "application/json" }));
+          form.append("file", new Blob([fileContent], { type: "application/json" }));
+
+          let method = "POST";
+          let url =
+            "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart";
+
+          if (driveFileId) {
+            method = "PATCH";
+            url =
+              "https://www.googleapis.com/upload/drive/v3/files/" +
+              encodeURIComponent(driveFileId) +
+              "?uploadType=multipart";
+          }
+
+          const res = await fetch(url, {
+            method,
+            headers: new Headers({ Authorization: "Bearer " + accessToken }),
+            body: form,
+          });
+
+          if (!res.ok) throw new Error("Drive upload failed: " + res.status);
+
+          const data = await res.json();
+          driveFileId = data.id;
+          setDriveStatus("Drive: synced just now", false);
+        } catch (err) {
+          console.error("Error saving backup to Drive", err);
+          setDriveStatus("Drive: sync error", true);
+        }
+      }
+
+      // ========= Confluence engine =========
+      function getConfluenceTotalsFromChecked(checkedMap) {
+        const tfs = state.confluence.timeframes || [];
+        const rules = state.confluence.rules || {};
+        let overallHave = 0;
+        let overallTotal = 0;
+
+        const byTf = {};
+        tfs.forEach((tf) => {
+          const list = Array.isArray(rules[tf]) ? rules[tf] : [];
+          const totalW = list.reduce((s, r) => s + (Number(r.weight) || 0), 0);
+          let hitW = 0;
+          list.forEach((r) => {
+            if (checkedMap?.[tf]?.[r.id]) hitW += Number(r.weight) || 0;
+          });
+          const pct = totalW ? (hitW / totalW) * 100 : 0;
+          byTf[tf] = { hitW, totalW, pct: Math.round(pct) };
+
+          overallHave += hitW;
+          overallTotal += totalW;
+        });
+
+        const overallPct = overallTotal ? Math.round((overallHave / overallTotal) * 100) : 0;
+        return { overallPct, overallHave, overallTotal, byTf };
+      }
+
+      function confluenceLabelFromPct(p) {
+        if (p >= 75) return "Strong Setup";
+        if (p >= 50) return "Decent Setup";
+        if (p >= 30) return "Average Setup";
+        return "Weak Setup";
+      }
+
+      function updateConfluenceSummaryUI() {
+        const { overallPct, byTf } = getConfluenceTotalsFromChecked(draftConfluenceChecked);
+        $("confluenceOverallBig").textContent = `${overallPct}%`;
+        $("confluenceTagline").textContent = confluenceLabelFromPct(overallPct);
+
+        const miniRow = $("confluenceMiniRow");
+        miniRow.innerHTML = "";
+        (state.confluence.timeframes || []).forEach((tf) => {
+          const p = byTf?.[tf]?.pct ?? 0;
+          const div = document.createElement("div");
+          div.className = "mini-pill";
+          div.textContent = `${tf} ${p}%`;
+          miniRow.appendChild(div);
+        });
+      }
+
+      function renderTradeConfluenceArea() {
+        const area = $("tradeConfluenceArea");
+        area.innerHTML = "";
+
+        const tfs = state.confluence.timeframes || [];
+        const rules = state.confluence.rules || {};
+
+        tfs.forEach((tf) => {
+          const list = Array.isArray(rules[tf]) ? rules[tf] : [];
+
+          const box = document.createElement("div");
+          box.className = "tf-group";
+
+          const head = document.createElement("div");
+          head.className = "tf-head";
+
+          const title = document.createElement("div");
+          title.className = "tf-title";
+          title.textContent = tf;
+
+          const pct = document.createElement("div");
+          pct.className = "tf-pct";
+          pct.id = `tfPct_${tf}`;
+          pct.textContent = "0%";
+
+          head.appendChild(title);
+          head.appendChild(pct);
+          box.appendChild(head);
+
+          if (!list.length) {
+            const empty = document.createElement("div");
+            empty.className = "small-text";
+            empty.innerHTML = "<em>No rules yet for this timeframe. Add them above.</em>";
+            box.appendChild(empty);
+          } else {
+            list.forEach((r) => {
+              const lab = document.createElement("label");
+              lab.className = "checklist-item";
+              const inp = document.createElement("input");
+              inp.type = "checkbox";
+              inp.checked = !!draftConfluenceChecked?.[tf]?.[r.id];
+              inp.addEventListener("change", () => {
+                if (!draftConfluenceChecked[tf]) draftConfluenceChecked[tf] = {};
+                draftConfluenceChecked[tf][r.id] = inp.checked;
+                updatePerTfPct(tf);
+                updateConfluenceSummaryUI();
+              });
+
+              const sp = document.createElement("span");
+              sp.textContent = `${r.text} (+${Number(r.weight) || 0})`;
+
+              lab.appendChild(inp);
+              lab.appendChild(sp);
+              box.appendChild(lab);
+            });
+          }
+
+          area.appendChild(box);
+          updatePerTfPct(tf);
+        });
+
+        updateConfluenceSummaryUI();
+      }
+
+      function updatePerTfPct(tf) {
+        const list = state.confluence.rules?.[tf] || [];
+        const totalW = list.reduce((s, r) => s + (Number(r.weight) || 0), 0);
+        let hitW = 0;
+        list.forEach((r) => {
+          if (draftConfluenceChecked?.[tf]?.[r.id]) hitW += Number(r.weight) || 0;
+        });
+        const pct = totalW ? Math.round((hitW / totalW) * 100) : 0;
+        const el = document.getElementById(`tfPct_${tf}`);
+        if (el) el.textContent = `${pct}%`;
+      }
+
+      function renderConfluenceBuilder() {
+        // Timeframe chips
+        const chips = $("tfChips");
+        chips.innerHTML = "";
+
+        (state.confluence.timeframes || []).forEach((tf) => {
+          const c = document.createElement("div");
+          c.className = "chip";
+          c.textContent = tf;
+
+          const x = document.createElement("button");
+          x.type = "button";
+          x.textContent = "×";
+          x.title = "Remove timeframe";
+          x.addEventListener("click", () => {
+            state.confluence.timeframes = state.confluence.timeframes.filter((t) => t !== tf);
+            // Remove draft selection for that TF
+            delete draftConfluenceChecked[tf];
+            saveState();
+            renderConfluenceBuilder();
+            renderTradeConfluenceArea();
+          });
+
+          c.appendChild(x);
+          chips.appendChild(c);
+        });
+
+        // TF select
+        const sel = $("ruleTfSelect");
+        sel.innerHTML = "";
+        (state.confluence.timeframes || []).forEach((tf) => {
+          const opt = document.createElement("option");
+          opt.value = tf;
+          opt.textContent = tf;
+          sel.appendChild(opt);
+        });
+
+        // Rules list grouped
+        const listWrap = $("rulesList");
+        listWrap.innerHTML = "";
+
+        (state.confluence.timeframes || []).forEach((tf) => {
+          const group = document.createElement("div");
+          group.className = "tf-group";
+
+          const head = document.createElement("div");
+          head.className = "tf-head";
+
+          const title = document.createElement("div");
+          title.className = "tf-title";
+          title.textContent = `Rules for ${tf}`;
+
+          const meta = document.createElement("div");
+          meta.className = "small-text";
+          const totalW = (state.confluence.rules?.[tf] || []).reduce((s, r) => s + (Number(r.weight) || 0), 0);
+          meta.textContent = `Total weight: ${totalW}`;
+
+          head.appendChild(title);
+          head.appendChild(meta);
+          group.appendChild(head);
+
+          const rules = state.confluence.rules?.[tf] || [];
+          if (!rules.length) {
+            const empty = document.createElement("div");
+            empty.className = "small-text";
+            empty.innerHTML = "<em>No rules yet.</em>";
+            group.appendChild(empty);
+          } else {
+            rules.forEach((r) => {
+              const line = document.createElement("div");
+              line.className = "rule-line";
+
+              const left = document.createElement("div");
+              left.className = "small-text";
+              left.style.color = "rgba(226,232,240,0.9)";
+              left.textContent = `${r.text} (+${Number(r.weight) || 0})`;
+
+              const x = document.createElement("button");
+              x.className = "x";
+              x.type = "button";
+              x.textContent = "×";
+              x.title = "Remove rule";
+              x.addEventListener("click", () => {
+                state.confluence.rules[tf] = (state.confluence.rules[tf] || []).filter((rr) => rr.id !== r.id);
+                if (draftConfluenceChecked?.[tf]) delete draftConfluenceChecked[tf][r.id];
+                saveState();
+                renderConfluenceBuilder();
+                renderTradeConfluenceArea();
+              });
+
+              line.appendChild(left);
+              line.appendChild(x);
+              group.appendChild(line);
+            });
+          }
+
+          listWrap.appendChild(group);
+        });
+      }
+
+      function addTimeframesFromInput(text) {
+        const parts = String(text || "")
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean);
+
+        if (!parts.length) return;
+
+        const existing = new Set(state.confluence.timeframes || []);
+        parts.forEach((tf) => {
+          if (!existing.has(tf)) {
+            state.confluence.timeframes.push(tf);
+            if (!Array.isArray(state.confluence.rules[tf])) state.confluence.rules[tf] = [];
+            existing.add(tf);
+          }
+        });
+
+        saveState();
+        renderConfluenceBuilder();
+        renderTradeConfluenceArea();
+      }
+
+      // ========= Recalc dashboard =========
+      function recalcDashboard() {
+        const trades = [...state.trades].sort((a, b) => new Date(a.date) - new Date(b.date));
+        const riskPerTrade = Number(state.riskPerTrade) || 0;
+        const starting = Number(state.startingBalance) || 0;
+
+        $("startingBalance").value = starting || "";
+        $("riskPerTrade").value = riskPerTrade || "";
+
+        $("tradeCountLabel").textContent =
+          trades.length === 1 ? "1 trade logged" : `${trades.length} trades logged`;
+
+        // Normalize trade numbers
+        trades.forEach((t) => {
+          t.resultR = Number(t.resultR) || 0;
+          t.riskR = Number(t.riskR) || 1;
+          t.pnlR = t.resultR;
+          t.pnlUSD = t.pnlR * riskPerTrade;
+          t.fees = Number(t.fees) || 0;
+          // net after fees (for metrics)
+          t.netUSD = t.pnlUSD - t.fees;
+          t.disciplinePct = Number(t.disciplinePct) || 0;
+          t.confluencePct = Number(t.confluencePct) || 0;
+        });
+
+        const totalR = trades.reduce((s, t) => s + t.pnlR, 0);
+        const totalUsdGross = trades.reduce((s, t) => s + t.pnlUSD, 0);
+        const totalFees = trades.reduce((s, t) => s + (Number(t.fees) || 0), 0);
+        const totalUsdNet = trades.reduce((s, t) => s + (Number(t.netUSD) || 0), 0);
+
+        const balance = starting + totalUsdNet;
+
+        $("toplineTotals").textContent = `Total PnL: ${fmtUSD(totalUsdNet)} • Balance: ${fmtUSD(
+          balance
+        )} • Starting: ${fmtUSD(starting)}`;
+
+        // PerfectTrade-like summary
+        $("netPnlBig").textContent = fmtUSD(totalUsdNet);
+        $("netPnlBig").style.color = totalUsdNet >= 0 ? "var(--good)" : "var(--bad)";
+        $("netPnlSub").textContent = `+ ${trades.length} trades completed`;
+
+        const nonBe = trades.filter((t) => t.pnlR !== 0);
+        const wins = trades.filter((t) => t.pnlR > 0);
+        const losses = trades.filter((t) => t.pnlR < 0);
+        const winRate = nonBe.length ? (wins.length / nonBe.length) * 100 : 0;
+        $("winRateValue").textContent = fmtPct(winRate);
+
+        const totalProfit = trades.reduce((s, t) => (t.netUSD > 0 ? s + t.netUSD : s), 0);
+        const totalLossAbs = trades.reduce((s, t) => (t.netUSD < 0 ? s + Math.abs(t.netUSD) : s), 0);
+        $("totalProfitValue").textContent = fmtUSD(totalProfit);
+        $("totalLossValue").textContent = fmtUSD(totalLossAbs);
+        $("totalProfitSub").textContent = `${wins.length} winning trades`;
+        $("totalLossSub").textContent = `${losses.length} losing trades`;
+
+        const profitFactor = totalLossAbs > 0 ? totalProfit / totalLossAbs : 0;
+        $("profitFactorValue").textContent = (isFinite(profitFactor) ? profitFactor : 0).toFixed(2);
+
+        const avgConf = trades.length
+          ? trades.reduce((s, t) => s + (Number(t.confluencePct) || 0), 0) / trades.length
+          : 0;
+        $("avgConfluenceValue").textContent = `${Math.round(avgConf)}%`;
+
+        // Largest win/loss + best streak
+        let largestWin = 0;
+        let largestLoss = 0;
+        trades.forEach((t) => {
+          if (t.netUSD > largestWin) largestWin = t.netUSD;
+          if (t.netUSD < largestLoss) largestLoss = t.netUSD;
+        });
+        $("largestWinValue").textContent = fmtUSD(largestWin);
+        $("largestLossValue").textContent = fmtUSD(largestLoss); // negative is shown as negative
+
+        // Best streak (consecutive wins)
+        let bestStreak = 0;
+        let curStreak = 0;
+        trades
+          .slice()
+          .sort((a, b) => new Date(a.date) - new Date(b.date))
+          .forEach((t) => {
+            if (t.pnlR > 0) {
+              curStreak += 1;
+              bestStreak = Math.max(bestStreak, curStreak);
+            } else {
+              curStreak = 0;
+            }
+          });
+        $("bestStreakValue").textContent = String(bestStreak);
+        $("totalTradesMini").textContent = String(trades.length);
+
+        // Equity points in R
+        const equityR = [];
+        let runningR = 0;
+        trades.forEach((t) => {
+          runningR += t.pnlR;
+          equityR.push({ x: new Date(t.date), y: runningR });
+        });
+
+        const eqCaption =
+          trades.length === 0
+            ? "No trades yet. Log your first setup to start drawing your curve."
+            : `Total R: ${fmtR(totalR)} • Net PnL: ${fmtUSD(totalUsdNet)} • Fees: ${fmtUSD(
+                totalFees
+              )} • Starting: ${fmtUSD(starting)} • Balance: ${fmtUSD(balance)}.`;
+        $("equityCaption").textContent = eqCaption;
+
+        drawEquityChart(equityR);
+        drawProbabilityChart(wins.length, losses.length);
+
+        // Last 7 / 30 days based on net
+        const today = new Date();
+        const dayMs = 24 * 60 * 60 * 1000;
+        const last7Start = new Date(today.getTime() - 6 * dayMs);
+        const last30Start = new Date(today.getTime() - 29 * dayMs);
+
+        let pnl7 = 0,
+          pnl30 = 0;
+        const dayMap = new Map();
+
+        trades.forEach((t) => {
+          const d = new Date(t.date);
+          const key = t.date;
+          if (!dayMap.has(key)) dayMap.set(key, 0);
+          dayMap.set(key, dayMap.get(key) + (t.netUSD || 0));
+          if (d >= last7Start && d <= today) pnl7 += t.netUSD || 0;
+          if (d >= last30Start && d <= today) pnl30 += t.netUSD || 0;
+        });
+
+        $("last7PnL").textContent = `${fmtR(pnl7 / (riskPerTrade || 1))} • ${fmtUSD(pnl7)}`;
+        $("last30PnL").textContent = `${fmtR(pnl30 / (riskPerTrade || 1))} • ${fmtUSD(pnl30)}`;
+        $("totalTradesEval").textContent = trades.length
+          ? `${trades.length} trade${trades.length === 1 ? "" : "s"}`
+          : "No trades yet.";
+
+        let bestDay = 0,
+          worstDay = 0;
+        dayMap.forEach((v) => {
+          if (v > bestDay) bestDay = v;
+          if (v < worstDay) worstDay = v;
+        });
+        $("bestDayEval").textContent = fmtUSD(bestDay);
+        $("worstDayEval").textContent = fmtUSD(worstDay);
+
+        renderCalendarAndRecent(trades);
+        renderEvaluation(trades, {
+          totalUsdNet,
+          starting,
+          balance,
+          winRate,
+          pnlByDay: dayMap,
+          equityR,
+          wins,
+          losses,
+          totalFees,
+        });
+      }
+
+      function renderCalendarAndRecent(trades) {
+        const { first, last } = getCalendarMonthRange(calendarMonthOffset);
+        const year = first.getFullYear();
+        const month = first.getMonth();
+
+        const monthName = first.toLocaleString("en-US", { month: "long" });
+        $("calendarTitle").textContent = `Calendar – ${monthName} ${year}`;
+
+        const daysInMonth = last.getDate();
+        const perDay = Array.from({ length: daysInMonth }, () => 0);
+
+        trades.forEach((t) => {
+          const d = new Date(t.date);
+          if (d.getFullYear() === year && d.getMonth() === month) {
+            const day = d.getDate();
+            perDay[day - 1] += Number(t.netUSD) || 0;
+          }
+        });
+
+        const tbody = $("calendarBody");
+        tbody.innerHTML = "";
+        const firstWeekday = new Date(year, month, 1).getDay();
+
+        let row = document.createElement("tr");
+        for (let i = 0; i < firstWeekday; i++) row.appendChild(document.createElement("td"));
+
+        for (let day = 1; day <= daysInMonth; day++) {
+          if (row.children.length === 7) {
+            tbody.appendChild(row);
+            row = document.createElement("tr");
+          }
+          const cell = document.createElement("td");
+          const pnl = perDay[day - 1];
+          const div = document.createElement("div");
+          div.className = "calendar-day";
+          if (pnl !== 0) {
+            div.classList.add("has-trades");
+            if (pnl < 0) div.classList.add("negative");
+          }
+          div.textContent = day;
+          if (pnl !== 0) {
+            const span = document.createElement("span");
+            span.className = "calendar-pnl";
+            span.textContent = fmtUSD(pnl);
+            div.appendChild(span);
+          }
+          cell.appendChild(div);
+          row.appendChild(cell);
+        }
+        if (row.children.length > 0) {
+          while (row.children.length < 7) row.appendChild(document.createElement("td"));
+          tbody.appendChild(row);
+        }
+
+        const monthTrades = trades.filter((t) => {
+          const d = new Date(t.date);
+          return d.getFullYear() === year && d.getMonth() === month;
+        });
+
+        const recentBody = $("recentBody");
+        recentBody.innerHTML = "";
+
+        monthTrades
+          .slice()
+          .sort((a, b) => new Date(b.date) - new Date(a.date))
+          .forEach((t, idx) => {
+            const tr = document.createElement("tr");
+            const discPct = isFinite(t.disciplinePct) ? Math.round(t.disciplinePct) : 0;
+            const confPct = isFinite(t.confluencePct) ? Math.round(t.confluencePct) : 0;
+
+            const cells = [
+              idx + 1,
+              t.date,
+              t.pair || "",
+              t.direction || "",
+              fmtR(t.pnlR),
+              fmtUSD(t.netUSD),
+              `${discPct}%`,
+              `${confPct}%`,
+              t.screenshot ? `<a href="${t.screenshot}" target="_blank">Open</a>` : "",
+              (t.notes || "").replace(/</g, "&lt;").replace(/>/g, "&gt;"),
+            ];
+
+            cells.forEach((val) => {
+              const td = document.createElement("td");
+              td.innerHTML = val;
+              tr.appendChild(td);
+            });
+            recentBody.appendChild(tr);
+          });
+
+        $("recentCaption").textContent = monthTrades.length
+          ? `${monthTrades.length} trade${monthTrades.length === 1 ? "" : "s"} in ${monthName} ${year}.`
+          : `No trades logged in ${monthName} ${year}.`;
+      }
+
+      function renderEvaluation(trades, { totalUsdNet, starting, balance, winRate, pnlByDay, equityR, wins, losses, totalFees }) {
+        $("evalTotalTrades").textContent = trades.length || 0;
+
+        const days = pnlByDay ? pnlByDay.size : 0;
+        const avgPerDay = days ? totalUsdNet / days : 0;
+        $("evalAvgDay").textContent = fmtUSD(avgPerDay);
+
+        let biggestWin = 0,
+          biggestLose = 0;
+        trades.forEach((t) => {
+          if (t.netUSD > biggestWin) biggestWin = t.netUSD;
+          if (t.netUSD < biggestLose) biggestLose = t.netUSD;
+        });
+        $("evalBiggestWinner").textContent = fmtUSD(biggestWin);
+        $("evalBiggestLoser").textContent = fmtUSD(biggestLose);
+
+        $("evalFees").textContent = fmtUSD(totalFees || 0);
+
+        const nonBe = trades.filter((t) => t.pnlR !== 0);
+        const winNoBE = nonBe.length ? (wins.length / nonBe.length) * 100 : 0;
+        $("evalWinNoBE").textContent = fmtPct(winNoBE);
+
+        const roi = starting ? ((balance - starting) / starting) * 100 : 0;
+        $("evalROI").textContent = fmtPct(roi);
+
+        let maxDraw = 0;
+        if (equityR.length && starting) {
+          let peak = starting;
+          let equityUsd = starting;
+          equityR.forEach((pt) => {
+            equityUsd = starting + pt.y * (state.riskPerTrade || 0);
+            // subtract fees net adjustment approx: use net PnL for drawdown measure is complex; keep original approach
+            if (equityUsd > peak) peak = equityUsd;
+            const dd = peak > 0 ? (peak - equityUsd) / peak : 0;
+            if (dd > maxDraw) maxDraw = dd;
+          });
+        }
+        $("evalDrawdown").textContent = fmtPct(maxDraw * 100);
+
+        let winDays = 0,
+          loseDays = 0;
+        pnlByDay.forEach((v) => {
+          if (v > 0) winDays++;
+          else if (v < 0) loseDays++;
+        });
+        $("evalWinLoseDays").textContent = `${winDays} / ${loseDays}`;
+
+        if (trades.length) {
+          const dates = trades.map((t) => new Date(t.date)).sort((a, b) => a - b);
+          const dayMs = 24 * 60 * 60 * 1000;
+          const spanDays = (dates[dates.length - 1] - dates[0]) / dayMs + 1 || 1;
+          const spanWeeks = spanDays / 7;
+          const perDay = trades.length / spanDays;
+          const perWeek = trades.length / spanWeeks;
+          $("evalTradesPer").textContent = `${perDay.toFixed(2)} / ${perWeek.toFixed(2)}`;
+        } else {
+          $("evalTradesPer").textContent = "0.00 / 0.00";
+        }
+
+        // Streak string (last 10 trades)
+        let streakStr = "";
+        trades
+          .slice()
+          .sort((a, b) => new Date(b.date) - new Date(a.date))
+          .slice(0, 10)
+          .forEach((t) => {
+            const c = t.pnlR > 0 ? "W" : t.pnlR < 0 ? "L" : "B";
+            streakStr = c + (streakStr ? " " + streakStr : "");
+          });
+        $("evalStreak").textContent = streakStr || "–";
+      }
+
+      // ========= Canvas helpers =========
+      function resizeCanvasToDisplaySize(canvas, cssHeight = 180) {
+        const dpr = window.devicePixelRatio || 1;
+        const displayWidth = Math.floor(canvas.clientWidth * dpr);
+        const displayHeight = Math.floor(cssHeight * dpr);
+        if (canvas.width !== displayWidth || canvas.height !== displayHeight) {
+          canvas.width = displayWidth;
+          canvas.height = displayHeight;
+        }
+        return dpr;
+      }
+
+      function clearCanvas(canvas, cssHeight = 180) {
+        const dpr = resizeCanvasToDisplaySize(canvas, cssHeight);
+        const ctx = canvas.getContext("2d");
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "rgba(2,6,23,0.35)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        return { ctx, dpr };
+      }
+
+      function drawEquityChart(points) {
+        const canvas = $("equityChart");
+        const { ctx } = clearCanvas(canvas, 180);
+        if (!points.length) return;
+
+        const padding = 22 * (window.devicePixelRatio || 1);
+        const w = canvas.width;
+        const h = canvas.height;
+
+        const xs = points.map((p) => p.x.getTime());
+        const ys = points.map((p) => p.y);
+        const minX = Math.min(...xs);
+        const maxX = Math.max(...xs);
+        const minY = Math.min(0, Math.min(...ys));
+        const maxY = Math.max(...ys);
+
+        const xScale = (x) =>
+          padding + ((x - minX) / (maxX - minX || 1)) * (w - padding * 2);
+        const yScale = (y) =>
+          h - padding - ((y - minY) / (maxY - minY || 1)) * (h - padding * 2);
+
+        ctx.beginPath();
+        ctx.strokeStyle = "rgba(127,224,181,0.95)";
+        ctx.lineWidth = 2 * (window.devicePixelRatio || 1);
+
+        points.forEach((p, i) => {
+          const x = xScale(p.x.getTime());
+          const y = yScale(p.y);
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+
+        // zero line
+        if (minY < 0 && maxY > 0) {
+          ctx.beginPath();
+          ctx.strokeStyle = "rgba(148,163,184,0.24)";
+          ctx.lineWidth = 1 * (window.devicePixelRatio || 1);
+          const y0 = yScale(0);
+          ctx.moveTo(padding, y0);
+          ctx.lineTo(w - padding, y0);
+          ctx.stroke();
+        }
+      }
+
+      function drawProbabilityChart(wins, losses) {
+        const canvas = $("probChart");
+        const { ctx } = clearCanvas(canvas, 180);
+
+        const total = wins + losses;
+        $("probCaption").textContent = total ? `${wins} win(s), ${losses} loss(es).` : "No win/loss data yet.";
+        if (!total) return;
+
+        const w = canvas.width;
+        const h = canvas.height;
+        const dpr = window.devicePixelRatio || 1;
+
+        const barWidth = 56 * dpr;
+        const gap = 34 * dpr;
+        const maxHeight = h - 44 * dpr;
+
+        const winHeight = (wins / total) * maxHeight;
+        const lossHeight = (losses / total) * maxHeight;
+
+        const baseY = h - 22 * dpr;
+
+        ctx.fillStyle = "rgba(127,224,181,0.95)";
+        ctx.fillRect(w / 2 - barWidth - gap / 2, baseY - winHeight, barWidth, winHeight);
+
+        ctx.fillStyle = "rgba(255,138,138,0.92)";
+        ctx.fillRect(w / 2 + gap / 2, baseY - lossHeight, barWidth, lossHeight);
+      }
+
+      // ========= Backup import / export =========
+      function exportBackup() {
+        try {
+          const data = JSON.stringify(state, null, 2);
+          const blob = new Blob([data], { type: "application/json" });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          const stamp = new Date().toISOString().slice(0, 10);
+          a.href = url;
+          a.download = `tredlog-backup-${stamp}.json`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+          alert("Backup exported.");
+        } catch (e) {
+          console.error(e);
+          alert("Could not export backup.");
+        }
+      }
+
+      function importBackup() {
+        const input = document.createElement("input");
+        input.type = "file";
+        input.accept = "application/json";
+        input.addEventListener("change", () => {
+          const file = input.files[0];
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            try {
+              const data = JSON.parse(e.target.result);
+              state = ensureStateShape(data);
+              saveState();
+              renderCustomRules();
+              renderConfluenceBuilder();
+              resetInputs();
+              recalcDashboard();
+              alert("Backup imported.");
+            } catch (err) {
+              console.error(err);
+              alert("Failed to import backup.");
+            }
+          };
+          reader.readAsText(file);
+        });
+        input.click();
+      }
+
+      // ========= UI wiring =========
+      function renderCustomRules() {
+        const container = $("customRulesList");
+        container.innerHTML = "";
+        if (!state.customRules.length) {
+          container.innerHTML = '<em>No custom rules yet. Add your checklist items below.</em>';
+          return;
+        }
+        state.customRules.forEach((rule, idx) => {
+          const div = document.createElement("div");
+          div.textContent = `${idx + 1}. ${rule}`;
+          container.appendChild(div);
+        });
+      }
+
+      function addTradeFromForm(isDraft = false) {
+        const date = $("tradeDate").value;
+        if (!date && !isDraft) {
+          alert("Please select a trade date.");
+          return;
+        }
+
+        const pair = $("pair").value.trim();
+        const direction = $("direction").value;
+        const session = $("session").value.trim();
+        const riskR = parseNumber($("riskR").value) || 1;
+        const resultR = parseNumber($("resultR").value);
+        const setup = $("setup").value.trim();
+        const entrySignal = $("entrySignal").value.trim();
+        const screenshot = $("screenshot").value.trim();
+        const notes = $("notes").value.trim();
+        const fees = parseNumber($("fees").value);
+
+        const checklistCore = [
+          $("chkPlannedRespected").checked,
+          $("chkNoRevenge").checked,
+          $("chkNoAddRisk").checked,
+          $("chkScreenshotsSaved").checked,
+          $("chkAnnotated").checked,
+          $("chkClearHeadspace").checked,
+        ];
+        const disciplinePct =
+          (checklistCore.filter(Boolean).length / checklistCore.length) * 100;
+
+        // Confluence for this trade
+        const conf = getConfluenceTotalsFromChecked(draftConfluenceChecked);
+        const confluencePct = conf.overallPct;
+
+        // Store checked map inside the trade so it always matches later (and is part of backups)
+        const confluenceChecked = JSON.parse(JSON.stringify(draftConfluenceChecked || {}));
+
+        const trade = {
+          id: Date.now(),
+          date: date || new Date().toISOString().slice(0, 10),
+          pair,
+          direction,
+          session,
+          riskR,
+          resultR,
+          setup,
+          entrySignal,
+          screenshot,
+          notes,
+          fees,
+          disciplinePct,
+          confluencePct,
+          confluenceChecked,
+        };
+
+        if (!isDraft) {
+          state.trades.push(trade);
+          saveState();
+          resetInputs();
+          recalcDashboard();
+        } else {
+          saveState();
+          alert("Draft saved locally in your browser (not added to log yet).");
+        }
+      }
+
+      function init() {
+        loadState();
+        state = ensureStateShape(state);
+
+        if (state.startingBalance) $("startingBalance").value = state.startingBalance;
+        if (state.riskPerTrade) $("riskPerTrade").value = state.riskPerTrade;
+
+        renderCustomRules();
+        renderConfluenceBuilder();
+        renderTradeConfluenceArea();
+        recalcDashboard();
+        updateSigninUI();
+        updateDisciplinePreview();
+        updateConfluenceSummaryUI();
+
+        $("startingBalance").addEventListener("change", () => {
+          state.startingBalance = parseNumber($("startingBalance").value);
+          saveState();
+          recalcDashboard();
+        });
+        $("riskPerTrade").addEventListener("change", () => {
+          state.riskPerTrade = parseNumber($("riskPerTrade").value);
+          saveState();
+          recalcDashboard();
+        });
+
+        [
+          "chkPlannedRespected",
+          "chkNoRevenge",
+          "chkNoAddRisk",
+          "chkScreenshotsSaved",
+          "chkAnnotated",
+          "chkClearHeadspace",
+        ].forEach((id) => {
+          $(id).addEventListener("change", updateDisciplinePreview);
+        });
+
+        $("addCustomRuleBtn").addEventListener("click", (e) => {
+          e.preventDefault();
+          const text = $("newCustomRule").value.trim();
+          if (!text) return;
+          state.customRules.push(text);
+          $("newCustomRule").value = "";
+          saveState();
+          renderCustomRules();
+        });
+
+        // Confluence builder actions
+        $("addTfBtn").addEventListener("click", (e) => {
+          e.preventDefault();
+          addTimeframesFromInput($("newTfInput").value);
+          $("newTfInput").value = "";
+        });
+
+        $("resetTfBtn").addEventListener("click", (e) => {
+          e.preventDefault();
+          state.confluence = getDefaultConfluence();
+          draftConfluenceChecked = {};
+          saveState();
+          renderConfluenceBuilder();
+          renderTradeConfluenceArea();
+          updateConfluenceSummaryUI();
+        });
+
+        $("addRuleBtn").addEventListener("click", (e) => {
+          e.preventDefault();
+          const tf = $("ruleTfSelect").value;
+          const text = $("ruleText").value.trim();
+          const weight = clamp(parseNumber($("ruleWeight").value), 1, 100) || 10;
+          if (!tf) return alert("Pick a timeframe.");
+          if (!text) return alert("Enter a rule.");
+          if (!Array.isArray(state.confluence.rules[tf])) state.confluence.rules[tf] = [];
+          state.confluence.rules[tf].push({ id: uid(), text, weight });
+          $("ruleText").value = "";
+          $("ruleWeight").value = "10";
+          saveState();
+          renderConfluenceBuilder();
+          renderTradeConfluenceArea();
+          updateConfluenceSummaryUI();
+        });
+
+        $("addTradeBtn").addEventListener("click", (e) => {
+          e.preventDefault();
+          addTradeFromForm(false);
+        });
+
+        $("saveDraftBtn").addEventListener("click", (e) => {
+          e.preventDefault();
+          addTradeFromForm(true);
+        });
+
+        $("clearBtn").addEventListener("click", () => {
+          if (confirm("This will clear all local trades and settings on this device. Continue?")) {
+            localStorage.removeItem(STORAGE_KEY);
+            state = ensureStateShape({});
+            draftConfluenceChecked = {};
+            resetInputs();
+            renderCustomRules();
+            renderConfluenceBuilder();
+            recalcDashboard();
+            saveState();
+          }
+        });
+
+        $("exportBtn").addEventListener("click", exportBackup);
+        $("importBtn").addEventListener("click", importBackup);
+
+        $("calPrevBtn").addEventListener("click", () => {
+          calendarMonthOffset--;
+          recalcDashboard();
+        });
+        $("calNextBtn").addEventListener("click", () => {
+          calendarMonthOffset++;
+          recalcDashboard();
+        });
+
+        $("googleSignInBtn").addEventListener("click", handleSignInClick);
+        $("googleSignOutBtn").addEventListener("click", handleSignOutClick);
+
+        window.addEventListener("resize", recalcDashboard);
+      }
+
+      document.addEventListener("DOMContentLoaded", init);
+    </script>
+
+    <!-- Google Identity Services (creates tokenClient in gisLoaded) -->
+    <script
+      src="https://accounts.google.com/gsi/client"
+      async
+      defer
+      onload="gisLoaded()"
+    ></script>
+
+    <!-- Google API JS (loads gapi and then calls gapiLoaded) -->
+    <script
+      src="https://apis.google.com/js/api.js"
+      async
+      defer
+      onload="gapiLoaded()"
+    ></script>
+  </body>
 </html>
