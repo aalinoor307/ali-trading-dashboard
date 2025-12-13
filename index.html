@@ -115,7 +115,11 @@
         width: 34px;
         height: 34px;
         border-radius: 12px;
-        background: linear-gradient(135deg, rgba(127, 224, 181, 0.7), rgba(54, 122, 255, 0.45));
+        background: linear-gradient(
+          135deg,
+          rgba(127, 224, 181, 0.7),
+          rgba(54, 122, 255, 0.45)
+        );
         box-shadow: 0 0 0 4px rgba(127, 224, 181, 0.12);
       }
 
@@ -229,6 +233,65 @@
         white-space: nowrap;
       }
 
+      /* Tabs (right panel) */
+      .panel-topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin: 8px 0 12px;
+      }
+
+      .tabs {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .tabbtn {
+        border-radius: var(--pill);
+        border: 1px solid rgba(148, 163, 184, 0.22);
+        background: rgba(2, 6, 23, 0.34);
+        color: rgba(226, 232, 240, 0.86);
+        cursor: pointer;
+        font-size: 11px;
+        padding: 6px 12px;
+        font-weight: 700;
+      }
+
+      .tabbtn:hover {
+        border-color: rgba(226, 232, 240, 0.35);
+      }
+
+      .tabbtn.active {
+        border: none;
+        background: linear-gradient(
+          90deg,
+          rgba(127, 224, 181, 0.9),
+          rgba(54, 122, 255, 0.65)
+        );
+        color: #081018;
+      }
+
+      .month-nav {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .month-label {
+        padding: 6px 10px;
+        border-radius: var(--pill);
+        border: 1px solid rgba(148, 163, 184, 0.22);
+        background: rgba(2, 6, 23, 0.28);
+        color: rgba(226, 232, 240, 0.86);
+        font-size: 11px;
+        font-weight: 650;
+        min-width: 140px;
+        text-align: center;
+      }
+
       .row {
         display: flex;
         gap: 10px;
@@ -285,9 +348,13 @@
 
       .btn-primary {
         border: none;
-        background: linear-gradient(90deg, rgba(127, 224, 181, 0.9), rgba(54, 122, 255, 0.65));
+        background: linear-gradient(
+          90deg,
+          rgba(127, 224, 181, 0.9),
+          rgba(54, 122, 255, 0.65)
+        );
         color: #081018;
-        box-shadow: 0 18px 40px rgba(34, 197, 94, 0.10);
+        box-shadow: 0 18px 40px rgba(34, 197, 94, 0.1);
       }
 
       .btn-primary:hover {
@@ -371,11 +438,11 @@
         border-radius: var(--r);
         border: 1px solid rgba(148, 163, 184, 0.18);
         background: radial-gradient(
-          900px 240px at 30% 10%,
-          rgba(127, 224, 181, 0.18),
-          transparent 60%
-        ),
-        rgba(2, 6, 23, 0.35);
+            900px 240px at 30% 10%,
+            rgba(127, 224, 181, 0.18),
+            transparent 60%
+          ),
+          rgba(2, 6, 23, 0.35);
         padding: 14px 14px 12px;
         position: relative;
         overflow: hidden;
@@ -445,11 +512,11 @@
 
       .dash-side.bad {
         background: radial-gradient(
-          700px 240px at 40% 0%,
-          rgba(248, 113, 113, 0.18),
-          transparent 60%
-        ),
-        rgba(2, 6, 23, 0.35);
+            700px 240px at 40% 0%,
+            rgba(248, 113, 113, 0.18),
+            transparent 60%
+          ),
+          rgba(2, 6, 23, 0.35);
       }
 
       .dash-side.bad .value {
@@ -528,9 +595,9 @@
         color: rgba(148, 163, 184, 0.72);
       }
 
-      .three-grid {
+      .dash-lower-grid {
         display: grid;
-        grid-template-columns: 1.2fr 1.2fr 1.2fr;
+        grid-template-columns: 1.2fr 1.2fr;
         gap: 10px;
         margin-top: 10px;
       }
@@ -624,7 +691,7 @@
         border-radius: 10px;
         padding: 7px 0;
         margin: 2px;
-        border: 1px solid rgba(148, 163, 184, 0.10);
+        border: 1px solid rgba(148, 163, 184, 0.1);
         background: rgba(2, 6, 23, 0.25);
         min-height: 44px;
         display: grid;
@@ -632,12 +699,12 @@
       }
 
       .calendar-day.has-trades {
-        background: rgba(34, 197, 94, 0.10);
+        background: rgba(34, 197, 94, 0.1);
         border-color: rgba(34, 197, 94, 0.25);
       }
 
       .calendar-day.negative {
-        background: rgba(248, 113, 113, 0.10);
+        background: rgba(248, 113, 113, 0.1);
         border-color: rgba(248, 113, 113, 0.25);
       }
 
@@ -661,7 +728,7 @@
         justify-content: space-between;
         gap: 12px;
         padding: 5px 0;
-        border-bottom: 1px solid rgba(148, 163, 184, 0.10);
+        border-bottom: 1px solid rgba(148, 163, 184, 0.1);
       }
 
       .eval-list li:last-child {
@@ -756,7 +823,7 @@
         gap: 10px;
         align-items: center;
         padding: 5px 0;
-        border-bottom: 1px solid rgba(148, 163, 184, 0.10);
+        border-bottom: 1px solid rgba(148, 163, 184, 0.1);
       }
 
       .rule-line:last-child {
@@ -782,11 +849,11 @@
         border-radius: var(--r2);
         border: 1px solid rgba(148, 163, 184, 0.14);
         background: radial-gradient(
-          800px 200px at 40% 0%,
-          rgba(127, 224, 181, 0.14),
-          transparent 60%
-        ),
-        rgba(2, 6, 23, 0.28);
+            800px 200px at 40% 0%,
+            rgba(127, 224, 181, 0.14),
+            transparent 60%
+          ),
+          rgba(2, 6, 23, 0.28);
       }
 
       .confluence-summary .big {
@@ -817,7 +884,7 @@
       .mini-pill {
         border-radius: var(--pill);
         border: 1px solid rgba(148, 163, 184, 0.16);
-        background: rgba(2, 6, 23, 0.30);
+        background: rgba(2, 6, 23, 0.3);
         padding: 6px 10px;
         font-size: 11px;
         color: rgba(226, 232, 240, 0.9);
@@ -846,11 +913,11 @@
         main {
           grid-template-columns: minmax(0, 1fr);
         }
-        .three-grid {
-          grid-template-columns: minmax(0, 1fr);
-        }
         .dash-mini {
           grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .dash-lower-grid {
+          grid-template-columns: minmax(0, 1fr);
         }
       }
 
@@ -1133,124 +1200,192 @@
           </div>
         </section>
 
-        <!-- RIGHT: dashboard -->
+        <!-- RIGHT: tabbed dashboard/history -->
         <section class="card">
           <div class="card-inner">
             <div class="card-title-row">
               <div class="card-title">Equity & performance overview</div>
               <div class="card-subtitle">
-                <span id="toplineTotals">Total PnL: $0.00 • Balance: $0.00 • Starting: $0.00</span>
+                <span id="toplineTotals">Month PnL: $0.00 • Month Balance: $0.00 • Starting: $0.00</span>
               </div>
             </div>
 
-            <!-- PerfectTrade-like top cards -->
-            <div class="dash-grid">
-              <div class="dash-big">
-                <div class="label">Net Profit &amp; Loss</div>
-                <div id="netPnlBig" class="value">$0.00</div>
-                <div id="netPnlSub" class="sub">+ 0 trades completed</div>
-                <div class="icon">$</div>
+            <!-- Tabs + month selector -->
+            <div class="panel-topbar">
+              <div class="tabs">
+                <button id="tabBtnDashboard" class="tabbtn active" data-tab="dashboard">Dashboard</button>
+                <button id="tabBtnHistory" class="tabbtn" data-tab="history">History</button>
+              </div>
 
-                <div style="display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin-top: 12px;">
-                  <div class="mini" style="border-radius:14px">
-                    <div class="label">Win Rate</div>
-                    <div id="winRateValue" class="value">0%</div>
+              <div class="month-nav">
+                <button id="monthPrevBtn" class="tabbtn" title="Previous month">‹</button>
+                <div id="monthLabel" class="month-label">This month</div>
+                <button id="monthNextBtn" class="tabbtn" title="Next month">›</button>
+              </div>
+            </div>
+
+            <!-- DASHBOARD TAB -->
+            <div id="tabDashboardPane">
+              <!-- PerfectTrade-like top cards -->
+              <div class="dash-grid">
+                <div class="dash-big">
+                  <div class="label">Net Profit &amp; Loss (Selected month)</div>
+                  <div id="netPnlBig" class="value">$0.00</div>
+                  <div id="netPnlSub" class="sub">+ 0 trades in selected month</div>
+                  <div class="icon">$</div>
+
+                  <div style="display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin-top: 12px;">
+                    <div class="mini" style="border-radius:14px">
+                      <div class="label">Win Rate</div>
+                      <div id="winRateValue" class="value">0%</div>
+                    </div>
+                    <div class="mini" style="border-radius:14px">
+                      <div class="label">Profit Factor</div>
+                      <div id="profitFactorValue" class="value">0.00</div>
+                    </div>
+                    <div class="mini" style="border-radius:14px">
+                      <div class="label">Avg Confluence</div>
+                      <div id="avgConfluenceValue" class="value">0%</div>
+                    </div>
                   </div>
-                  <div class="mini" style="border-radius:14px">
-                    <div class="label">Profit Factor</div>
-                    <div id="profitFactorValue" class="value">0.00</div>
+                </div>
+
+                <div class="dash-right">
+                  <div class="dash-side good">
+                    <div class="label">Total Profit (Selected month)</div>
+                    <div id="totalProfitValue" class="value">$0.00</div>
+                    <div id="totalProfitSub" class="sub">0 winning trades</div>
                   </div>
-                  <div class="mini" style="border-radius:14px">
-                    <div class="label">Avg Confluence</div>
-                    <div id="avgConfluenceValue" class="value">0%</div>
+                  <div class="dash-side bad">
+                    <div class="label">Total Loss (Selected month)</div>
+                    <div id="totalLossValue" class="value">$0.00</div>
+                    <div id="totalLossSub" class="sub">0 losing trades</div>
                   </div>
                 </div>
               </div>
 
-              <div class="dash-right">
-                <div class="dash-side good">
-                  <div class="label">Total Profit</div>
-                  <div id="totalProfitValue" class="value">$0.00</div>
-                  <div id="totalProfitSub" class="sub">0 winning trades</div>
+              <div class="dash-mini">
+                <div class="mini">
+                  <div class="label">Largest Win</div>
+                  <div id="largestWinValue" class="value">$0.00</div>
                 </div>
-                <div class="dash-side bad">
-                  <div class="label">Total Loss</div>
-                  <div id="totalLossValue" class="value">$0.00</div>
-                  <div id="totalLossSub" class="sub">0 losing trades</div>
+                <div class="mini">
+                  <div class="label">Largest Loss</div>
+                  <div id="largestLossValue" class="value">$0.00</div>
+                </div>
+                <div class="mini">
+                  <div class="label">Best Streak</div>
+                  <div id="bestStreakValue" class="value">0</div>
+                </div>
+                <div class="mini">
+                  <div class="label">Total Trades</div>
+                  <div id="totalTradesMini" class="value">0</div>
+                </div>
+              </div>
+
+              <!-- Charts -->
+              <div class="chart-row">
+                <div class="chart-box">
+                  <div class="chart-title-row">
+                    <div class="chart-title">Equity curve (Selected month • cumulative R)</div>
+                    <div id="equityCaption" class="chart-caption">
+                      No trades in this month yet.
+                    </div>
+                  </div>
+                  <canvas id="equityChart" height="180"></canvas>
+                </div>
+                <div class="chart-box">
+                  <div class="chart-title-row">
+                    <div class="chart-title">Probability view (Selected month wins vs losses)</div>
+                    <div id="probCaption" class="chart-caption"></div>
+                  </div>
+                  <canvas id="probChart" height="180"></canvas>
+                </div>
+              </div>
+
+              <!-- Lower cards (month + evaluation) -->
+              <div class="dash-lower-grid">
+                <div class="chart-box">
+                  <div class="chart-title">Selected month summary</div>
+                  <div class="small-text">All numbers below match the selected month.</div>
+                  <ul class="eval-list">
+                    <li>
+                      <span>Month PnL (USD)</span>
+                      <span id="last7PnL" class="eval-value">$0.00</span>
+                    </li>
+                    <li>
+                      <span>Month PnL (R)</span>
+                      <span id="last30PnL" class="eval-value">0.00R</span>
+                    </li>
+                    <li>
+                      <span>Trades in month</span>
+                      <span id="totalTradesEval" class="eval-value">0</span>
+                    </li>
+                    <li>
+                      <span>Best day (USD)</span>
+                      <span id="bestDayEval" class="eval-value">$0.00</span>
+                    </li>
+                    <li>
+                      <span>Worst day (USD)</span>
+                      <span id="worstDayEval" class="eval-value">$0.00</span>
+                    </li>
+                  </ul>
+                </div>
+
+                <div class="chart-box">
+                  <div class="chart-title">Evaluation (Selected month)</div>
+                  <ul class="eval-list">
+                    <li>
+                      <span>Total number of trades</span>
+                      <span id="evalTotalTrades" class="eval-value"></span>
+                    </li>
+                    <li>
+                      <span>Avg. profit per trading day</span>
+                      <span id="evalAvgDay" class="eval-value"></span>
+                    </li>
+                    <li>
+                      <span>Biggest winner</span>
+                      <span id="evalBiggestWinner" class="eval-value"></span>
+                    </li>
+                    <li>
+                      <span>Biggest loser</span>
+                      <span id="evalBiggestLoser" class="eval-value"></span>
+                    </li>
+                    <li>
+                      <span>Total fees</span>
+                      <span id="evalFees" class="eval-value">$0.00</span>
+                    </li>
+                    <li>
+                      <span>Winrate w/o BE</span>
+                      <span id="evalWinNoBE" class="eval-value"></span>
+                    </li>
+                    <li>
+                      <span>ROI (month)</span>
+                      <span id="evalROI" class="eval-value"></span>
+                    </li>
+                    <li>
+                      <span>Max drawdown (month)</span>
+                      <span id="evalDrawdown" class="eval-value"></span>
+                    </li>
+                    <li>
+                      <span>Winning / Losing days</span>
+                      <span id="evalWinLoseDays" class="eval-value"></span>
+                    </li>
+                    <li>
+                      <span>Trades per day / week</span>
+                      <span id="evalTradesPer" class="eval-value"></span>
+                    </li>
+                    <li>
+                      <span>Current streak</span>
+                      <span id="evalStreak" class="eval-value"></span>
+                    </li>
+                  </ul>
                 </div>
               </div>
             </div>
 
-            <div class="dash-mini">
-              <div class="mini">
-                <div class="label">Largest Win</div>
-                <div id="largestWinValue" class="value">$0.00</div>
-              </div>
-              <div class="mini">
-                <div class="label">Largest Loss</div>
-                <div id="largestLossValue" class="value">$0.00</div>
-              </div>
-              <div class="mini">
-                <div class="label">Best Streak</div>
-                <div id="bestStreakValue" class="value">0</div>
-              </div>
-              <div class="mini">
-                <div class="label">Total Trades</div>
-                <div id="totalTradesMini" class="value">0</div>
-              </div>
-            </div>
-
-            <!-- Charts -->
-            <div class="chart-row">
-              <div class="chart-box">
-                <div class="chart-title-row">
-                  <div class="chart-title">Equity curve (cumulative R)</div>
-                  <div id="equityCaption" class="chart-caption">
-                    No trades yet. Log your first setup to start drawing your curve.
-                  </div>
-                </div>
-                <canvas id="equityChart" height="180"></canvas>
-              </div>
-              <div class="chart-box">
-                <div class="chart-title-row">
-                  <div class="chart-title">Probability view (wins vs losses)</div>
-                  <div id="probCaption" class="chart-caption"></div>
-                </div>
-                <canvas id="probChart" height="180"></canvas>
-              </div>
-            </div>
-
-            <!-- Three lower cards -->
-            <div class="three-grid">
-              <!-- Weekly & monthly stats -->
-              <div class="chart-box">
-                <div class="chart-title">Weekly & monthly stats</div>
-                <div class="small-text">Quick glance at last 7 and 30 days.</div>
-                <ul class="eval-list">
-                  <li>
-                    <span>Last 7 days</span>
-                    <span id="last7PnL" class="eval-value"></span>
-                  </li>
-                  <li>
-                    <span>Last 30 days</span>
-                    <span id="last30PnL" class="eval-value"></span>
-                  </li>
-                  <li>
-                    <span>Total trades</span>
-                    <span id="totalTradesEval" class="eval-value"></span>
-                  </li>
-                  <li>
-                    <span>Best day (USD)</span>
-                    <span id="bestDayEval" class="eval-value"></span>
-                  </li>
-                  <li>
-                    <span>Worst day (USD)</span>
-                    <span id="worstDayEval" class="eval-value"></span>
-                  </li>
-                </ul>
-              </div>
-
-              <!-- Calendar -->
+            <!-- HISTORY TAB -->
+            <div id="tabHistoryPane" style="display:none">
               <div class="chart-box">
                 <div class="calendar-header">
                   <div class="calendar-title" id="calendarTitle">Calendar – this month</div>
@@ -1275,85 +1410,34 @@
                 </table>
               </div>
 
-              <!-- Evaluation -->
-              <div class="chart-box">
-                <div class="chart-title">Evaluation</div>
-                <ul class="eval-list">
-                  <li>
-                    <span>Total number of trades</span>
-                    <span id="evalTotalTrades" class="eval-value"></span>
-                  </li>
-                  <li>
-                    <span>Avg. profit per trading day</span>
-                    <span id="evalAvgDay" class="eval-value"></span>
-                  </li>
-                  <li>
-                    <span>Biggest winner</span>
-                    <span id="evalBiggestWinner" class="eval-value"></span>
-                  </li>
-                  <li>
-                    <span>Biggest loser</span>
-                    <span id="evalBiggestLoser" class="eval-value"></span>
-                  </li>
-                  <li>
-                    <span>Total fees</span>
-                    <span id="evalFees" class="eval-value">$0.00</span>
-                  </li>
-                  <li>
-                    <span>Winrate w/o BE</span>
-                    <span id="evalWinNoBE" class="eval-value"></span>
-                  </li>
-                  <li>
-                    <span>ROI</span>
-                    <span id="evalROI" class="eval-value"></span>
-                  </li>
-                  <li>
-                    <span>Max drawdown</span>
-                    <span id="evalDrawdown" class="eval-value"></span>
-                  </li>
-                  <li>
-                    <span>Winning / Losing days</span>
-                    <span id="evalWinLoseDays" class="eval-value"></span>
-                  </li>
-                  <li>
-                    <span>Trades per day / week</span>
-                    <span id="evalTradesPer" class="eval-value"></span>
-                  </li>
-                  <li>
-                    <span>Current streak</span>
-                    <span id="evalStreak" class="eval-value"></span>
-                  </li>
-                </ul>
+              <div class="chart-box" style="margin-top: 10px">
+                <div class="chart-title-row">
+                  <div class="chart-title">Recent trades (Selected month)</div>
+                  <div class="chart-caption" id="recentCaption"></div>
+                </div>
+
+                <div style="max-height: 320px; overflow: auto; border-radius: 14px">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Date</th>
+                        <th>Pair</th>
+                        <th>Dir</th>
+                        <th>R</th>
+                        <th>PnL ($)</th>
+                        <th>Disc%</th>
+                        <th>Conf%</th>
+                        <th>Screenshot</th>
+                        <th>Notes</th>
+                      </tr>
+                    </thead>
+                    <tbody id="recentBody"></tbody>
+                  </table>
+                </div>
               </div>
             </div>
 
-            <!-- Recent trades table -->
-            <div class="chart-box" style="margin-top: 10px">
-              <div class="chart-title-row">
-                <div class="chart-title">Recent trades</div>
-                <div class="chart-caption" id="recentCaption"></div>
-              </div>
-
-              <div style="max-height: 220px; overflow: auto; border-radius: 14px">
-                <table class="table">
-                  <thead>
-                    <tr>
-                      <th>#</th>
-                      <th>Date</th>
-                      <th>Pair</th>
-                      <th>Dir</th>
-                      <th>R</th>
-                      <th>PnL ($)</th>
-                      <th>Disc%</th>
-                      <th>Conf%</th>
-                      <th>Screenshot</th>
-                      <th>Notes</th>
-                    </tr>
-                  </thead>
-                  <tbody id="recentBody"></tbody>
-                </table>
-              </div>
-            </div>
           </div>
         </section>
       </main>
@@ -1387,8 +1471,11 @@
       // ========= Storage / state =========
       const STORAGE_KEY = "tredlog_dashboard_v3";
 
-      // Month offset for calendar & recent trades filtering
-      let calendarMonthOffset = 0; // 0 = current month
+      // Selected month offset (0 = current month). ALL dashboard metrics are calculated ONLY for this month.
+      let selectedMonthOffset = 0;
+
+      // Active right-panel tab
+      let activeRightTab = "dashboard"; // "dashboard" | "history"
 
       // Draft confluence checks for the current trade form (not saved until trade is added)
       let draftConfluenceChecked = {}; // { TF: { ruleId: true } }
@@ -1438,6 +1525,30 @@
 
       function clamp(n, a, b) {
         return Math.max(a, Math.min(b, n));
+      }
+
+      function getMonthRange(offset) {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = now.getMonth() + offset; // can be negative / >11
+        const first = new Date(year, month, 1);
+        const last = new Date(year, month + 1, 0);
+        return { first, last };
+      }
+
+      function monthLabelFromDate(d) {
+        const monthName = d.toLocaleString("en-US", { month: "long" });
+        return `${monthName} ${d.getFullYear()}`;
+      }
+
+      function filterTradesToSelectedMonth(trades) {
+        const { first } = getMonthRange(selectedMonthOffset);
+        const year = first.getFullYear();
+        const month = first.getMonth();
+        return (trades || []).filter((t) => {
+          const d = new Date(t.date);
+          return d.getFullYear() === year && d.getMonth() === month;
+        });
       }
 
       // ========= Default Confluence (4H, M30, M15) =========
@@ -1575,16 +1686,6 @@
         $("disciplineLabel").textContent = `${hit} / ${total} rules followed (${pct}% discipline).`;
       }
 
-      // ========= Calendar helpers =========
-      function getCalendarMonthRange(offset) {
-        const now = new Date();
-        const year = now.getFullYear();
-        const month = now.getMonth() + offset; // can be negative / >11
-        const first = new Date(year, month, 1);
-        const last = new Date(year, month + 1, 0);
-        return { first, last };
-      }
-
       // ========= Google Drive helpers =========
       function setDriveStatus(text, isOffOrError) {
         const pill = $("driveStatusPill");
@@ -1670,7 +1771,6 @@
           });
           gapiInitialized = true;
 
-          // If the user already signed in (GIS callback fired before gapi init), load backup now.
           if (isSignedIn) {
             try {
               await loadBackupFromDrive();
@@ -1954,7 +2054,6 @@
           x.title = "Remove timeframe";
           x.addEventListener("click", () => {
             state.confluence.timeframes = state.confluence.timeframes.filter((t) => t !== tf);
-            // Remove draft selection for that TF
             delete draftConfluenceChecked[tf];
             saveState();
             renderConfluenceBuilder();
@@ -2060,330 +2159,6 @@
         renderTradeConfluenceArea();
       }
 
-      // ========= Recalc dashboard =========
-      function recalcDashboard() {
-        const trades = [...state.trades].sort((a, b) => new Date(a.date) - new Date(b.date));
-        const riskPerTrade = Number(state.riskPerTrade) || 0;
-        const starting = Number(state.startingBalance) || 0;
-
-        $("startingBalance").value = starting || "";
-        $("riskPerTrade").value = riskPerTrade || "";
-
-        $("tradeCountLabel").textContent =
-          trades.length === 1 ? "1 trade logged" : `${trades.length} trades logged`;
-
-        // Normalize trade numbers
-        trades.forEach((t) => {
-          t.resultR = Number(t.resultR) || 0;
-          t.riskR = Number(t.riskR) || 1;
-          t.pnlR = t.resultR;
-          t.pnlUSD = t.pnlR * riskPerTrade;
-          t.fees = Number(t.fees) || 0;
-          // net after fees (for metrics)
-          t.netUSD = t.pnlUSD - t.fees;
-          t.disciplinePct = Number(t.disciplinePct) || 0;
-          t.confluencePct = Number(t.confluencePct) || 0;
-        });
-
-        const totalR = trades.reduce((s, t) => s + t.pnlR, 0);
-        const totalUsdGross = trades.reduce((s, t) => s + t.pnlUSD, 0);
-        const totalFees = trades.reduce((s, t) => s + (Number(t.fees) || 0), 0);
-        const totalUsdNet = trades.reduce((s, t) => s + (Number(t.netUSD) || 0), 0);
-
-        const balance = starting + totalUsdNet;
-
-        $("toplineTotals").textContent = `Total PnL: ${fmtUSD(totalUsdNet)} • Balance: ${fmtUSD(
-          balance
-        )} • Starting: ${fmtUSD(starting)}`;
-
-        // PerfectTrade-like summary
-        $("netPnlBig").textContent = fmtUSD(totalUsdNet);
-        $("netPnlBig").style.color = totalUsdNet >= 0 ? "var(--good)" : "var(--bad)";
-        $("netPnlSub").textContent = `+ ${trades.length} trades completed`;
-
-        const nonBe = trades.filter((t) => t.pnlR !== 0);
-        const wins = trades.filter((t) => t.pnlR > 0);
-        const losses = trades.filter((t) => t.pnlR < 0);
-        const winRate = nonBe.length ? (wins.length / nonBe.length) * 100 : 0;
-        $("winRateValue").textContent = fmtPct(winRate);
-
-        const totalProfit = trades.reduce((s, t) => (t.netUSD > 0 ? s + t.netUSD : s), 0);
-        const totalLossAbs = trades.reduce((s, t) => (t.netUSD < 0 ? s + Math.abs(t.netUSD) : s), 0);
-        $("totalProfitValue").textContent = fmtUSD(totalProfit);
-        $("totalLossValue").textContent = fmtUSD(totalLossAbs);
-        $("totalProfitSub").textContent = `${wins.length} winning trades`;
-        $("totalLossSub").textContent = `${losses.length} losing trades`;
-
-        const profitFactor = totalLossAbs > 0 ? totalProfit / totalLossAbs : 0;
-        $("profitFactorValue").textContent = (isFinite(profitFactor) ? profitFactor : 0).toFixed(2);
-
-        const avgConf = trades.length
-          ? trades.reduce((s, t) => s + (Number(t.confluencePct) || 0), 0) / trades.length
-          : 0;
-        $("avgConfluenceValue").textContent = `${Math.round(avgConf)}%`;
-
-        // Largest win/loss + best streak
-        let largestWin = 0;
-        let largestLoss = 0;
-        trades.forEach((t) => {
-          if (t.netUSD > largestWin) largestWin = t.netUSD;
-          if (t.netUSD < largestLoss) largestLoss = t.netUSD;
-        });
-        $("largestWinValue").textContent = fmtUSD(largestWin);
-        $("largestLossValue").textContent = fmtUSD(largestLoss); // negative is shown as negative
-
-        // Best streak (consecutive wins)
-        let bestStreak = 0;
-        let curStreak = 0;
-        trades
-          .slice()
-          .sort((a, b) => new Date(a.date) - new Date(b.date))
-          .forEach((t) => {
-            if (t.pnlR > 0) {
-              curStreak += 1;
-              bestStreak = Math.max(bestStreak, curStreak);
-            } else {
-              curStreak = 0;
-            }
-          });
-        $("bestStreakValue").textContent = String(bestStreak);
-        $("totalTradesMini").textContent = String(trades.length);
-
-        // Equity points in R
-        const equityR = [];
-        let runningR = 0;
-        trades.forEach((t) => {
-          runningR += t.pnlR;
-          equityR.push({ x: new Date(t.date), y: runningR });
-        });
-
-        const eqCaption =
-          trades.length === 0
-            ? "No trades yet. Log your first setup to start drawing your curve."
-            : `Total R: ${fmtR(totalR)} • Net PnL: ${fmtUSD(totalUsdNet)} • Fees: ${fmtUSD(
-                totalFees
-              )} • Starting: ${fmtUSD(starting)} • Balance: ${fmtUSD(balance)}.`;
-        $("equityCaption").textContent = eqCaption;
-
-        drawEquityChart(equityR);
-        drawProbabilityChart(wins.length, losses.length);
-
-        // Last 7 / 30 days based on net
-        const today = new Date();
-        const dayMs = 24 * 60 * 60 * 1000;
-        const last7Start = new Date(today.getTime() - 6 * dayMs);
-        const last30Start = new Date(today.getTime() - 29 * dayMs);
-
-        let pnl7 = 0,
-          pnl30 = 0;
-        const dayMap = new Map();
-
-        trades.forEach((t) => {
-          const d = new Date(t.date);
-          const key = t.date;
-          if (!dayMap.has(key)) dayMap.set(key, 0);
-          dayMap.set(key, dayMap.get(key) + (t.netUSD || 0));
-          if (d >= last7Start && d <= today) pnl7 += t.netUSD || 0;
-          if (d >= last30Start && d <= today) pnl30 += t.netUSD || 0;
-        });
-
-        $("last7PnL").textContent = `${fmtR(pnl7 / (riskPerTrade || 1))} • ${fmtUSD(pnl7)}`;
-        $("last30PnL").textContent = `${fmtR(pnl30 / (riskPerTrade || 1))} • ${fmtUSD(pnl30)}`;
-        $("totalTradesEval").textContent = trades.length
-          ? `${trades.length} trade${trades.length === 1 ? "" : "s"}`
-          : "No trades yet.";
-
-        let bestDay = 0,
-          worstDay = 0;
-        dayMap.forEach((v) => {
-          if (v > bestDay) bestDay = v;
-          if (v < worstDay) worstDay = v;
-        });
-        $("bestDayEval").textContent = fmtUSD(bestDay);
-        $("worstDayEval").textContent = fmtUSD(worstDay);
-
-        renderCalendarAndRecent(trades);
-        renderEvaluation(trades, {
-          totalUsdNet,
-          starting,
-          balance,
-          winRate,
-          pnlByDay: dayMap,
-          equityR,
-          wins,
-          losses,
-          totalFees,
-        });
-      }
-
-      function renderCalendarAndRecent(trades) {
-        const { first, last } = getCalendarMonthRange(calendarMonthOffset);
-        const year = first.getFullYear();
-        const month = first.getMonth();
-
-        const monthName = first.toLocaleString("en-US", { month: "long" });
-        $("calendarTitle").textContent = `Calendar – ${monthName} ${year}`;
-
-        const daysInMonth = last.getDate();
-        const perDay = Array.from({ length: daysInMonth }, () => 0);
-
-        trades.forEach((t) => {
-          const d = new Date(t.date);
-          if (d.getFullYear() === year && d.getMonth() === month) {
-            const day = d.getDate();
-            perDay[day - 1] += Number(t.netUSD) || 0;
-          }
-        });
-
-        const tbody = $("calendarBody");
-        tbody.innerHTML = "";
-        const firstWeekday = new Date(year, month, 1).getDay();
-
-        let row = document.createElement("tr");
-        for (let i = 0; i < firstWeekday; i++) row.appendChild(document.createElement("td"));
-
-        for (let day = 1; day <= daysInMonth; day++) {
-          if (row.children.length === 7) {
-            tbody.appendChild(row);
-            row = document.createElement("tr");
-          }
-          const cell = document.createElement("td");
-          const pnl = perDay[day - 1];
-          const div = document.createElement("div");
-          div.className = "calendar-day";
-          if (pnl !== 0) {
-            div.classList.add("has-trades");
-            if (pnl < 0) div.classList.add("negative");
-          }
-          div.textContent = day;
-          if (pnl !== 0) {
-            const span = document.createElement("span");
-            span.className = "calendar-pnl";
-            span.textContent = fmtUSD(pnl);
-            div.appendChild(span);
-          }
-          cell.appendChild(div);
-          row.appendChild(cell);
-        }
-        if (row.children.length > 0) {
-          while (row.children.length < 7) row.appendChild(document.createElement("td"));
-          tbody.appendChild(row);
-        }
-
-        const monthTrades = trades.filter((t) => {
-          const d = new Date(t.date);
-          return d.getFullYear() === year && d.getMonth() === month;
-        });
-
-        const recentBody = $("recentBody");
-        recentBody.innerHTML = "";
-
-        monthTrades
-          .slice()
-          .sort((a, b) => new Date(b.date) - new Date(a.date))
-          .forEach((t, idx) => {
-            const tr = document.createElement("tr");
-            const discPct = isFinite(t.disciplinePct) ? Math.round(t.disciplinePct) : 0;
-            const confPct = isFinite(t.confluencePct) ? Math.round(t.confluencePct) : 0;
-
-            const cells = [
-              idx + 1,
-              t.date,
-              t.pair || "",
-              t.direction || "",
-              fmtR(t.pnlR),
-              fmtUSD(t.netUSD),
-              `${discPct}%`,
-              `${confPct}%`,
-              t.screenshot ? `<a href="${t.screenshot}" target="_blank">Open</a>` : "",
-              (t.notes || "").replace(/</g, "&lt;").replace(/>/g, "&gt;"),
-            ];
-
-            cells.forEach((val) => {
-              const td = document.createElement("td");
-              td.innerHTML = val;
-              tr.appendChild(td);
-            });
-            recentBody.appendChild(tr);
-          });
-
-        $("recentCaption").textContent = monthTrades.length
-          ? `${monthTrades.length} trade${monthTrades.length === 1 ? "" : "s"} in ${monthName} ${year}.`
-          : `No trades logged in ${monthName} ${year}.`;
-      }
-
-      function renderEvaluation(trades, { totalUsdNet, starting, balance, winRate, pnlByDay, equityR, wins, losses, totalFees }) {
-        $("evalTotalTrades").textContent = trades.length || 0;
-
-        const days = pnlByDay ? pnlByDay.size : 0;
-        const avgPerDay = days ? totalUsdNet / days : 0;
-        $("evalAvgDay").textContent = fmtUSD(avgPerDay);
-
-        let biggestWin = 0,
-          biggestLose = 0;
-        trades.forEach((t) => {
-          if (t.netUSD > biggestWin) biggestWin = t.netUSD;
-          if (t.netUSD < biggestLose) biggestLose = t.netUSD;
-        });
-        $("evalBiggestWinner").textContent = fmtUSD(biggestWin);
-        $("evalBiggestLoser").textContent = fmtUSD(biggestLose);
-
-        $("evalFees").textContent = fmtUSD(totalFees || 0);
-
-        const nonBe = trades.filter((t) => t.pnlR !== 0);
-        const winNoBE = nonBe.length ? (wins.length / nonBe.length) * 100 : 0;
-        $("evalWinNoBE").textContent = fmtPct(winNoBE);
-
-        const roi = starting ? ((balance - starting) / starting) * 100 : 0;
-        $("evalROI").textContent = fmtPct(roi);
-
-        let maxDraw = 0;
-        if (equityR.length && starting) {
-          let peak = starting;
-          let equityUsd = starting;
-          equityR.forEach((pt) => {
-            equityUsd = starting + pt.y * (state.riskPerTrade || 0);
-            // subtract fees net adjustment approx: use net PnL for drawdown measure is complex; keep original approach
-            if (equityUsd > peak) peak = equityUsd;
-            const dd = peak > 0 ? (peak - equityUsd) / peak : 0;
-            if (dd > maxDraw) maxDraw = dd;
-          });
-        }
-        $("evalDrawdown").textContent = fmtPct(maxDraw * 100);
-
-        let winDays = 0,
-          loseDays = 0;
-        pnlByDay.forEach((v) => {
-          if (v > 0) winDays++;
-          else if (v < 0) loseDays++;
-        });
-        $("evalWinLoseDays").textContent = `${winDays} / ${loseDays}`;
-
-        if (trades.length) {
-          const dates = trades.map((t) => new Date(t.date)).sort((a, b) => a - b);
-          const dayMs = 24 * 60 * 60 * 1000;
-          const spanDays = (dates[dates.length - 1] - dates[0]) / dayMs + 1 || 1;
-          const spanWeeks = spanDays / 7;
-          const perDay = trades.length / spanDays;
-          const perWeek = trades.length / spanWeeks;
-          $("evalTradesPer").textContent = `${perDay.toFixed(2)} / ${perWeek.toFixed(2)}`;
-        } else {
-          $("evalTradesPer").textContent = "0.00 / 0.00";
-        }
-
-        // Streak string (last 10 trades)
-        let streakStr = "";
-        trades
-          .slice()
-          .sort((a, b) => new Date(b.date) - new Date(a.date))
-          .slice(0, 10)
-          .forEach((t) => {
-            const c = t.pnlR > 0 ? "W" : t.pnlR < 0 ? "L" : "B";
-            streakStr = c + (streakStr ? " " + streakStr : "");
-          });
-        $("evalStreak").textContent = streakStr || "–";
-      }
-
       // ========= Canvas helpers =========
       function resizeCanvasToDisplaySize(canvas, cssHeight = 180) {
         const dpr = window.devicePixelRatio || 1;
@@ -2397,13 +2172,13 @@
       }
 
       function clearCanvas(canvas, cssHeight = 180) {
-        const dpr = resizeCanvasToDisplaySize(canvas, cssHeight);
+        resizeCanvasToDisplaySize(canvas, cssHeight);
         const ctx = canvas.getContext("2d");
         ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = "rgba(2,6,23,0.35)";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        return { ctx, dpr };
+        return { ctx };
       }
 
       function drawEquityChart(points) {
@@ -2543,6 +2318,22 @@
         });
       }
 
+      // ========= Tabs =========
+      function setActiveTab(tab) {
+        activeRightTab = tab === "history" ? "history" : "dashboard";
+
+        $("tabBtnDashboard").classList.toggle("active", activeRightTab === "dashboard");
+        $("tabBtnHistory").classList.toggle("active", activeRightTab === "history");
+
+        $("tabDashboardPane").style.display = activeRightTab === "dashboard" ? "block" : "none";
+        $("tabHistoryPane").style.display = activeRightTab === "history" ? "block" : "none";
+
+        // Re-render charts after switching to dashboard (ensures canvas sizes are correct)
+        if (activeRightTab === "dashboard") {
+          recalcDashboard();
+        }
+      }
+
       function addTradeFromForm(isDraft = false) {
         const date = $("tradeDate").value;
         if (!date && !isDraft) {
@@ -2608,6 +2399,323 @@
         }
       }
 
+      // ========= Calendar + recent (History tab) =========
+      function renderCalendarAndRecent(allTradesSorted) {
+        const trades = allTradesSorted || [];
+        const { first, last } = getMonthRange(selectedMonthOffset);
+        const year = first.getFullYear();
+        const month = first.getMonth();
+
+        const monthName = first.toLocaleString("en-US", { month: "long" });
+        $("calendarTitle").textContent = `Calendar – ${monthName} ${year}`;
+
+        const daysInMonth = last.getDate();
+        const perDay = Array.from({ length: daysInMonth }, () => 0);
+
+        trades.forEach((t) => {
+          const d = new Date(t.date);
+          if (d.getFullYear() === year && d.getMonth() === month) {
+            const day = d.getDate();
+            perDay[day - 1] += Number(t.netUSD) || 0;
+          }
+        });
+
+        const tbody = $("calendarBody");
+        tbody.innerHTML = "";
+        const firstWeekday = new Date(year, month, 1).getDay();
+
+        let row = document.createElement("tr");
+        for (let i = 0; i < firstWeekday; i++) row.appendChild(document.createElement("td"));
+
+        for (let day = 1; day <= daysInMonth; day++) {
+          if (row.children.length === 7) {
+            tbody.appendChild(row);
+            row = document.createElement("tr");
+          }
+          const cell = document.createElement("td");
+          const pnl = perDay[day - 1];
+          const div = document.createElement("div");
+          div.className = "calendar-day";
+          if (pnl !== 0) {
+            div.classList.add("has-trades");
+            if (pnl < 0) div.classList.add("negative");
+          }
+          div.textContent = day;
+          if (pnl !== 0) {
+            const span = document.createElement("span");
+            span.className = "calendar-pnl";
+            span.textContent = fmtUSD(pnl);
+            div.appendChild(span);
+          }
+          cell.appendChild(div);
+          row.appendChild(cell);
+        }
+        if (row.children.length > 0) {
+          while (row.children.length < 7) row.appendChild(document.createElement("td"));
+          tbody.appendChild(row);
+        }
+
+        const monthTrades = trades.filter((t) => {
+          const d = new Date(t.date);
+          return d.getFullYear() === year && d.getMonth() === month;
+        });
+
+        const recentBody = $("recentBody");
+        recentBody.innerHTML = "";
+
+        monthTrades
+          .slice()
+          .sort((a, b) => new Date(b.date) - new Date(a.date))
+          .forEach((t, idx) => {
+            const tr = document.createElement("tr");
+            const discPct = isFinite(t.disciplinePct) ? Math.round(t.disciplinePct) : 0;
+            const confPct = isFinite(t.confluencePct) ? Math.round(t.confluencePct) : 0;
+
+            const cells = [
+              idx + 1,
+              t.date,
+              t.pair || "",
+              t.direction || "",
+              fmtR(t.pnlR),
+              fmtUSD(t.netUSD),
+              `${discPct}%`,
+              `${confPct}%`,
+              t.screenshot ? `<a href="${t.screenshot}" target="_blank">Open</a>` : "",
+              (t.notes || "").replace(/</g, "&lt;").replace(/>/g, "&gt;"),
+            ];
+
+            cells.forEach((val) => {
+              const td = document.createElement("td");
+              td.innerHTML = val;
+              tr.appendChild(td);
+            });
+            recentBody.appendChild(tr);
+          });
+
+        $("recentCaption").textContent = monthTrades.length
+          ? `${monthTrades.length} trade${monthTrades.length === 1 ? "" : "s"} in ${monthName} ${year}.`
+          : `No trades logged in ${monthName} ${year}.`;
+      }
+
+      function renderEvaluation(trades, { totalUsdNet, starting, balance, winRate, pnlByDay, equityR, wins, losses, totalFees }) {
+        $("evalTotalTrades").textContent = trades.length || 0;
+
+        const days = pnlByDay ? pnlByDay.size : 0;
+        const avgPerDay = days ? totalUsdNet / days : 0;
+        $("evalAvgDay").textContent = fmtUSD(avgPerDay);
+
+        let biggestWin = 0,
+          biggestLose = 0;
+        trades.forEach((t) => {
+          if (t.netUSD > biggestWin) biggestWin = t.netUSD;
+          if (t.netUSD < biggestLose) biggestLose = t.netUSD;
+        });
+        $("evalBiggestWinner").textContent = fmtUSD(biggestWin);
+        $("evalBiggestLoser").textContent = fmtUSD(biggestLose);
+
+        $("evalFees").textContent = fmtUSD(totalFees || 0);
+
+        const nonBe = trades.filter((t) => t.pnlR !== 0);
+        const winNoBE = nonBe.length ? (wins.length / nonBe.length) * 100 : 0;
+        $("evalWinNoBE").textContent = fmtPct(winNoBE);
+
+        // Monthly ROI: month net vs starting (simple baseline)
+        const roi = starting ? ((balance - starting) / starting) * 100 : 0;
+        $("evalROI").textContent = fmtPct(roi);
+
+        let maxDraw = 0;
+        if (equityR.length && starting) {
+          let peak = starting;
+          let equityUsd = starting;
+          equityR.forEach((pt) => {
+            equityUsd = starting + pt.y * (state.riskPerTrade || 0);
+            if (equityUsd > peak) peak = equityUsd;
+            const dd = peak > 0 ? (peak - equityUsd) / peak : 0;
+            if (dd > maxDraw) maxDraw = dd;
+          });
+        }
+        $("evalDrawdown").textContent = fmtPct(maxDraw * 100);
+
+        let winDays = 0,
+          loseDays = 0;
+        pnlByDay.forEach((v) => {
+          if (v > 0) winDays++;
+          else if (v < 0) loseDays++;
+        });
+        $("evalWinLoseDays").textContent = `${winDays} / ${loseDays}`;
+
+        if (trades.length) {
+          const dates = trades.map((t) => new Date(t.date)).sort((a, b) => a - b);
+          const dayMs = 24 * 60 * 60 * 1000;
+          const spanDays = (dates[dates.length - 1] - dates[0]) / dayMs + 1 || 1;
+          const spanWeeks = spanDays / 7;
+          const perDay = trades.length / spanDays;
+          const perWeek = trades.length / spanWeeks;
+          $("evalTradesPer").textContent = `${perDay.toFixed(2)} / ${perWeek.toFixed(2)}`;
+        } else {
+          $("evalTradesPer").textContent = "0.00 / 0.00";
+        }
+
+        // Streak string (last 10 trades in the month)
+        let streakStr = "";
+        trades
+          .slice()
+          .sort((a, b) => new Date(b.date) - new Date(a.date))
+          .slice(0, 10)
+          .forEach((t) => {
+            const c = t.pnlR > 0 ? "W" : t.pnlR < 0 ? "L" : "B";
+            streakStr = c + (streakStr ? " " + streakStr : "");
+          });
+        $("evalStreak").textContent = streakStr || "–";
+      }
+
+      // ========= Recalc dashboard (MONTH ONLY) =========
+      function recalcDashboard() {
+        const allTrades = [...(state.trades || [])].sort((a, b) => new Date(a.date) - new Date(b.date));
+        const trades = filterTradesToSelectedMonth(allTrades).sort((a, b) => new Date(a.date) - new Date(b.date));
+
+        const riskPerTrade = Number(state.riskPerTrade) || 0;
+        const starting = Number(state.startingBalance) || 0;
+
+        $("startingBalance").value = starting || "";
+        $("riskPerTrade").value = riskPerTrade || "";
+
+        // Month label UI
+        const { first } = getMonthRange(selectedMonthOffset);
+        const monthNameYear = monthLabelFromDate(first);
+        $("monthLabel").textContent = monthNameYear;
+
+        // Trades logged label (month only)
+        $("tradeCountLabel").textContent =
+          trades.length === 1 ? `1 trade in ${monthNameYear}` : `${trades.length} trades in ${monthNameYear}`;
+
+        // Normalize trade numbers
+        trades.forEach((t) => {
+          t.resultR = Number(t.resultR) || 0;
+          t.riskR = Number(t.riskR) || 1;
+          t.pnlR = t.resultR;
+          t.pnlUSD = t.pnlR * riskPerTrade;
+          t.fees = Number(t.fees) || 0;
+          t.netUSD = t.pnlUSD - t.fees;
+          t.disciplinePct = Number(t.disciplinePct) || 0;
+          t.confluencePct = Number(t.confluencePct) || 0;
+        });
+
+        const totalR = trades.reduce((s, t) => s + t.pnlR, 0);
+        const totalFees = trades.reduce((s, t) => s + (Number(t.fees) || 0), 0);
+        const totalUsdNet = trades.reduce((s, t) => s + (Number(t.netUSD) || 0), 0);
+
+        const balance = starting + totalUsdNet;
+
+        $("toplineTotals").textContent = `Month PnL: ${fmtUSD(totalUsdNet)} • Month Balance: ${fmtUSD(
+          balance
+        )} • Starting: ${fmtUSD(starting)}`;
+
+        // Summary
+        $("netPnlBig").textContent = fmtUSD(totalUsdNet);
+        $("netPnlBig").style.color = totalUsdNet >= 0 ? "var(--good)" : "var(--bad)";
+        $("netPnlSub").textContent = `+ ${trades.length} trades in ${monthNameYear}`;
+
+        const nonBe = trades.filter((t) => t.pnlR !== 0);
+        const wins = trades.filter((t) => t.pnlR > 0);
+        const losses = trades.filter((t) => t.pnlR < 0);
+        const winRate = nonBe.length ? (wins.length / nonBe.length) * 100 : 0;
+        $("winRateValue").textContent = fmtPct(winRate);
+
+        const totalProfit = trades.reduce((s, t) => (t.netUSD > 0 ? s + t.netUSD : s), 0);
+        const totalLossAbs = trades.reduce((s, t) => (t.netUSD < 0 ? s + Math.abs(t.netUSD) : s), 0);
+        $("totalProfitValue").textContent = fmtUSD(totalProfit);
+        $("totalLossValue").textContent = fmtUSD(totalLossAbs);
+        $("totalProfitSub").textContent = `${wins.length} winning trades`;
+        $("totalLossSub").textContent = `${losses.length} losing trades`;
+
+        const profitFactor = totalLossAbs > 0 ? totalProfit / totalLossAbs : 0;
+        $("profitFactorValue").textContent = (isFinite(profitFactor) ? profitFactor : 0).toFixed(2);
+
+        const avgConf = trades.length
+          ? trades.reduce((s, t) => s + (Number(t.confluencePct) || 0), 0) / trades.length
+          : 0;
+        $("avgConfluenceValue").textContent = `${Math.round(avgConf)}%`;
+
+        // Largest win/loss + best streak (month)
+        let largestWin = 0;
+        let largestLoss = 0;
+        trades.forEach((t) => {
+          if (t.netUSD > largestWin) largestWin = t.netUSD;
+          if (t.netUSD < largestLoss) largestLoss = t.netUSD;
+        });
+        $("largestWinValue").textContent = fmtUSD(largestWin);
+        $("largestLossValue").textContent = fmtUSD(largestLoss);
+
+        let bestStreak = 0;
+        let curStreak = 0;
+        trades.forEach((t) => {
+          if (t.pnlR > 0) {
+            curStreak += 1;
+            bestStreak = Math.max(bestStreak, curStreak);
+          } else {
+            curStreak = 0;
+          }
+        });
+        $("bestStreakValue").textContent = String(bestStreak);
+        $("totalTradesMini").textContent = String(trades.length);
+
+        // Equity points in R (month only)
+        const equityR = [];
+        let runningR = 0;
+        trades.forEach((t) => {
+          runningR += t.pnlR;
+          equityR.push({ x: new Date(t.date), y: runningR });
+        });
+
+        const eqCaption =
+          trades.length === 0
+            ? `No trades in ${monthNameYear} yet.`
+            : `Month R: ${fmtR(totalR)} • Month Net PnL: ${fmtUSD(totalUsdNet)} • Fees: ${fmtUSD(
+                totalFees
+              )}.`;
+        $("equityCaption").textContent = eqCaption;
+
+        drawEquityChart(equityR);
+        drawProbabilityChart(wins.length, losses.length);
+
+        // Month summary card (day map within month)
+        const dayMap = new Map();
+        trades.forEach((t) => {
+          const key = t.date;
+          if (!dayMap.has(key)) dayMap.set(key, 0);
+          dayMap.set(key, dayMap.get(key) + (t.netUSD || 0));
+        });
+
+        $("last7PnL").textContent = fmtUSD(totalUsdNet);
+        $("last30PnL").textContent = fmtR(totalR);
+        $("totalTradesEval").textContent = trades.length ? String(trades.length) : "0";
+
+        let bestDay = 0, worstDay = 0;
+        dayMap.forEach((v) => {
+          if (v > bestDay) bestDay = v;
+          if (v < worstDay) worstDay = v;
+        });
+        $("bestDayEval").textContent = fmtUSD(bestDay);
+        $("worstDayEval").textContent = fmtUSD(worstDay);
+
+        // History tab content still renders from ALL trades but filtered internally by selected month
+        renderCalendarAndRecent(allTrades);
+
+        renderEvaluation(trades, {
+          totalUsdNet,
+          starting,
+          balance,
+          winRate,
+          pnlByDay: dayMap,
+          equityR,
+          wins,
+          losses,
+          totalFees,
+        });
+      }
+
+      // ========= Confluence builder (UI actions) =========
       function init() {
         loadState();
         state = ensureStateShape(state);
@@ -2622,6 +2730,7 @@
         updateSigninUI();
         updateDisciplinePreview();
         updateConfluenceSummaryUI();
+        setActiveTab("dashboard");
 
         $("startingBalance").addEventListener("change", () => {
           state.startingBalance = parseNumber($("startingBalance").value);
@@ -2715,19 +2824,36 @@
         $("exportBtn").addEventListener("click", exportBackup);
         $("importBtn").addEventListener("click", importBackup);
 
+        // Tabs
+        $("tabBtnDashboard").addEventListener("click", () => setActiveTab("dashboard"));
+        $("tabBtnHistory").addEventListener("click", () => setActiveTab("history"));
+
+        // Month nav (global)
+        $("monthPrevBtn").addEventListener("click", () => {
+          selectedMonthOffset--;
+          recalcDashboard();
+        });
+        $("monthNextBtn").addEventListener("click", () => {
+          selectedMonthOffset++;
+          recalcDashboard();
+        });
+
+        // Calendar nav (history tab) uses the same selected month
         $("calPrevBtn").addEventListener("click", () => {
-          calendarMonthOffset--;
+          selectedMonthOffset--;
           recalcDashboard();
         });
         $("calNextBtn").addEventListener("click", () => {
-          calendarMonthOffset++;
+          selectedMonthOffset++;
           recalcDashboard();
         });
 
         $("googleSignInBtn").addEventListener("click", handleSignInClick);
         $("googleSignOutBtn").addEventListener("click", handleSignOutClick);
 
-        window.addEventListener("resize", recalcDashboard);
+        window.addEventListener("resize", () => {
+          if (activeRightTab === "dashboard") recalcDashboard();
+        });
       }
 
       document.addEventListener("DOMContentLoaded", init);
