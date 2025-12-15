@@ -426,7 +426,7 @@
         color: var(--good);
       }
 
-      /* Dashboard metrics (PerfectTrade-like) */
+      /* Dashboard metrics */
       .dash-grid {
         display: grid;
         grid-template-columns: 1.4fr 1fr;
@@ -693,9 +693,10 @@
         margin: 2px;
         border: 1px solid rgba(148, 163, 184, 0.1);
         background: rgba(2, 6, 23, 0.25);
-        min-height: 44px;
+        min-height: 52px;
         display: grid;
         place-items: center;
+        cursor: pointer;
       }
 
       .calendar-day.has-trades {
@@ -890,6 +891,34 @@
         color: rgba(226, 232, 240, 0.9);
       }
 
+      /* Screenshot preview */
+      .shotCell {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .shotThumb {
+        width: 44px;
+        height: 32px;
+        border-radius: 8px;
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        object-fit: cover;
+        display: block;
+      }
+      .shotBtn {
+        border-radius: 999px;
+        border: 1px solid rgba(148, 163, 184, 0.26);
+        background: rgba(2, 6, 23, 0.34);
+        color: rgba(226, 232, 240, 0.92);
+        font-size: 10.5px;
+        padding: 4px 10px;
+        cursor: pointer;
+        font-weight: 700;
+      }
+      .shotBtn:hover {
+        border-color: rgba(226, 232, 240, 0.35);
+      }
+
       footer {
         margin-top: 14px;
         font-size: 10.5px;
@@ -949,6 +978,37 @@
           grid-template-columns: minmax(0, 1fr);
         }
       }
+
+      /* ===== Image modal (fast review) ===== */
+      #imageModal {
+        position: fixed;
+        inset: 0;
+        background: rgba(2, 6, 23, 0.92);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+      }
+      #imageModal img {
+        max-width: 92%;
+        max-height: 92%;
+        border-radius: 16px;
+        border: 1px solid rgba(148, 163, 184, 0.3);
+        box-shadow: 0 40px 120px rgba(0, 0, 0, 0.6);
+      }
+      #imageModalClose {
+        position: absolute;
+        top: 18px;
+        right: 22px;
+        font-size: 28px;
+        color: #fff;
+        cursor: pointer;
+        opacity: 0.85;
+        user-select: none;
+      }
+      #imageModalClose:hover {
+        opacity: 1;
+      }
     </style>
   </head>
 
@@ -972,7 +1032,9 @@
           <button id="importBtn" class="pill btn-small">Import backup</button>
           <div id="driveStatusPill" class="pill">Drive: not connected</div>
           <button id="googleSignInBtn" class="pill btn-small">Sign in with Google</button>
-          <button id="googleSignOutBtn" class="pill btn-small" style="display: none">Sign out</button>
+          <button id="googleSignOutBtn" class="pill btn-small" style="display: none">
+            Sign out
+          </button>
           <div id="clearBtn" class="pill danger">Clear local data</div>
         </div>
       </header>
@@ -997,11 +1059,23 @@
             <div class="row">
               <div class="col-2">
                 <label for="startingBalance">Starting balance (USD)</label>
-                <input id="startingBalance" type="number" min="0" step="0.01" placeholder="e.g. 10,000" />
+                <input
+                  id="startingBalance"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  placeholder="e.g. 10,000"
+                />
               </div>
               <div class="col-2">
                 <label for="riskPerTrade">Risk per trade (USD)</label>
-                <input id="riskPerTrade" type="number" step="0.01" min="0" placeholder="e.g. 1,000" />
+                <input
+                  id="riskPerTrade"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  placeholder="e.g. 1,000"
+                />
               </div>
             </div>
 
@@ -1037,29 +1111,52 @@
             <div class="row" style="margin-top: 8px">
               <div class="col-2">
                 <label for="riskR">Risk (R)</label>
-                <input id="riskR" type="number" step="0.01" placeholder="1" value="1" />
+                <input
+                  id="riskR"
+                  type="number"
+                  step="0.01"
+                  placeholder="1"
+                  value="1"
+                />
               </div>
               <div class="col-2">
                 <label for="resultR">Result (R)</label>
-                <input id="resultR" type="number" step="0.01" placeholder="e.g. -1, 0.5, 2" />
+                <input
+                  id="resultR"
+                  type="number"
+                  step="0.01"
+                  placeholder="e.g. -1, 0.5, 2"
+                />
               </div>
             </div>
 
             <div class="row" style="margin-top: 8px">
               <div class="col-2">
                 <label for="setup">Setup (custom)</label>
-                <input id="setup" type="text" placeholder="Type anything (saved per trade)" />
+                <input
+                  id="setup"
+                  type="text"
+                  placeholder="Type anything (saved per trade)"
+                />
               </div>
               <div class="col-2">
                 <label for="entrySignal">Entry signal (custom)</label>
-                <input id="entrySignal" type="text" placeholder="Type anything (saved per trade)" />
+                <input
+                  id="entrySignal"
+                  type="text"
+                  placeholder="Type anything (saved per trade)"
+                />
               </div>
             </div>
 
             <div class="row" style="margin-top: 8px">
               <div class="col-2">
                 <label for="screenshot">Screenshot / chart link</label>
-                <input id="screenshot" type="text" placeholder="Paste TradingView or chart URL" />
+                <input
+                  id="screenshot"
+                  type="text"
+                  placeholder="Paste image URL (.png/.jpg/.webp) or TradingView link"
+                />
               </div>
               <div class="col-2">
                 <label for="fees">Fees (USD) (optional)</label>
@@ -1069,21 +1166,26 @@
 
             <div style="margin-top: 8px">
               <label for="notes">Journal notes</label>
-              <textarea id="notes" placeholder="What did you see? Which rules were met? Where could you improve?"></textarea>
+              <textarea
+                id="notes"
+                placeholder="What did you see? Which rules were met? Where could you improve?"
+              ></textarea>
             </div>
 
             <!-- Weighted checklist -->
             <div class="section-heading">Weighted checklist</div>
             <div class="small-text" style="margin-bottom: 6px">
-              Tick only what actually happened on this trade. Discipline % is based on the core rules.
+              Tick only what actually happened on this trade. Discipline % is based on
+              the core rules.
             </div>
 
             <div class="checklist-grid">
-              <!-- Custom setup (global list - your personal reminders) -->
+              <!-- Custom setup -->
               <div class="checklist-card">
                 <div class="checklist-title">Custom setup checklist</div>
                 <div class="small-text" style="margin-bottom: 6px">
-                  Add your own reminders (e.g. “Clean close at level”). These are stored globally and shown here.
+                  Add your own reminders (e.g. “Clean close at level”). These are
+                  stored globally and shown here.
                 </div>
                 <div id="customRulesList" class="small-text" style="min-height: 40px">
                   <em>No custom rules yet. Add your checklist items below.</em>
@@ -1129,12 +1231,13 @@
               </div>
             </div>
 
-            <!-- Confluence checklist (custom) -->
+            <!-- Confluence checklist -->
             <div class="section-heading" style="margin-top: 14px">
               Confluence checklist (custom)
             </div>
             <div class="small-text">
-              Create your own timeframes (default: 4H, M30, M15) and rules with weights. Confluence % updates live and is stored inside each trade.
+              Create your own timeframes (default: 4H, M30, M15) and rules with weights.
+              Confluence % updates live and is stored inside each trade.
             </div>
 
             <div class="checklist-card" style="margin-top: 10px">
@@ -1161,7 +1264,11 @@
                 </div>
                 <div>
                   <label for="ruleText">Rule</label>
-                  <input id="ruleText" type="text" placeholder="e.g. Trend aligned, At AOI / rejected..." />
+                  <input
+                    id="ruleText"
+                    type="text"
+                    placeholder="e.g. Trend aligned, At AOI / rejected..."
+                  />
                 </div>
                 <div>
                   <label for="ruleWeight">Weight</label>
@@ -1174,11 +1281,13 @@
 
               <div id="rulesList" class="rules-list"></div>
 
-              <div class="section-heading" style="margin-top: 12px">This trade – Confluence checklist</div>
+              <div class="section-heading" style="margin-top: 12px">
+                This trade – Confluence checklist
+              </div>
               <div id="tradeConfluenceArea"></div>
 
               <div class="confluence-summary">
-                <div class="small-text" style="text-align:center">TOTAL OVERALL SCORE</div>
+                <div class="small-text" style="text-align: center">TOTAL OVERALL SCORE</div>
                 <div id="confluenceOverallBig" class="big">0%</div>
                 <div id="confluenceTagline" class="tagline">Weak Setup</div>
                 <div id="confluenceMiniRow" class="minirow"></div>
@@ -1206,15 +1315,21 @@
             <div class="card-title-row">
               <div class="card-title">Equity & performance overview</div>
               <div class="card-subtitle">
-                <span id="toplineTotals">Month PnL: $0.00 • Month Balance: $0.00 • Starting: $0.00</span>
+                <span id="toplineTotals"
+                  >Month PnL: $0.00 • Month Balance: $0.00 • Starting: $0.00</span
+                >
               </div>
             </div>
 
             <!-- Tabs + month selector -->
             <div class="panel-topbar">
               <div class="tabs">
-                <button id="tabBtnDashboard" class="tabbtn active" data-tab="dashboard">Dashboard</button>
-                <button id="tabBtnHistory" class="tabbtn" data-tab="history">History</button>
+                <button id="tabBtnDashboard" class="tabbtn active" data-tab="dashboard">
+                  Dashboard
+                </button>
+                <button id="tabBtnHistory" class="tabbtn" data-tab="history">
+                  History
+                </button>
               </div>
 
               <div class="month-nav">
@@ -1226,7 +1341,6 @@
 
             <!-- DASHBOARD TAB -->
             <div id="tabDashboardPane">
-              <!-- PerfectTrade-like top cards -->
               <div class="dash-grid">
                 <div class="dash-big">
                   <div class="label">Net Profit &amp; Loss (Selected month)</div>
@@ -1234,16 +1348,18 @@
                   <div id="netPnlSub" class="sub">+ 0 trades in selected month</div>
                   <div class="icon">$</div>
 
-                  <div style="display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin-top: 12px;">
-                    <div class="mini" style="border-radius:14px">
+                  <div
+                    style="display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin-top: 12px;"
+                  >
+                    <div class="mini" style="border-radius: 14px">
                       <div class="label">Win Rate</div>
                       <div id="winRateValue" class="value">0%</div>
                     </div>
-                    <div class="mini" style="border-radius:14px">
+                    <div class="mini" style="border-radius: 14px">
                       <div class="label">Profit Factor</div>
                       <div id="profitFactorValue" class="value">0.00</div>
                     </div>
-                    <div class="mini" style="border-radius:14px">
+                    <div class="mini" style="border-radius: 14px">
                       <div class="label">Avg Confluence</div>
                       <div id="avgConfluenceValue" class="value">0%</div>
                     </div>
@@ -1287,7 +1403,9 @@
               <div class="chart-row">
                 <div class="chart-box">
                   <div class="chart-title-row">
-                    <div class="chart-title">Equity curve (Selected month • cumulative R)</div>
+                    <div class="chart-title">
+                      Equity curve (Selected month • cumulative R)
+                    </div>
                     <div id="equityCaption" class="chart-caption">
                       No trades in this month yet.
                     </div>
@@ -1296,14 +1414,16 @@
                 </div>
                 <div class="chart-box">
                   <div class="chart-title-row">
-                    <div class="chart-title">Probability view (Selected month wins vs losses)</div>
+                    <div class="chart-title">
+                      Probability view (Selected month wins vs losses)
+                    </div>
                     <div id="probCaption" class="chart-caption"></div>
                   </div>
                   <canvas id="probChart" height="180"></canvas>
                 </div>
               </div>
 
-              <!-- Lower cards (month + evaluation) -->
+              <!-- Lower cards -->
               <div class="dash-lower-grid">
                 <div class="chart-box">
                   <div class="chart-title">Selected month summary</div>
@@ -1385,7 +1505,7 @@
             </div>
 
             <!-- HISTORY TAB -->
-            <div id="tabHistoryPane" style="display:none">
+            <div id="tabHistoryPane" style="display: none">
               <div class="chart-box">
                 <div class="calendar-header">
                   <div class="calendar-title" id="calendarTitle">Calendar – this month</div>
@@ -1416,7 +1536,7 @@
                   <div class="chart-caption" id="recentCaption"></div>
                 </div>
 
-                <div style="max-height: 320px; overflow: auto; border-radius: 14px">
+                <div style="max-height: 360px; overflow: auto; border-radius: 14px">
                   <table class="table">
                     <thead>
                       <tr>
@@ -1424,7 +1544,11 @@
                         <th>Date</th>
                         <th>Pair</th>
                         <th>Dir</th>
+                        <th>Session</th>
+                        <th>Setup</th>
+                        <th>Entry</th>
                         <th>R</th>
+                        <th>Fees</th>
                         <th>PnL ($)</th>
                         <th>Disc%</th>
                         <th>Conf%</th>
@@ -1437,7 +1561,6 @@
                 </div>
               </div>
             </div>
-
           </div>
         </section>
       </main>
@@ -1449,6 +1572,12 @@
           <a href="mailto:support@tredlog.com">support@tredlog.com</a>
         </div>
       </footer>
+    </div>
+
+    <!-- ================= IMAGE MODAL ================= -->
+    <div id="imageModal">
+      <div id="imageModalClose">×</div>
+      <img id="imageModalImg" alt="Trade screenshot" />
     </div>
 
     <script>
@@ -1510,8 +1639,7 @@
           Number(v).toLocaleString("en-US", {
             minimumFractionDigits: 0,
             maximumFractionDigits: 0,
-          }) + "%"
-        );
+          }) + "%";
       }
 
       function parseNumber(input) {
@@ -1549,6 +1677,10 @@
           const d = new Date(t.date);
           return d.getFullYear() === year && d.getMonth() === month;
         });
+      }
+
+      function isImageUrl(url) {
+        return !!String(url || "").match(/\.(png|jpg|jpeg|webp)(\?.*)?$/i);
       }
 
       // ========= Default Confluence (4H, M30, M15) =========
@@ -1592,26 +1724,27 @@
           confluence: getDefaultConfluence(),
         };
 
-        const s = Object.assign({}, base, (obj && typeof obj === "object" ? obj : {}));
+        const s = Object.assign({}, base, obj && typeof obj === "object" ? obj : {});
         s.startingBalance = Number(s.startingBalance) || 0;
         s.riskPerTrade = Number(s.riskPerTrade) || 0;
         s.trades = Array.isArray(s.trades) ? s.trades : [];
         s.customRules = Array.isArray(s.customRules) ? s.customRules : [];
 
-        // Confluence shape
         if (!s.confluence || typeof s.confluence !== "object") s.confluence = getDefaultConfluence();
-        if (!Array.isArray(s.confluence.timeframes)) s.confluence.timeframes = getDefaultConfluence().timeframes.slice();
-        if (!s.confluence.rules || typeof s.confluence.rules !== "object") s.confluence.rules = getDefaultConfluence().rules;
+        if (!Array.isArray(s.confluence.timeframes))
+          s.confluence.timeframes = getDefaultConfluence().timeframes.slice();
+        if (!s.confluence.rules || typeof s.confluence.rules !== "object")
+          s.confluence.rules = getDefaultConfluence().rules;
 
-        // Ensure each TF exists in rules map
         s.confluence.timeframes.forEach((tf) => {
           if (!Array.isArray(s.confluence.rules[tf])) s.confluence.rules[tf] = [];
-          // Ensure rule items have ids
-          s.confluence.rules[tf] = s.confluence.rules[tf].map((r) => ({
-            id: r && r.id ? String(r.id) : uid(),
-            text: (r && r.text ? String(r.text) : "").trim(),
-            weight: clamp(parseNumber(r && r.weight), 1, 100) || 10,
-          })).filter(r => r.text);
+          s.confluence.rules[tf] = s.confluence.rules[tf]
+            .map((r) => ({
+              id: r && r.id ? String(r.id) : uid(),
+              text: (r && r.text ? String(r.text) : "").trim(),
+              weight: clamp(parseNumber(r && r.weight), 1, 100) || 10,
+            }))
+            .filter((r) => r.text);
         });
 
         return s;
@@ -1663,8 +1796,8 @@
 
         draftConfluenceChecked = {};
         updateDisciplinePreview();
-        renderTradeConfluenceArea(); // resets confluence checkboxes
-        updateConfluenceSummaryUI(); // resets summary
+        renderTradeConfluenceArea();
+        updateConfluenceSummaryUI();
       }
 
       // ========= Discipline % =========
@@ -1724,10 +1857,8 @@
         if (!gapiInitialized || !isSignedIn) return;
         if (driveSaveTimeout) clearTimeout(driveSaveTimeout);
         driveSaveTimeout = setTimeout(() => {
-          saveBackupToDrive().catch((err) =>
-            console.error("Drive autosync failed", err)
-          );
-        }, 1500);
+          saveBackupToDrive().catch((err) => console.error("Drive autosync failed", err));
+        }, 1200);
       }
 
       // ========= Google Identity / gapi entrypoints =========
@@ -1787,14 +1918,10 @@
 
       function handleSignInClick() {
         if (!tokenClient) {
-          alert(
-            "Google client not ready yet. If this keeps happening, check your API key / Client ID."
-          );
+          alert("Google client not ready yet. Check API key / Client ID.");
           return;
         }
-        tokenClient.requestAccessToken({
-          prompt: isSignedIn ? "" : "consent",
-        });
+        tokenClient.requestAccessToken({ prompt: isSignedIn ? "" : "consent" });
       }
 
       function handleSignOutClick() {
@@ -1847,6 +1974,7 @@
           saveState(false);
           renderCustomRules();
           renderConfluenceBuilder();
+          resetInputs();
           recalcDashboard();
           setDriveStatus("Drive: backup loaded", false);
         } else {
@@ -1860,6 +1988,7 @@
             saveState(false);
             renderCustomRules();
             renderConfluenceBuilder();
+            resetInputs();
             recalcDashboard();
             setDriveStatus("Drive: backup loaded", false);
           } else {
@@ -1873,7 +2002,7 @@
 
         try {
           setDriveStatus("Drive: syncing…", false);
-          const fileContent = JSON.stringify(state, null, 2);
+          const fileContent = JSON.stringify(state);
           const metadata = { name: "tredlog-dashboard-backup.json" };
 
           const token = gapi.client.getToken();
@@ -1885,8 +2014,7 @@
           form.append("file", new Blob([fileContent], { type: "application/json" }));
 
           let method = "POST";
-          let url =
-            "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart";
+          let url = "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart";
 
           if (driveFileId) {
             method = "PATCH";
@@ -2039,7 +2167,6 @@
       }
 
       function renderConfluenceBuilder() {
-        // Timeframe chips
         const chips = $("tfChips");
         chips.innerHTML = "";
 
@@ -2064,7 +2191,6 @@
           chips.appendChild(c);
         });
 
-        // TF select
         const sel = $("ruleTfSelect");
         sel.innerHTML = "";
         (state.confluence.timeframes || []).forEach((tf) => {
@@ -2074,7 +2200,6 @@
           sel.appendChild(opt);
         });
 
-        // Rules list grouped
         const listWrap = $("rulesList");
         listWrap.innerHTML = "";
 
@@ -2091,7 +2216,10 @@
 
           const meta = document.createElement("div");
           meta.className = "small-text";
-          const totalW = (state.confluence.rules?.[tf] || []).reduce((s, r) => s + (Number(r.weight) || 0), 0);
+          const totalW = (state.confluence.rules?.[tf] || []).reduce(
+            (s, r) => s + (Number(r.weight) || 0),
+            0
+          );
           meta.textContent = `Total weight: ${totalW}`;
 
           head.appendChild(title);
@@ -2120,7 +2248,9 @@
               x.textContent = "×";
               x.title = "Remove rule";
               x.addEventListener("click", () => {
-                state.confluence.rules[tf] = (state.confluence.rules[tf] || []).filter((rr) => rr.id !== r.id);
+                state.confluence.rules[tf] = (state.confluence.rules[tf] || []).filter(
+                  (rr) => rr.id !== r.id
+                );
                 if (draftConfluenceChecked?.[tf]) delete draftConfluenceChecked[tf][r.id];
                 saveState();
                 renderConfluenceBuilder();
@@ -2160,83 +2290,103 @@
       }
 
       // ========= Canvas helpers =========
-      function resizeCanvasToDisplaySize(canvas, cssHeight = 180) {
-        const dpr = window.devicePixelRatio || 1;
-        const displayWidth = Math.floor(canvas.clientWidth * dpr);
-        const displayHeight = Math.floor(cssHeight * dpr);
-        if (canvas.width !== displayWidth || canvas.height !== displayHeight) {
-          canvas.width = displayWidth;
-          canvas.height = displayHeight;
-        }
-        return dpr;
-      }
-
       function clearCanvas(canvas, cssHeight = 180) {
-        resizeCanvasToDisplaySize(canvas, cssHeight);
+        const dpr = window.devicePixelRatio || 1;
+        const w = Math.floor(canvas.clientWidth * dpr);
+        const h = Math.floor(cssHeight * dpr);
+        if (canvas.width !== w || canvas.height !== h) {
+          canvas.width = w;
+          canvas.height = h;
+        }
         const ctx = canvas.getContext("2d");
         ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = "rgba(2,6,23,0.35)";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        return { ctx };
+        return { ctx, dpr };
       }
 
+      // ====== BEAUTIFUL EQUITY CURVE (FAST) ======
       function drawEquityChart(points) {
         const canvas = $("equityChart");
-        const { ctx } = clearCanvas(canvas, 180);
+        const { ctx, dpr } = clearCanvas(canvas, 180);
         if (!points.length) return;
 
-        const padding = 22 * (window.devicePixelRatio || 1);
+        const pad = 22 * dpr;
         const w = canvas.width;
         const h = canvas.height;
 
         const xs = points.map((p) => p.x.getTime());
         const ys = points.map((p) => p.y);
+
         const minX = Math.min(...xs);
         const maxX = Math.max(...xs);
         const minY = Math.min(0, Math.min(...ys));
         const maxY = Math.max(...ys);
 
         const xScale = (x) =>
-          padding + ((x - minX) / (maxX - minX || 1)) * (w - padding * 2);
+          pad + ((x - minX) / (maxX - minX || 1)) * (w - pad * 2);
         const yScale = (y) =>
-          h - padding - ((y - minY) / (maxY - minY || 1)) * (h - padding * 2);
+          h - pad - ((y - minY) / (maxY - minY || 1)) * (h - pad * 2);
 
+        // Area fill
         ctx.beginPath();
-        ctx.strokeStyle = "rgba(127,224,181,0.95)";
-        ctx.lineWidth = 2 * (window.devicePixelRatio || 1);
-
         points.forEach((p, i) => {
           const x = xScale(p.x.getTime());
           const y = yScale(p.y);
           if (i === 0) ctx.moveTo(x, y);
           else ctx.lineTo(x, y);
         });
-        ctx.stroke();
+        const lastX = xScale(xs[xs.length - 1]);
+        const firstX = xScale(xs[0]);
+        const y0 = yScale(0);
+        ctx.lineTo(lastX, y0);
+        ctx.lineTo(firstX, y0);
+        ctx.closePath();
+        ctx.fillStyle = "rgba(127,224,181,0.12)";
+        ctx.fill();
 
-        // zero line
+        // Glow line
+        ctx.beginPath();
+        points.forEach((p, i) => {
+          const x = xScale(p.x.getTime());
+          const y = yScale(p.y);
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        });
+        ctx.strokeStyle = "rgba(127,224,181,0.95)";
+        ctx.lineWidth = 2.2 * dpr;
+        ctx.shadowColor = "rgba(127,224,181,0.35)";
+        ctx.shadowBlur = 14 * dpr;
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+
+        // 0-line
         if (minY < 0 && maxY > 0) {
+          ctx.save();
+          ctx.setLineDash([5 * dpr, 5 * dpr]);
           ctx.beginPath();
-          ctx.strokeStyle = "rgba(148,163,184,0.24)";
-          ctx.lineWidth = 1 * (window.devicePixelRatio || 1);
-          const y0 = yScale(0);
-          ctx.moveTo(padding, y0);
-          ctx.lineTo(w - padding, y0);
+          ctx.strokeStyle = "rgba(148,163,184,0.32)";
+          ctx.lineWidth = 1 * dpr;
+          ctx.moveTo(pad, y0);
+          ctx.lineTo(w - pad, y0);
           ctx.stroke();
+          ctx.restore();
         }
       }
 
       function drawProbabilityChart(wins, losses) {
         const canvas = $("probChart");
-        const { ctx } = clearCanvas(canvas, 180);
+        const { ctx, dpr } = clearCanvas(canvas, 180);
 
         const total = wins + losses;
-        $("probCaption").textContent = total ? `${wins} win(s), ${losses} loss(es).` : "No win/loss data yet.";
+        $("probCaption").textContent = total
+          ? `${wins} win(s), ${losses} loss(es).`
+          : "No win/loss data yet.";
         if (!total) return;
 
         const w = canvas.width;
         const h = canvas.height;
-        const dpr = window.devicePixelRatio || 1;
 
         const barWidth = 56 * dpr;
         const gap = 34 * dpr;
@@ -2308,7 +2458,8 @@
         const container = $("customRulesList");
         container.innerHTML = "";
         if (!state.customRules.length) {
-          container.innerHTML = '<em>No custom rules yet. Add your checklist items below.</em>';
+          container.innerHTML =
+            "<em>No custom rules yet. Add your checklist items below.</em>";
           return;
         }
         state.customRules.forEach((rule, idx) => {
@@ -2328,10 +2479,7 @@
         $("tabDashboardPane").style.display = activeRightTab === "dashboard" ? "block" : "none";
         $("tabHistoryPane").style.display = activeRightTab === "history" ? "block" : "none";
 
-        // Re-render charts after switching to dashboard (ensures canvas sizes are correct)
-        if (activeRightTab === "dashboard") {
-          recalcDashboard();
-        }
+        if (activeRightTab === "dashboard") scheduleRecalc();
       }
 
       function addTradeFromForm(isDraft = false) {
@@ -2363,11 +2511,9 @@
         const disciplinePct =
           (checklistCore.filter(Boolean).length / checklistCore.length) * 100;
 
-        // Confluence for this trade
         const conf = getConfluenceTotalsFromChecked(draftConfluenceChecked);
         const confluencePct = conf.overallPct;
 
-        // Store checked map inside the trade so it always matches later (and is part of backups)
         const confluenceChecked = JSON.parse(JSON.stringify(draftConfluenceChecked || {}));
 
         const trade = {
@@ -2392,7 +2538,7 @@
           state.trades.push(trade);
           saveState();
           resetInputs();
-          recalcDashboard();
+          scheduleRecalc();
         } else {
           saveState();
           alert("Draft saved locally in your browser (not added to log yet).");
@@ -2401,7 +2547,7 @@
 
       // ========= Calendar + recent (History tab) =========
       function renderCalendarAndRecent(allTradesSorted) {
-        const trades = allTradesSorted || [];
+        const tradesAll = allTradesSorted || [];
         const { first, last } = getMonthRange(selectedMonthOffset);
         const year = first.getFullYear();
         const month = first.getMonth();
@@ -2412,11 +2558,16 @@
         const daysInMonth = last.getDate();
         const perDay = Array.from({ length: daysInMonth }, () => 0);
 
-        trades.forEach((t) => {
+        const riskPerTrade = Number(state.riskPerTrade) || 0;
+
+        tradesAll.forEach((t) => {
           const d = new Date(t.date);
           if (d.getFullYear() === year && d.getMonth() === month) {
             const day = d.getDate();
-            perDay[day - 1] += Number(t.netUSD) || 0;
+            const pnlR = Number(t.resultR) || 0;
+            const fees = Number(t.fees) || 0;
+            const netUSD = pnlR * riskPerTrade - fees;
+            perDay[day - 1] += netUSD;
           }
         });
 
@@ -2436,6 +2587,7 @@
           const pnl = perDay[day - 1];
           const div = document.createElement("div");
           div.className = "calendar-day";
+          div.dataset.day = String(day);
           if (pnl !== 0) {
             div.classList.add("has-trades");
             if (pnl < 0) div.classList.add("negative");
@@ -2455,49 +2607,116 @@
           tbody.appendChild(row);
         }
 
-        const monthTrades = trades.filter((t) => {
-          const d = new Date(t.date);
-          return d.getFullYear() === year && d.getMonth() === month;
-        });
+        const monthTrades = tradesAll
+          .filter((t) => {
+            const d = new Date(t.date);
+            return d.getFullYear() === year && d.getMonth() === month;
+          })
+          .slice()
+          .sort((a, b) => new Date(b.date) - new Date(a.date));
 
+        renderRecentTable(monthTrades, monthName, year);
+      }
+
+      function safeText(v) {
+        return String(v ?? "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+      }
+
+      function renderRecentTable(tradeList, monthName, year, forceCaption) {
         const recentBody = $("recentBody");
         recentBody.innerHTML = "";
 
-        monthTrades
-          .slice()
-          .sort((a, b) => new Date(b.date) - new Date(a.date))
-          .forEach((t, idx) => {
-            const tr = document.createElement("tr");
-            const discPct = isFinite(t.disciplinePct) ? Math.round(t.disciplinePct) : 0;
-            const confPct = isFinite(t.confluencePct) ? Math.round(t.confluencePct) : 0;
+        const riskPerTrade = Number(state.riskPerTrade) || 0;
+        const SCREENSHOT_COL_INDEX = 12; // must match the column order below (0-based)
 
-            const cells = [
-              idx + 1,
-              t.date,
-              t.pair || "",
-              t.direction || "",
-              fmtR(t.pnlR),
-              fmtUSD(t.netUSD),
-              `${discPct}%`,
-              `${confPct}%`,
-              t.screenshot ? `<a href="${t.screenshot}" target="_blank">Open</a>` : "",
-              (t.notes || "").replace(/</g, "&lt;").replace(/>/g, "&gt;"),
-            ];
+        tradeList.forEach((t, idx) => {
+          const pnlR = Number(t.resultR) || 0;
+          const fees = Number(t.fees) || 0;
+          const netUSD = pnlR * riskPerTrade - fees;
 
-            cells.forEach((val) => {
-              const td = document.createElement("td");
-              td.innerHTML = val;
-              tr.appendChild(td);
-            });
-            recentBody.appendChild(tr);
+          const discPct = isFinite(t.disciplinePct) ? Math.round(t.disciplinePct) : 0;
+          const confPct = isFinite(t.confluencePct) ? Math.round(t.confluencePct) : 0;
+
+          const tr = document.createElement("tr");
+          tr.style.cursor = "pointer";
+          tr.title = "Click to open screenshot";
+
+          tr.addEventListener("click", () => {
+            const url = (t.screenshot || "").trim();
+            if (!url) return;
+            openImageModal(url);
           });
 
-        $("recentCaption").textContent = monthTrades.length
-          ? `${monthTrades.length} trade${monthTrades.length === 1 ? "" : "s"} in ${monthName} ${year}.`
-          : `No trades logged in ${monthName} ${year}.`;
+          const shotUrl = (t.screenshot || "").trim();
+          let shotCellHtml = "";
+          if (shotUrl) {
+            if (isImageUrl(shotUrl)) {
+              shotCellHtml = `
+                <div class="shotCell">
+                  <img class="shotThumb" src="${shotUrl}" alt="shot" loading="lazy" />
+                  <button class="shotBtn" data-url="${shotUrl}">View</button>
+                </div>`;
+            } else {
+              shotCellHtml = `
+                <div class="shotCell">
+                  <button class="shotBtn" data-url="${shotUrl}">Open</button>
+                </div>`;
+            }
+          }
+
+          // Column order MUST match HTML table header:
+          // #, Date, Pair, Dir, Session, Setup, Entry, R, Fees, PnL, Disc%, Conf%, Screenshot, Notes
+          const cells = [
+            idx + 1,
+            t.date,
+            safeText(t.pair || ""),
+            safeText(t.direction || ""),
+            safeText(t.session || ""),
+            safeText(t.setup || ""),
+            safeText(t.entrySignal || ""),
+            fmtR(pnlR),
+            fmtUSD(fees),
+            fmtUSD(netUSD),
+            `${discPct}%`,
+            `${confPct}%`,
+            shotCellHtml,
+            safeText(t.notes || ""),
+          ];
+
+          cells.forEach((val, cidx) => {
+            const td = document.createElement("td");
+            td.innerHTML = val;
+
+            // stop row click from triggering when pressing View/Open
+            if (cidx === SCREENSHOT_COL_INDEX) {
+              td.addEventListener("click", (e) => {
+                const btn = e.target.closest("button[data-url]");
+                if (!btn) return;
+                e.stopPropagation();
+                openImageModal(btn.getAttribute("data-url"));
+              });
+            }
+
+            tr.appendChild(td);
+          });
+
+          recentBody.appendChild(tr);
+        });
+
+        $("recentCaption").textContent =
+          forceCaption ||
+          (tradeList.length
+            ? `${tradeList.length} trade${tradeList.length === 1 ? "" : "s"} in ${monthName} ${year}. Click a day to filter.`
+            : `No trades logged in ${monthName} ${year}.`);
       }
 
-      function renderEvaluation(trades, { totalUsdNet, starting, balance, winRate, pnlByDay, equityR, wins, losses, totalFees }) {
+      function renderEvaluation(
+        trades,
+        { totalUsdNet, starting, balance, pnlByDay, equityR, wins, totalFees }
+      ) {
         $("evalTotalTrades").textContent = trades.length || 0;
 
         const days = pnlByDay ? pnlByDay.size : 0;
@@ -2519,7 +2738,6 @@
         const winNoBE = nonBe.length ? (wins.length / nonBe.length) * 100 : 0;
         $("evalWinNoBE").textContent = fmtPct(winNoBE);
 
-        // Monthly ROI: month net vs starting (simple baseline)
         const roi = starting ? ((balance - starting) / starting) * 100 : 0;
         $("evalROI").textContent = fmtPct(roi);
 
@@ -2556,7 +2774,6 @@
           $("evalTradesPer").textContent = "0.00 / 0.00";
         }
 
-        // Streak string (last 10 trades in the month)
         let streakStr = "";
         trades
           .slice()
@@ -2571,8 +2788,12 @@
 
       // ========= Recalc dashboard (MONTH ONLY) =========
       function recalcDashboard() {
-        const allTrades = [...(state.trades || [])].sort((a, b) => new Date(a.date) - new Date(b.date));
-        const trades = filterTradesToSelectedMonth(allTrades).sort((a, b) => new Date(a.date) - new Date(b.date));
+        const allTrades = [...(state.trades || [])].sort(
+          (a, b) => new Date(a.date) - new Date(b.date)
+        );
+        const trades = filterTradesToSelectedMonth(allTrades).sort(
+          (a, b) => new Date(a.date) - new Date(b.date)
+        );
 
         const riskPerTrade = Number(state.riskPerTrade) || 0;
         const starting = Number(state.startingBalance) || 0;
@@ -2580,30 +2801,36 @@
         $("startingBalance").value = starting || "";
         $("riskPerTrade").value = riskPerTrade || "";
 
-        // Month label UI
         const { first } = getMonthRange(selectedMonthOffset);
         const monthNameYear = monthLabelFromDate(first);
         $("monthLabel").textContent = monthNameYear;
 
-        // Trades logged label (month only)
         $("tradeCountLabel").textContent =
-          trades.length === 1 ? `1 trade in ${monthNameYear}` : `${trades.length} trades in ${monthNameYear}`;
+          trades.length === 1
+            ? `1 trade in ${monthNameYear}`
+            : `${trades.length} trades in ${monthNameYear}`;
 
-        // Normalize trade numbers
-        trades.forEach((t) => {
-          t.resultR = Number(t.resultR) || 0;
-          t.riskR = Number(t.riskR) || 1;
-          t.pnlR = t.resultR;
-          t.pnlUSD = t.pnlR * riskPerTrade;
-          t.fees = Number(t.fees) || 0;
-          t.netUSD = t.pnlUSD - t.fees;
-          t.disciplinePct = Number(t.disciplinePct) || 0;
-          t.confluencePct = Number(t.confluencePct) || 0;
+        const derived = trades.map((t) => {
+          const resultR = Number(t.resultR) || 0;
+          const fees = Number(t.fees) || 0;
+          const pnlUSD = resultR * riskPerTrade;
+          const netUSD = pnlUSD - fees;
+          return {
+            ...t,
+            resultR,
+            riskR: Number(t.riskR) || 1,
+            pnlR: resultR,
+            pnlUSD,
+            fees,
+            netUSD,
+            disciplinePct: Number(t.disciplinePct) || 0,
+            confluencePct: Number(t.confluencePct) || 0,
+          };
         });
 
-        const totalR = trades.reduce((s, t) => s + t.pnlR, 0);
-        const totalFees = trades.reduce((s, t) => s + (Number(t.fees) || 0), 0);
-        const totalUsdNet = trades.reduce((s, t) => s + (Number(t.netUSD) || 0), 0);
+        const totalR = derived.reduce((s, t) => s + t.pnlR, 0);
+        const totalFees = derived.reduce((s, t) => s + (Number(t.fees) || 0), 0);
+        const totalUsdNet = derived.reduce((s, t) => s + (Number(t.netUSD) || 0), 0);
 
         const balance = starting + totalUsdNet;
 
@@ -2611,19 +2838,21 @@
           balance
         )} • Starting: ${fmtUSD(starting)}`;
 
-        // Summary
         $("netPnlBig").textContent = fmtUSD(totalUsdNet);
         $("netPnlBig").style.color = totalUsdNet >= 0 ? "var(--good)" : "var(--bad)";
-        $("netPnlSub").textContent = `+ ${trades.length} trades in ${monthNameYear}`;
+        $("netPnlSub").textContent = `+ ${derived.length} trades in ${monthNameYear}`;
 
-        const nonBe = trades.filter((t) => t.pnlR !== 0);
-        const wins = trades.filter((t) => t.pnlR > 0);
-        const losses = trades.filter((t) => t.pnlR < 0);
+        const nonBe = derived.filter((t) => t.pnlR !== 0);
+        const wins = derived.filter((t) => t.pnlR > 0);
+        const losses = derived.filter((t) => t.pnlR < 0);
         const winRate = nonBe.length ? (wins.length / nonBe.length) * 100 : 0;
         $("winRateValue").textContent = fmtPct(winRate);
 
-        const totalProfit = trades.reduce((s, t) => (t.netUSD > 0 ? s + t.netUSD : s), 0);
-        const totalLossAbs = trades.reduce((s, t) => (t.netUSD < 0 ? s + Math.abs(t.netUSD) : s), 0);
+        const totalProfit = derived.reduce((s, t) => (t.netUSD > 0 ? s + t.netUSD : s), 0);
+        const totalLossAbs = derived.reduce(
+          (s, t) => (t.netUSD < 0 ? s + Math.abs(t.netUSD) : s),
+          0
+        );
         $("totalProfitValue").textContent = fmtUSD(totalProfit);
         $("totalLossValue").textContent = fmtUSD(totalLossAbs);
         $("totalProfitSub").textContent = `${wins.length} winning trades`;
@@ -2632,15 +2861,14 @@
         const profitFactor = totalLossAbs > 0 ? totalProfit / totalLossAbs : 0;
         $("profitFactorValue").textContent = (isFinite(profitFactor) ? profitFactor : 0).toFixed(2);
 
-        const avgConf = trades.length
-          ? trades.reduce((s, t) => s + (Number(t.confluencePct) || 0), 0) / trades.length
+        const avgConf = derived.length
+          ? derived.reduce((s, t) => s + (Number(t.confluencePct) || 0), 0) / derived.length
           : 0;
         $("avgConfluenceValue").textContent = `${Math.round(avgConf)}%`;
 
-        // Largest win/loss + best streak (month)
         let largestWin = 0;
         let largestLoss = 0;
-        trades.forEach((t) => {
+        derived.forEach((t) => {
           if (t.netUSD > largestWin) largestWin = t.netUSD;
           if (t.netUSD < largestLoss) largestLoss = t.netUSD;
         });
@@ -2649,7 +2877,7 @@
 
         let bestStreak = 0;
         let curStreak = 0;
-        trades.forEach((t) => {
+        derived.forEach((t) => {
           if (t.pnlR > 0) {
             curStreak += 1;
             bestStreak = Math.max(bestStreak, curStreak);
@@ -2658,30 +2886,27 @@
           }
         });
         $("bestStreakValue").textContent = String(bestStreak);
-        $("totalTradesMini").textContent = String(trades.length);
+        $("totalTradesMini").textContent = String(derived.length);
 
-        // Equity points in R (month only)
         const equityR = [];
         let runningR = 0;
-        trades.forEach((t) => {
+        derived.forEach((t) => {
           runningR += t.pnlR;
           equityR.push({ x: new Date(t.date), y: runningR });
         });
 
-        const eqCaption =
-          trades.length === 0
+        $("equityCaption").textContent =
+          derived.length === 0
             ? `No trades in ${monthNameYear} yet.`
             : `Month R: ${fmtR(totalR)} • Month Net PnL: ${fmtUSD(totalUsdNet)} • Fees: ${fmtUSD(
                 totalFees
               )}.`;
-        $("equityCaption").textContent = eqCaption;
 
         drawEquityChart(equityR);
         drawProbabilityChart(wins.length, losses.length);
 
-        // Month summary card (day map within month)
         const dayMap = new Map();
-        trades.forEach((t) => {
+        derived.forEach((t) => {
           const key = t.date;
           if (!dayMap.has(key)) dayMap.set(key, 0);
           dayMap.set(key, dayMap.get(key) + (t.netUSD || 0));
@@ -2689,9 +2914,10 @@
 
         $("last7PnL").textContent = fmtUSD(totalUsdNet);
         $("last30PnL").textContent = fmtR(totalR);
-        $("totalTradesEval").textContent = trades.length ? String(trades.length) : "0";
+        $("totalTradesEval").textContent = derived.length ? String(derived.length) : "0";
 
-        let bestDay = 0, worstDay = 0;
+        let bestDay = 0,
+          worstDay = 0;
         dayMap.forEach((v) => {
           if (v > bestDay) bestDay = v;
           if (v < worstDay) worstDay = v;
@@ -2699,21 +2925,82 @@
         $("bestDayEval").textContent = fmtUSD(bestDay);
         $("worstDayEval").textContent = fmtUSD(worstDay);
 
-        // History tab content still renders from ALL trades but filtered internally by selected month
         renderCalendarAndRecent(allTrades);
 
-        renderEvaluation(trades, {
+        renderEvaluation(derived, {
           totalUsdNet,
           starting,
           balance,
-          winRate,
           pnlByDay: dayMap,
           equityR,
           wins,
-          losses,
           totalFees,
         });
       }
+
+      // ========= Fast scheduling =========
+      let _recalcRAF = 0;
+      function scheduleRecalc() {
+        if (_recalcRAF) cancelAnimationFrame(_recalcRAF);
+        _recalcRAF = requestAnimationFrame(() => {
+          _recalcRAF = 0;
+          recalcDashboard();
+        });
+      }
+
+      // ========= IMAGE MODAL =========
+      function openImageModal(url) {
+        if (!url) return;
+        const clean = String(url).trim();
+        if (!isImageUrl(clean)) {
+          window.open(clean, "_blank");
+          return;
+        }
+        $("imageModalImg").src = clean;
+        $("imageModal").style.display = "flex";
+      }
+      $("imageModalClose").onclick = () => {
+        $("imageModal").style.display = "none";
+        $("imageModalImg").src = "";
+      };
+      $("imageModal").onclick = (e) => {
+        if (e.target.id === "imageModal") {
+          $("imageModal").style.display = "none";
+          $("imageModalImg").src = "";
+        }
+      };
+
+      // ========= Calendar click → show that day’s trades =========
+      document.addEventListener("click", function (e) {
+        const dayEl = e.target.closest(".calendar-day");
+        if (!dayEl) return;
+
+        const day = parseInt(dayEl.dataset.day || dayEl.textContent, 10);
+        if (!day) return;
+
+        const { first } = getMonthRange(selectedMonthOffset);
+        const y = first.getFullYear();
+        const m = String(first.getMonth() + 1).padStart(2, "0");
+        const d = String(day).padStart(2, "0");
+        const dateStr = `${y}-${m}-${d}`;
+
+        const monthTrades = filterTradesToSelectedMonth(state.trades || []);
+        const filtered = monthTrades.filter((t) => t.date === dateStr);
+
+        if (!filtered.length) return;
+
+        if (activeRightTab !== "history") setActiveTab("history");
+
+        const caption = `${filtered.length} trade${filtered.length === 1 ? "" : "s"} on ${dateStr}.`;
+        renderRecentTable(
+          filtered.slice().sort((a, b) => new Date(b.date) - new Date(a.date)),
+          first.toLocaleString("en-US", { month: "long" }),
+          y,
+          caption
+        );
+
+        setTimeout(() => $("recentBody").scrollIntoView({ behavior: "smooth" }), 50);
+      });
 
       // ========= Confluence builder (UI actions) =========
       function init() {
@@ -2735,12 +3022,12 @@
         $("startingBalance").addEventListener("change", () => {
           state.startingBalance = parseNumber($("startingBalance").value);
           saveState();
-          recalcDashboard();
+          scheduleRecalc();
         });
         $("riskPerTrade").addEventListener("change", () => {
           state.riskPerTrade = parseNumber($("riskPerTrade").value);
           saveState();
-          recalcDashboard();
+          scheduleRecalc();
         });
 
         [
@@ -2764,7 +3051,6 @@
           renderCustomRules();
         });
 
-        // Confluence builder actions
         $("addTfBtn").addEventListener("click", (e) => {
           e.preventDefault();
           addTimeframesFromInput($("newTfInput").value);
@@ -2824,55 +3110,47 @@
         $("exportBtn").addEventListener("click", exportBackup);
         $("importBtn").addEventListener("click", importBackup);
 
-        // Tabs
         $("tabBtnDashboard").addEventListener("click", () => setActiveTab("dashboard"));
         $("tabBtnHistory").addEventListener("click", () => setActiveTab("history"));
 
-        // Month nav (global)
         $("monthPrevBtn").addEventListener("click", () => {
           selectedMonthOffset--;
-          recalcDashboard();
+          scheduleRecalc();
         });
         $("monthNextBtn").addEventListener("click", () => {
           selectedMonthOffset++;
-          recalcDashboard();
+          scheduleRecalc();
         });
 
-        // Calendar nav (history tab) uses the same selected month
         $("calPrevBtn").addEventListener("click", () => {
           selectedMonthOffset--;
-          recalcDashboard();
+          scheduleRecalc();
         });
         $("calNextBtn").addEventListener("click", () => {
           selectedMonthOffset++;
-          recalcDashboard();
+          scheduleRecalc();
         });
 
         $("googleSignInBtn").addEventListener("click", handleSignInClick);
         $("googleSignOutBtn").addEventListener("click", handleSignOutClick);
 
+        // Debounced resize re-render (keeps it fast)
+        let resizeT = null;
         window.addEventListener("resize", () => {
-          if (activeRightTab === "dashboard") recalcDashboard();
+          if (resizeT) clearTimeout(resizeT);
+          resizeT = setTimeout(() => {
+            if (activeRightTab === "dashboard") scheduleRecalc();
+          }, 150);
         });
       }
 
       document.addEventListener("DOMContentLoaded", init);
     </script>
 
-    <!-- Google Identity Services (creates tokenClient in gisLoaded) -->
-    <script
-      src="https://accounts.google.com/gsi/client"
-      async
-      defer
-      onload="gisLoaded()"
-    ></script>
+    <!-- Google Identity Services -->
+    <script src="https://accounts.google.com/gsi/client" async defer onload="gisLoaded()"></script>
 
-    <!-- Google API JS (loads gapi and then calls gapiLoaded) -->
-    <script
-      src="https://apis.google.com/js/api.js"
-      async
-      defer
-      onload="gapiLoaded()"
-    ></script>
+    <!-- Google API JS -->
+    <script src="https://apis.google.com/js/api.js" async defer onload="gapiLoaded()"></script>
   </body>
 </html>
