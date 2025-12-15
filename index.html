@@ -1544,11 +1544,7 @@
                         <th>Date</th>
                         <th>Pair</th>
                         <th>Dir</th>
-                        <th>Session</th>
-                        <th>Setup</th>
-                        <th>Entry</th>
                         <th>R</th>
-                        <th>Fees</th>
                         <th>PnL ($)</th>
                         <th>Disc%</th>
                         <th>Conf%</th>
@@ -1752,6 +1748,7 @@
 
       function saveState(shouldSyncDrive = true) {
         try {
+          // no pretty print = faster
           localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
         } catch (e) {
           console.warn("Failed to save state", e);
@@ -2002,7 +1999,7 @@
 
         try {
           setDriveStatus("Drive: syncing…", false);
-          const fileContent = JSON.stringify(state);
+          const fileContent = JSON.stringify(state); // faster
           const metadata = { name: "tredlog-dashboard-backup.json" };
 
           const token = gapi.client.getToken();
@@ -2306,7 +2303,7 @@
         return { ctx, dpr };
       }
 
-      // ====== BEAUTIFUL EQUITY CURVE (FAST) ======
+      // ====== BEAUTIFUL EQUITY CURVE (UPDATED) ======
       function drawEquityChart(points) {
         const canvas = $("equityChart");
         const { ctx, dpr } = clearCanvas(canvas, 180);
@@ -2337,6 +2334,7 @@
           if (i === 0) ctx.moveTo(x, y);
           else ctx.lineTo(x, y);
         });
+        // close to 0 line
         const lastX = xScale(xs[xs.length - 1]);
         const firstX = xScale(xs[0]);
         const y0 = yScale(0);
@@ -2558,6 +2556,7 @@
         const daysInMonth = last.getDate();
         const perDay = Array.from({ length: daysInMonth }, () => 0);
 
+        // create derived netUSD per trade without mutating stored objects
         const riskPerTrade = Number(state.riskPerTrade) || 0;
 
         tradesAll.forEach((t) => {
@@ -2618,19 +2617,11 @@
         renderRecentTable(monthTrades, monthName, year);
       }
 
-      function safeText(v) {
-        return String(v ?? "")
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;");
-      }
-
       function renderRecentTable(tradeList, monthName, year, forceCaption) {
         const recentBody = $("recentBody");
         recentBody.innerHTML = "";
 
         const riskPerTrade = Number(state.riskPerTrade) || 0;
-        const SCREENSHOT_COL_INDEX = 12; // must match the column order below (0-based)
 
         tradeList.forEach((t, idx) => {
           const pnlR = Number(t.resultR) || 0;
@@ -2644,7 +2635,8 @@
           tr.style.cursor = "pointer";
           tr.title = "Click to open screenshot";
 
-          tr.addEventListener("click", () => {
+          tr.addEventListener("click", (e) => {
+            // allow clicking inside without double actions
             const url = (t.screenshot || "").trim();
             if (!url) return;
             openImageModal(url);
@@ -2667,31 +2659,24 @@
             }
           }
 
-          // Column order MUST match HTML table header:
-          // #, Date, Pair, Dir, Session, Setup, Entry, R, Fees, PnL, Disc%, Conf%, Screenshot, Notes
           const cells = [
             idx + 1,
             t.date,
-            safeText(t.pair || ""),
-            safeText(t.direction || ""),
-            safeText(t.session || ""),
-            safeText(t.setup || ""),
-            safeText(t.entrySignal || ""),
+            t.pair || "",
+            t.direction || "",
             fmtR(pnlR),
-            fmtUSD(fees),
             fmtUSD(netUSD),
             `${discPct}%`,
             `${confPct}%`,
             shotCellHtml,
-            safeText(t.notes || ""),
+            (t.notes || "").replace(/</g, "&lt;").replace(/>/g, "&gt;"),
           ];
 
           cells.forEach((val, cidx) => {
             const td = document.createElement("td");
             td.innerHTML = val;
-
             // stop row click from triggering when pressing View/Open
-            if (cidx === SCREENSHOT_COL_INDEX) {
+            if (cidx === 8) {
               td.addEventListener("click", (e) => {
                 const btn = e.target.closest("button[data-url]");
                 if (!btn) return;
@@ -2699,7 +2684,6 @@
                 openImageModal(btn.getAttribute("data-url"));
               });
             }
-
             tr.appendChild(td);
           });
 
@@ -2810,6 +2794,7 @@
             ? `1 trade in ${monthNameYear}`
             : `${trades.length} trades in ${monthNameYear}`;
 
+        // derived per-trade month metrics (do not break stored data)
         const derived = trades.map((t) => {
           const resultR = Number(t.resultR) || 0;
           const fees = Number(t.fees) || 0;
@@ -2989,6 +2974,7 @@
 
         if (!filtered.length) return;
 
+        // switch to History tab automatically
         if (activeRightTab !== "history") setActiveTab("history");
 
         const caption = `${filtered.length} trade${filtered.length === 1 ? "" : "s"} on ${dateStr}.`;
